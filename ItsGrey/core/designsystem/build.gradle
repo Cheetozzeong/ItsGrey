@@ -41,29 +41,28 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation deps.ktx.core
+    implementation deps.appcompat
+    implementation deps.material
 
     // Material Design 3
-    implementation "androidx.compose.material3:material3:1.0.1"
-    implementation "androidx.compose.material3:material3-window-size-class:1.0.1"
+    implementation deps.compose.material3.material3
+    implementation deps.compose.material3.windowSize
     // Android Studio Preview support
-    implementation "androidx.compose.ui:ui-tooling-preview:1.3.3"
-    debugImplementation "androidx.compose.ui:ui-tooling:1.3.3"
+    implementation deps.compose.ui.preview
+    debugImplementation deps.compose.ui.tooling
     // such as input and measurement/layout
-    implementation "androidx.compose.ui:ui:1.3.3"
+    implementation deps.compose.ui.ui
     // UI Tests
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.3.3"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.3.3"
+    androidTestImplementation deps.compose.ui.testJunit4
+    debugImplementation deps.compose.ui.textManifest
     // the icons but not the material library (e.g. when using Material3 or a
     // custom design system based on Foundation)
-    implementation "androidx.compose.material:material-icons-core:1.3.1"
+    implementation deps.compose.material.iconsCore
     // Optional - Add full set of material icons
-    implementation "androidx.compose.material:material-icons-extended:1.3.1"
+    implementation deps.compose.material.iconsExtended
     // Optional - Add window size utils
-    implementation "androidx.compose.material3:material3-window-size-class:1.0.1"
-
+    implementation deps.compose.material3.windowSize
     // Optional - Integration with activities
     implementation "androidx.activity:activity-compose:1.6.1"
     // Optional - Integration with ViewModels
