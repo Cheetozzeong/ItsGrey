@@ -224,7 +224,7 @@ val DarkAndroidColorScheme = darkColorScheme(
 //    ) {
 //        MaterialTheme(
 //            colorScheme = colorScheme,
-//            typography = IGTypography,
+//            typography = IgTypography,
 //            content = content,
 //        )
 //    }
