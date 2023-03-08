@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "870090395674",
+    "project_id": "itsgray-8c4c7",
+    "storage_bucket": "itsgray-8c4c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870090395674:android:4d44a3702e199b185141a3",
+        "android_client_info": {
+          "package_name": "com.tntt.itsgray"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870090395674-vid2gvd8dnpc2cre3pfuck7ft3226m1f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOdqJQ7Oh-7YxlXH0SQkP4pkv9ZBPTfFQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870090395674-vid2gvd8dnpc2cre3pfuck7ft3226m1f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
