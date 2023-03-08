@@ -1,4 +1,4 @@
-package com.tntt.core.designsystem.component
+package com.tntt.designsystem.component
 
 class Image {
 }

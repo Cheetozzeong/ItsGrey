@@ -1,4 +1,10 @@
 package com.tntt.designsystem.component
 
-class Button {
-}
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+
+@Preview
+@Composable
+    fun AddButton(){
+
+    }
