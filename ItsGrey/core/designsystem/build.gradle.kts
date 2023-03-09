@@ -1,33 +1,37 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    id ("com.android.application")
+    id ("org.jetbrains.kotlin.android")
 }
 
+
 android {
-    namespace 'com.tntt.designsystem'
-    compileSdk 33
+    namespace = "com.tntt.itsgrey"
+    compileSdk = AppConfig.compileSdk
 
     defaultConfig {
-        minSdk 24
-        targetSdk 33
+        minSdk = AppConfig.minSdk
+        targetSdk = AppConfig.targetSdk
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles = "consumer-rules.pro"
     }
 
     buildFeatures {
         compose = true
-        viewBinding true
+        viewBinding = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.1.1"
+        kotlinCompilerExtensionVersion = "1.4.1"
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
