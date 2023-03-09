@@ -1,9 +1,8 @@
 package com.tntt.designsystem.icon
 
 import androidx.annotation.DrawableRes
-import androidx.compose.material.icons.Icons
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.tntt.designsystem.R
+import itsgrey.core.designsystem.R
 
 object IgIcons {
 

@@ -1,51 +1,54 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id ("com.android.application")
+    id ("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace 'com.tntt.itsgrey'
-    compileSdk 33
+    namespace = "itsgrey.app"
+    compileSdk = AppConfig.compileSdk
 
     defaultConfig {
-        applicationId "com.tntt.itsgrey"
-        minSdk 24
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.tntt.itsgrey"
+        minSdk = AppConfig.minSdk
+        targetSdk = AppConfig.targetSdk
+        versionCode = 1
+        versionName = "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
     buildFeatures {
-        viewBinding true
+        dataBinding = true
+        viewBinding = true
     }
 }
 
 dependencies {
 
-    implementation deps.ktx.core
-    implementation deps.appcompat
-    implementation deps.material
+    implementation(Libraries.KTX.CORE)
+    implementation(Libraries.AndroidX.APP_COMPAT)
+    implementation(Libraries.AndroidX.MATERIAL)
+    implementation(Libraries.AndroidX.CONSTRAINT_LAYOUT)
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation(Libraries.Test.JUNIT)
+    androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 }

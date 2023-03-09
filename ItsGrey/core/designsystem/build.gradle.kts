@@ -5,7 +5,7 @@ plugins {
 
 
 android {
-    namespace = "com.tntt.itsgrey"
+    namespace = "itsgrey.core.designsystem"
     compileSdk = AppConfig.compileSdk
 
     defaultConfig {
@@ -13,7 +13,7 @@ android {
         targetSdk = AppConfig.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles = "consumer-rules.pro"
+
     }
 
     buildFeatures {
@@ -35,44 +35,39 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
 }
 
 dependencies {
 
-    implementation deps.ktx.core
-    implementation deps.appcompat
-    implementation deps.material
+    implementation(Libraries.KTX.CORE)
+    implementation(Libraries.AndroidX.APP_COMPAT)
+    implementation(Libraries.AndroidX.MATERIAL)
 
     // Material Design 3
-    implementation deps.compose.material3.material3
-    implementation deps.compose.material3.windowSize
+    implementation(Libraries.Compose.MATERIAL3.MATERIAL3)
+    implementation(Libraries.Compose.MATERIAL3.WINDOW_SIZE)
     // Android Studio Preview support
-    implementation deps.compose.ui.preview
-    debugImplementation deps.compose.ui.tooling
-    // such as input and measurement/layout
-    implementation deps.compose.ui.ui
+    implementation(Libraries.Compose.UI.UI)
+    implementation(Libraries.Compose.UI.PREVIEW)
+    implementation(Libraries.Compose.UI.TOOLING)
     // UI Tests
-    androidTestImplementation deps.compose.ui.testJunit4
-    debugImplementation deps.compose.ui.textManifest
+    androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
+    debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
     // the icons but not the material library (e.g. when using Material3 or a
     // custom design system based on Foundation)
-    implementation deps.compose.material.iconsCore
-    // Optional - Add full set of material icons
-    implementation deps.compose.material.iconsExtended
-    // Optional - Add window size utils
-    implementation deps.compose.material3.windowSize
-    // Optional - Integration with activities
-    implementation "androidx.activity:activity-compose:1.6.1"
-    // Optional - Integration with ViewModels
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    implementation(Libraries.Compose.MATERIAL.ICONS_CORE)
+    implementation(Libraries.Compose.MATERIAL.ICONS_EXTENDED)
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation (Libraries.Test.JUNIT)
+    androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
 }
