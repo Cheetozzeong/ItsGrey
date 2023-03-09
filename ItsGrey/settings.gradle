@@ -16,3 +16,6 @@ rootProject.name = "ItsGrey"
 include ':app'
 include ':core:designsystem'
 include ':core:designsystem'
+include ':core:network'
+include ':core:network'
+include ':core:network'
