@@ -12,7 +12,6 @@ import com.tntt.designsystem.R
 internal val IgTypography = Typography(
     displayLarge = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontFamily = IgFont.gangwon,
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
