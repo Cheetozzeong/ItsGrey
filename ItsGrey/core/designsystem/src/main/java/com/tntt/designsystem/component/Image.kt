@@ -8,6 +8,8 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -17,6 +19,21 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
+
+enum class BoxEvent {
+    None,
+    Active,
+    Move,
+    Resize,
+    Dialog
+}
+
+data class BoxState(
+    val event: BoxEvent = BoxEvent.None,
+    val position: Offset = Offset.Zero,
+    val size: Size = Size.Zero,
+    val isDialogShown: Boolean = false
+)
 
 @Composable
 fun Image(
