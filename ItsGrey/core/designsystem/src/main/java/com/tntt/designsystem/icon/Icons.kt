@@ -17,9 +17,8 @@ object IgIcons {
     val Close = Icons.Rounded.Close
     val Check = Icons.Rounded.Check
     val ArrowForward = Icons.Rounded.ArrowForward
-
-    val Redo = R.drawable.icon_redo_button_48
-    val Undo = R.drawable.icon_undo_button_48
+    val Undo = Icons.Rounded.Undo
+    val Redo = Icons.Rounded.Redo
 
 //    val Add = R.drawable.icon_add_button_48
 //    val GoBack = R.drawable.icon_back_button_48
@@ -27,6 +26,8 @@ object IgIcons {
 //    val Next = R.drawable.icon_next_button_48
 //    val Preview = R.drawable.icon_preview_button_48
 //    val Template = R.drawable.icon_template_button
+//    val Redo = R.drawable.icon_redo_button_48
+//    val Undo = R.drawable.icon_undo_button_48
 }
 
 /**
