@@ -9,7 +9,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import com.tntt.itsgrey.databinding.ActivityMainBinding
+import itsgrey.app.R
+import itsgrey.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
