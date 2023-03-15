@@ -7,6 +7,7 @@ object Versions {
 
     // KTX
     const val CORE = "1.9.0"
+    const val COROUTINES = "1.3.9"
 
     // TEST
     const val JUNIT = "1.1.5"
@@ -31,6 +32,7 @@ object Libraries {
 
     object KTX {
         const val CORE = "androidx.core:core-ktx:${Versions.CORE}"
+        const val COROUTINES = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINES}"
     }
 
     object Test {
