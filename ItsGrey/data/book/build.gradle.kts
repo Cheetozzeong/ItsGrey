@@ -56,4 +56,5 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT_VERSION}")
 
     testImplementation ("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    implementation(Libraries.KTX.COROUTINES)
 }
