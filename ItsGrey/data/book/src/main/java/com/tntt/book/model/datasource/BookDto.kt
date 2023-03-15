@@ -1,12 +1,12 @@
 package com.tntt.book.model.datasource
 
 import java.util.Date
+import java.util.ArrayList
 
-data class BookDto (
-    var id:String?,
-    var title:String?,
-    var isPublished:Boolean?,
-    var publishDate:Date?,
-    var editDate:Date?,
-    val pages:java.util.ArrayList<String>?){
-}
+data class BookDto(
+    val id: String,
+    val title: String,
+    val isPublished: Boolean,
+    val publishDate: Date,
+    val editDate: Date,
+    val pages: ArrayList<String>)

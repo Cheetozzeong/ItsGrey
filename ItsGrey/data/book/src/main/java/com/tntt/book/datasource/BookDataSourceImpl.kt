@@ -13,13 +13,8 @@ import javax.inject.Inject
 class BookDataSourceImpl: BookDataSource {
     @Inject lateinit var firestore: FirebaseFirestore
 
-    override fun test(): String {
-        println("success")
-        return "success"
-    }
-
     override fun createBook(book: BookDto): Boolean {
-        var result:Boolean = true
+        var result: Boolean = true
         book.id = UUID.randomUUID().toString()
         firestore.collection("book")
             .document(book.id)
@@ -39,7 +34,7 @@ class BookDataSourceImpl: BookDataSource {
         val result = firestore.collection("book").document(id).get()
         println("result = ${result}")
 
-        lateinit var book : BookDto
+        lateinit var book: BookDto
 
         // result -> book mapping 구현
 
