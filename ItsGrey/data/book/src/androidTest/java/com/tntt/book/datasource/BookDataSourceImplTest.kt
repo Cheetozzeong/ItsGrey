@@ -18,7 +18,6 @@ class BookDataSourceImplTest {
 
         var result = bookDataSource.createBook(book)
         println("result = ${result}")
-
     }
 
 }

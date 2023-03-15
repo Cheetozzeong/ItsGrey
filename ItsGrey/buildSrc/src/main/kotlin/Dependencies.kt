@@ -17,6 +17,9 @@ object Versions {
     // Hilt
     const val HILT_VERSION = "2.28-alpha"
 
+    // Kotlin
+    const val KOTLIN = "1.5.31"
+
     object Compose {
         const val MATERIAL3 = "1.0.1"
         const val MATERIAL = "1.3.1"

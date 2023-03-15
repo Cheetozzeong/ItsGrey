@@ -36,14 +36,24 @@ class BookDataSourceImpl: BookDataSource {
     }
 
     override fun readBookById(id: String): BookDto {
-        TODO("Not yet implemented")
+        val result = firestore.collection("book").document(id).get()
+        println("result = ${result}")
+
+        lateinit var book : BookDto
+
+        // result -> book mapping 구현
+
+        return book
     }
 
     override fun updateBook(book: BookDto): BookDto {
-        TODO("Not yet implemented")
+
     }
 
     override fun deleteBook(id: String): Boolean {
-        TODO("Not yet implemented")
+        val result = firestore.collection("book").document(id).delete()
+            .addOnSuccessListener { println("success delete") }
+            .addOnFailureListener { println("fail delete") }
+
     }
 }
