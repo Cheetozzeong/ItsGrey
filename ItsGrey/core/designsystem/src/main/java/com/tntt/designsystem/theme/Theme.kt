@@ -173,62 +173,33 @@ val DarkAndroidColorScheme = darkColorScheme(
 // * @param disableDynamicTheming If `true`, disables the use of dynamic theming, even when it is
 // *        supported. This parameter has no effect if [androidTheme] is `true`.
 // */
-//@Composable
-//fun NiaTheme(
-//    darkTheme: Boolean = isSystemInDarkTheme(),
-//    androidTheme: Boolean = false,
-//    disableDynamicTheming: Boolean = true,
-//    content: @Composable () -> Unit,
-//) {
-//    // Color scheme
-//    val colorScheme = when {
-//        androidTheme -> if (darkTheme) DarkAndroidColorScheme else LightAndroidColorScheme
-//        !disableDynamicTheming && supportsDynamicTheming() -> {
-//            val context = LocalContext.current
-//            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-//        }
-//
-//        else -> if (darkTheme) DarkDefaultColorScheme else LightDefaultColorScheme
-//    }
-//    // Gradient colors
-//    val emptyGradientColors = GradientColors(container = colorScheme.surfaceColorAtElevation(2.dp))
-//    val defaultGradientColors = GradientColors(
-//        top = colorScheme.inverseOnSurface,
-//        bottom = colorScheme.primaryContainer,
-//        container = colorScheme.surface,
-//    )
-//    val gradientColors = when {
-//        androidTheme -> if (darkTheme) DarkAndroidGradientColors else LightAndroidGradientColors
-//        !disableDynamicTheming && supportsDynamicTheming() -> emptyGradientColors
-//        else -> defaultGradientColors
-//    }
-//    // Background theme
-//    val defaultBackgroundTheme = BackgroundTheme(
-//        color = colorScheme.surface,
-//        tonalElevation = 2.dp,
-//    )
-//    val backgroundTheme = when {
-//        androidTheme -> if (darkTheme) DarkAndroidBackgroundTheme else LightAndroidBackgroundTheme
-//        else -> defaultBackgroundTheme
-//    }
-//    val tintTheme = when {
-//        androidTheme -> TintTheme()
-//        !disableDynamicTheming && supportsDynamicTheming() -> TintTheme(colorScheme.primary)
-//        else -> TintTheme()
-//    }
-//    // Composition locals
-//    CompositionLocalProvider(
-//        LocalGradientColors provides gradientColors,
-//        LocalBackgroundTheme provides backgroundTheme,
-//        LocalTintTheme provides tintTheme,
-//    ) {
-//        MaterialTheme(
-//            colorScheme = colorScheme,
-//            typography = IgTypography,
-//            content = content,
-//        )
-//    }
-//}
+@Composable
+fun NiaTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    androidTheme: Boolean = false,
+    disableDynamicTheming: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    // Color scheme
+    val colorScheme = when {
+        androidTheme -> if (darkTheme) DarkAndroidColorScheme else LightAndroidColorScheme
+        !disableDynamicTheming && supportsDynamicTheming() -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+
+        else -> if (darkTheme) DarkDefaultColorScheme else LightDefaultColorScheme
+    }
+    // Composition locals
+    CompositionLocalProvider(
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = IgTypography,
+            content = content,
+        )
+    }
+}
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
 fun supportsDynamicTheming() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
