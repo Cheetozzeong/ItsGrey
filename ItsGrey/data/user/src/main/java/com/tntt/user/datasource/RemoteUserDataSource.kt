@@ -3,11 +3,11 @@ package com.tntt.user.datasource
 import com.tntt.user.model.datasource.UserDto
 
 interface RemoteUserDataSource {
-    fun createBook(id: String, bookId: String): Boolean
+    fun addBook(bookId: String)
 
-    fun getUser(id: String): UserDto
-    fun getInProgressBooks(id: String): ArrayList<String>
-    fun getPublishedBooks(id: String): ArrayList<String>
+    fun getUser(userId: String): UserDto
+    fun getInProgressBookIds(userId: String): ArrayList<String>
+    fun getPublishedBookIds(userId: String): ArrayList<String>
 
-    fun deleteBook(id: String, bookId: String): Boolean
+    fun deleteBook(userId: String, bookId: String)
 }
