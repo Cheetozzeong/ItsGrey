@@ -14,6 +14,12 @@ object Versions {
     // Android Test
     const val ESPRESSO_CORE = "3.5.1"
 
+    // Hilt
+    const val HILT = "2.28-alpha"
+
+    // Kotlin
+    const val KOTLIN = "1.5.31"
+
     object Compose {
         const val MATERIAL3 = "1.0.1"
         const val MATERIAL = "1.3.1"

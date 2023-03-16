@@ -15,3 +15,6 @@ dependencyResolutionManagement {
 rootProject.name = "ItsGrey"
 include ':app'
 include ':core:designsystem'
+include ':core:network'
+include ':data:book'
+include ':fortest'
