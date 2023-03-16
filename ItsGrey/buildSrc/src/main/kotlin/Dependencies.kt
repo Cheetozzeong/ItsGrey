@@ -15,7 +15,7 @@ object Versions {
     const val ESPRESSO_CORE = "3.5.1"
 
     // Hilt
-    const val HILT_VERSION = "2.28-alpha"
+    const val HILT = "2.28-alpha"
 
     // Kotlin
     const val KOTLIN = "1.5.31"
