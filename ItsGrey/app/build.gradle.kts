@@ -56,6 +56,6 @@ dependencies {
     androidTestImplementation(Libraries.Test.JUNIT)
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
-    implementation("com.google.dagger:hilt-android:${Versions.HILT_VERSION}")
-    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT_VERSION}")
+    implementation("com.google.dagger:hilt-android:${Versions.HILT}")
+    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 }
