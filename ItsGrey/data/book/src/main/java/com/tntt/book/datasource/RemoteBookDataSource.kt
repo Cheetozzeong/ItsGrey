@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface RemoteBookDataSource{
     fun createBook(book: BookDto): Flow<String>
-    fun getPages(bookId: String): Flow<List<String>>
+    fun getPageIds(bookId: String): Flow<List<String>>
     fun getFirstPage(bookId: String): Flow<String>
     fun deleteBookById(bookId: String)
     fun getBookById(bookId: String): Flow<BookDto?>
