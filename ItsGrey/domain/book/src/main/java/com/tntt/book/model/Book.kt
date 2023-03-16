@@ -23,22 +23,16 @@ data class Thumbnail(
     val image: ImageState
 )
 
-interface Book {
-    val bookId: String
-    val title: String
-    val thumbnail: Thumbnail
-}
-
 data class BookForPublication(
-    override val bookId: String,
-    override val title: String,
-    override val thumbnail: Thumbnail,
+    val bookId: String,
+    val title: String,
+    val thumbnail: Thumbnail,
     val publicationDate: Date
-) : Book
+)
 
 data class BookForWrite(
-    override val bookId: String,
-    override val title: String,
-    override val thumbnail: Thumbnail,
+    val bookId: String,
+    val title: String,
+    val thumbnail: Thumbnail,
     val recentWriteDate: Date
-) : Book
+)
