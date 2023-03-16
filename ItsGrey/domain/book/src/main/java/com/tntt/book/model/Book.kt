@@ -4,23 +4,23 @@ import sun.jvm.hotspot.utilities.BitMap
 import java.util.Date
 
 data class ContentState(
-    val offsetX: Double,
-    val offsetY: Double,
-    val size: Double,
+    val offsetX: Float,
+    val offsetY: Float,
+    val size: Float,
     val text: String
 )
 
 data class ImageState(
-    val offsetX: Double,
-    val offsetY: Double,
-    val size: Double,
+    val offsetX: Float,
+    val offsetY: Float,
+    val size: Float,
     val dpi: Any,
     val imageBitmap: BitMap,
 )
 
 data class Thumbnail(
     val contents: List<ContentState>,
-    val image: List<ImageState>
+    val image: ImageState
 )
 
 interface Book {
