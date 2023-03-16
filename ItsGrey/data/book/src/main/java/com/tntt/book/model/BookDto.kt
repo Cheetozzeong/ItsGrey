@@ -1,4 +1,4 @@
-package com.tntt.book.model.datasource
+package com.tntt.book.model
 
 import java.util.Date
 import java.util.ArrayList

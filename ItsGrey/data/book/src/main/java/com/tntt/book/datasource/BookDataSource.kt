@@ -1,6 +1,6 @@
 package com.tntt.book.datasource
 
-import com.tntt.book.model.datasource.BookDto
+import com.tntt.book.model.BookDto
 
 interface BookDataSource{
     fun createBook(book: BookDto): Boolean
