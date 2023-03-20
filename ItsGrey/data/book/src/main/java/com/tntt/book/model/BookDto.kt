@@ -7,5 +7,4 @@ data class BookDto(
     val id: String,
     val title: String,
     val isPublished: Boolean,
-    val saveDate: Date,
-    val pages: ArrayList<String>)
+    val saveDate: Date)

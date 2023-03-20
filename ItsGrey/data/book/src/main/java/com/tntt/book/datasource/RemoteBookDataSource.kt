@@ -1,13 +1,11 @@
 package com.tntt.book.datasource
 
-import com.tntt.book.model.datasource.BookDto
-import kotlinx.coroutines.flow.Flow
+import com.tntt.book.model.BookDto
+import com.tntt.home.model.BookType
+import com.tntt.home.model.SortType
 
 interface RemoteBookDataSource{
-    fun createBook(book: BookDto): Flow<String>
-    fun getPages(bookId: String): Flow<List<String>>
-    fun getFirstPage(bookId: String): Flow<String>
-    fun deleteBookById(bookId: String)
-    fun getBookById(bookId: String): Flow<BookDto?>
-    fun updateBook(book: BookDto): Flow<BookDto>
+    fun getBookDtos(userId: String, sortType: SortType, startIndex: Int, bookType: BookType): List<BookDto>
+    fun createBookDto(userId: String): String
+    fun deleteBook(bookIds: List<String>): Boolean
 }
