@@ -49,4 +49,6 @@ dependencies {
     implementation ("com.google.firebase:firebase-database:19.2.0")
 
     implementation(project(":core:network"))
+    implementation(project(":domain:repo"))
+    implementation(project(":domain:model"))
 }

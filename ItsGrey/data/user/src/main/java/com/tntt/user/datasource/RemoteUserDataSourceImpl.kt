@@ -3,7 +3,7 @@ package com.tntt.user.datasource
 import com.tntt.network.Firestore
 import com.tntt.user.model.datasource.UserDto
 
-class RemoteUserDataSourceImpl: RemoteUserDataSource {
+object RemoteUserDataSourceImpl: RemoteUserDataSource {
     val userCollection by lazy { Firestore.firestore.collection("user") }
 
     override fun getUser(token: String): UserDto {
