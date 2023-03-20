@@ -10,6 +10,6 @@ tasks.register("clean", Delete::class) {
 
 buildscript{
     dependencies{
-        classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT_VERSION}")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}")
     }
 }

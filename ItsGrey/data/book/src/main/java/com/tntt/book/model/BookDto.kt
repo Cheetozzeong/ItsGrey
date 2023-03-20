@@ -1,12 +1,11 @@
-package com.tntt.book.model.repository
+package com.tntt.book.model
 
 import java.util.Date
 import java.util.ArrayList
 
-data class Book(
+data class BookDto(
     val id: String,
     val title: String,
     val isPublished: Boolean,
-    val publishDate: Date,
-    val editDate: Date,
+    val saveDate: Date,
     val pages: ArrayList<String>)
