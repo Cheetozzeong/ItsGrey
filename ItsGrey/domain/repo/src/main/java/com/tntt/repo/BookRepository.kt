@@ -1,7 +1,12 @@
 package com.tntt.repo
 
+import com.tntt.home.model.BookType
+import com.tntt.home.model.SortType
 import com.tntt.model.BookInfo
 
 interface BookRepository {
-    fun getBookInfos(val userId: String, val sortType: SortType, val startIndex: Int, bookType: BookType): List<BookInfo>
+    fun getBookInfos(userId: String, sortType: SortType, startIndex: Int, bookType: BookType): List<BookInfo>
+    fun createBook(userId: String): String
+    fun deleteBook(bookIds: List<String>): Boolean
+
 }
