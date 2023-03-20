@@ -1,35 +1,26 @@
 package com.tntt.designsystem.component
 
 import android.util.Log
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.OpenInFull
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.ImageBitmapConfig
-import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +36,7 @@ enum class BoxState {
 }
 
 data class BoxData(
+    val id: String,
     var state: BoxState = BoxState.None,
     var position: Offset = Offset(0f, 0f),
     var size: Size = Size(0f, 0f)
@@ -75,21 +67,21 @@ fun Box(
 @Composable
 fun BoxForEdit(
     boxData: BoxData,
-    onBoxStateChange: (boxId: Int, state: BoxState) -> Unit,
+    onBoxStateChange: (id: String, state: BoxState) -> Unit,
     updateBoxData: (BoxData) -> Unit,
     onClickDelete: () -> Unit,
     innerContent: @Composable () -> Unit,
 ) {
-
-    val id = 1
-    val isDialogShown = false
-
-    val state = boxData.state
+    val isDialogShown = remember { mutableStateOf(boxData.state == BoxState.Active) }
     val position = remember { mutableStateOf(boxData.position) }
     val size = remember{ mutableStateOf(boxData.size) }
     val ratio = boxData.size.width / boxData.size.height
 
-    if(state == BoxState.InActive) {
+    val borderStyle = if (boxData.state == BoxState.Active) Stroke(width = 4f) else Stroke(width = 2f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
+    val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary
+
+    if(boxData.state == BoxState.InActive) {
+        isDialogShown.value = false
         updateBoxData(
             boxData.copy(
                 state = BoxState.None,
@@ -107,34 +99,45 @@ fun BoxForEdit(
                     position.value.y.roundToInt()
                 )
             }
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = {
-                        if (state == BoxState.None) {
-                            onBoxStateChange(id, BoxState.Active)
-                        }
+            .pointerInput(boxData.state) {
+                when (boxData.state) {
+                    BoxState.None -> {
+                        detectTapGestures(
+                            onPress = {
+                                onBoxStateChange(boxData.id, BoxState.Active)
+                                isDialogShown.value = true
+                            }
+                        )
                     }
+                    BoxState.Active -> {
+                        detectDragGestures(
+                            onDrag = { _, dragAmount ->
+                                position.value += dragAmount
+                            },
+                            onDragEnd = {
+                                updateBoxData(
+                                    boxData.copy(
+                                        position = position.value
+                                    )
+                                )
+                            }
+                        )
+                    }
+                    else -> {}
+                }
+
+            }
+            .drawBehind {
+                drawRect(
+                    color = borderColor,
+                    style = borderStyle
                 )
             }
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragStart = {
-                        if (state != BoxState.Active) return@detectDragGestures
-                    },
-                    onDrag = { _, dragAmount ->
-                        position.value += dragAmount
-                    }
-                )
-            }
-            .border(
-                if (state == BoxState.None) 0.dp else 3.dp,
-                if (state == BoxState.None) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary
-            )
             .size(size.value.width.dp, size.value.height.dp)
 
     ) {
         innerContent()
-        if (state == BoxState.Active) {
+        if (boxData.state == BoxState.Active) {
             DrawResizeCorner(
                 size.value,
                 onDrag = { offset ->
@@ -152,6 +155,34 @@ fun BoxForEdit(
 }
 
 private const val CORNER_SIZE = 30
+
+@Composable
+fun BoxDialog(
+    dialogComponent: List<@Composable () -> Unit>,
+    position: Offset,
+) {
+
+    val buttonHeight = ButtonDefaults.MinHeight.value
+    val backgroundColor = MaterialTheme.colorScheme.surface
+
+    Row(
+        Modifier
+            .offset{
+                IntOffset(
+                    position.x.roundToInt(),
+                    (position.y - buttonHeight).roundToInt()
+                )
+            }
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(20.dp)
+            )
+    ) {
+        dialogComponent.forEach {
+            it.invoke()
+        }
+    }
+}
 
 @Composable
 private fun DrawDeleteCorner(
@@ -218,6 +249,7 @@ private fun PreviewBox() {
     var boxData by remember(BoxState.None) {
         mutableStateOf(
             BoxData(
+                id = "abc",
                 size = Size(300f, 300f),
                 position = Offset(40f, 40f)
             )
@@ -246,7 +278,7 @@ private fun PreviewBox() {
                 },
                 innerContent = {
                     TextField(value = "", onValueChange = {})
-                }
+                },
             )
         }
     }
