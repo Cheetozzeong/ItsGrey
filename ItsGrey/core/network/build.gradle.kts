@@ -3,9 +3,6 @@ import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
-
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -54,7 +51,4 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore-ktx:23.0.4")
     implementation ("com.google.firebase:firebase-analytics:17.2.1")
     implementation ("com.google.firebase:firebase-database:19.2.0")
-
-    implementation("com.google.dagger:hilt-android:${Versions.HILT}")
-    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 }

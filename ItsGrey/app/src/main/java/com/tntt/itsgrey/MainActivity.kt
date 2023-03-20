@@ -13,7 +13,6 @@ import dagger.hilt.android.HiltAndroidApp
 import itsgrey.app.R
 import itsgrey.app.databinding.ActivityMainBinding
 
-@HiltAndroidApp
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
