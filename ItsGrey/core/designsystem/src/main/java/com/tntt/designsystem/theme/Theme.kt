@@ -86,7 +86,7 @@ val DarkDefaultColorScheme = darkColorScheme(
 
 
 @Composable
-fun NiaTheme(
+fun IgTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     androidTheme: Boolean = false,
     disableDynamicTheming: Boolean = true,
