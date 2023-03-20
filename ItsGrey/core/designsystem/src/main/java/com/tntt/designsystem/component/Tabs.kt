@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,28 +41,28 @@ fun IgTabMainRow(
                 {
                     drawLine(
                         color,
-                        Offset(0f, 0f),
-                        Offset(0f, size.height),
+                        Offset(borderSize/2, 0f),
+                        Offset(borderSize/2, size.height),
                         strokeWidth = borderSize,
                     )
                     drawLine(
                         color,
-                        Offset(0f, 0f),
-                        Offset(size.width, 0f),
+                        Offset(0f, borderSize/2),
+                        Offset(size.width, borderSize/2),
                         strokeWidth = borderSize
                     )
                     drawLine(
                         color,
-                        Offset(size.width, 0f),
-                        Offset(size.width, size.height),
+                        Offset(size.width-borderSize/2,0f),
+                        Offset(size.width-borderSize/2, size.height),
                         strokeWidth = borderSize
                     )
                 }
                 else {
                     drawLine(
                         color,
-                        Offset(0f, size.height),
-                        Offset(size.width, size.height),
+                        Offset(0f, size.height-borderSize/2),
+                        Offset(size.width, size.height-borderSize/2),
                         strokeWidth = borderSize
                     )
                 }
