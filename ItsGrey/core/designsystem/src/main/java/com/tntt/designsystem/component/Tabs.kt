@@ -7,11 +7,15 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,24 +24,63 @@ import androidx.compose.ui.unit.dp
 import com.tntt.core.designsystem.theme.Black
 
 @Composable
-fun IgTabMain(
+fun IgTabMainRow(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     text: @Composable () -> Unit,
 ) {
+    val color = MaterialTheme.colorScheme.secondary
     Tab(
         selected = selected,
         onClick = onClick,
-        modifier = modifier.background(MaterialTheme.colorScheme.primary),
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.primary)
+            .drawBehind {
+                val borderSize = 4.dp.toPx()
+                if (selected)
+                {
+                    drawLine(
+                        color,
+                        Offset(0f, 0f),
+                        Offset(0f, size.height),
+                        strokeWidth = borderSize,
+                    )
+                    drawLine(
+                        color,
+                        Offset(0f, 0f),
+                        Offset(size.width, 0f),
+                        strokeWidth = borderSize
+                    )
+                    drawLine(
+                        color,
+                        Offset(size.width, 0f),
+                        Offset(size.width, size.height),
+                        strokeWidth = borderSize
+                    )
+                }
+                else {
+                    drawLine(
+                        color,
+                        Offset(0f, size.height),
+                        Offset(size.width, size.height),
+                        strokeWidth = borderSize
+                    )
+                }
+            },
         enabled = enabled,
         text = {
             val style = MaterialTheme.typography.labelLarge.copy(textAlign = TextAlign.Center)
             ProvideTextStyle(
                 value = style,
                 content = {
-                    Box {
+                    Box(
+                        Modifier
+                            .padding(vertical = if (selected) 16.dp else 6.dp)
+                            .size(width= 100.dp, height = 50.dp)
+                            .wrapContentSize(Alignment.Center))
+                    {
                         text()
                     }
                 },
@@ -46,26 +89,30 @@ fun IgTabMain(
     )
 }
 
+
+
+
 @Composable
-fun IgTabMainRow(
-    selectedTabIndex: Int,
-    modifier: Modifier = Modifier,
-    tabs: @Composable () -> Unit,
-) {
-    TabRow(
-        selectedTabIndex = selectedTabIndex,
-        modifier = modifier,
-        containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        indicator = { tabPositions ->
-            IgTabMainIndicator(tabPosition = tabPositions, index = selectedTabIndex)
-
-        },
-        tabs = tabs,
-    )
+fun IgTabsMain(
+    titles: List<String>,
+){
+    var selectedTabIndex by remember { mutableStateOf(0) }
+//    val titles = listOf("출간", "작업중")
+    // 각 탭의 선택 상태 및 클릭 이벤트 처리
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Bottom
+    ) {
+        titles.forEachIndexed { index, title ->
+            IgTabMainRow(
+                selected = selectedTabIndex == index,
+                onClick = { selectedTabIndex = index },
+                text = { Text(text = title) },
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
 }
-
-
 
 @Composable
 fun IgTabMainIndicator(
@@ -198,21 +245,11 @@ fun IgTabsTemplate() {
 
 @Preview
 @Composable
-fun TabsMainPreview(){
-    var selectedTabIndex by remember { mutableStateOf(0) }
-    val titles = listOf("출간", "작업중")
-    IgTabMainRow(selectedTabIndex = selectedTabIndex,
-        modifier = Modifier
-    ) {
-        titles.forEachIndexed { index, title ->
-            IgTabMain(
-                selected = selectedTabIndex == index,
-                onClick = { selectedTabIndex = index },
-                text = { Text(text = title) },
-            )
-        }
-    }
+fun TapsMainPreview() {
+    val titles = listOf("출간", "작업중", "abc")
+    IgTabsMain(titles)
 }
+
 
 @Preview
 @Composable
