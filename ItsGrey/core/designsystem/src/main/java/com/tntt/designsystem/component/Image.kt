@@ -43,50 +43,45 @@ fun ImageBoxForEdit(
     onBoxStateChange: (boxId: String, state: BoxState) -> Unit,
     updateBoxData: (BoxData) -> Unit,
     onClickDelete: () -> Unit,
-    imageData: ImageBitmap
+    imageData: ImageBitmap,
+    dialogComponent: List<@Composable () -> Unit>,
 ) {
 
-    if(boxData.state == BoxState.Active) {
-        BoxDialog(
-            dialogComponent = listOf(
-                { Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Zero")
-                }},
-                { Button(onClick = { /*TODO*/ }) {
-                    Text(text = "First")
-                }},
-                { Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Second")
-                }},
-                { Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Last")
-                }}
-            ),
-            position = boxData.position
+    val isDialogShown = remember(boxData.state) { mutableStateOf(boxData.state == BoxState.Active) }
+
+    Box() {
+        if(isDialogShown.value) {
+            BoxDialog(
+                dialogComponent = dialogComponent,
+                position = boxData.position
+            )
+        }
+
+        BoxForEdit(
+            boxData = boxData,
+            onBoxStateChange = { id, state ->
+                onBoxStateChange(id, state)
+            },
+            updateBoxData = { newBoxData ->
+                updateBoxData(newBoxData)
+            },
+            onClickDelete = {
+
+            },
+            innerContent = {
+                Image(
+                    // TODO: imageData 받는거로 변경
+                    painter = painterResource(id = R.drawable.icon_preview_button_48),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .fillMaxSize(),
+                )
+            },
+            onDialogShownChange = { dialogState ->
+                isDialogShown.value = dialogState
+            }
         )
     }
-
-    BoxForEdit(
-        boxData = boxData,
-        onBoxStateChange = { id, state ->
-            onBoxStateChange(id, state)
-        },
-        updateBoxData = { newBoxData ->
-            updateBoxData(newBoxData)
-        },
-        onClickDelete = {
-
-        },
-        innerContent = {
-            Image(
-                // TODO: imageData 받는거로 변경
-                painter = painterResource(id = R.drawable.icon_preview_button_48),
-                contentDescription = "",
-                modifier = Modifier
-                    .fillMaxSize(),
-            )
-        },
-    )
 }
 
 @Preview
@@ -129,7 +124,15 @@ private fun PreviewImage() {
                 onClickDelete = {
                     Log.d("CORNER DELETE", "delete corner is clicked")
                 },
-                imageData = ImageBitmap(300, 300, ImageBitmapConfig.Argb8888)
+                imageData = ImageBitmap(300, 300, ImageBitmapConfig.Argb8888),
+                dialogComponent = listOf {
+                    Button(onClick = { /*TODO*/ }) {
+
+                    }
+                    Button(onClick = { /*TODO*/ }) {
+
+                    }
+                }
             )
         }
     }

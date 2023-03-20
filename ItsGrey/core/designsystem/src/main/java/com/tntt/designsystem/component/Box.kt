@@ -71,8 +71,8 @@ fun BoxForEdit(
     updateBoxData: (BoxData) -> Unit,
     onClickDelete: () -> Unit,
     innerContent: @Composable () -> Unit,
+    onDialogShownChange: (Boolean) -> Unit
 ) {
-    val isDialogShown = remember { mutableStateOf(boxData.state == BoxState.Active) }
     val position = remember { mutableStateOf(boxData.position) }
     val size = remember{ mutableStateOf(boxData.size) }
     val ratio = boxData.size.width / boxData.size.height
@@ -81,7 +81,6 @@ fun BoxForEdit(
     val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary
 
     if(boxData.state == BoxState.InActive) {
-        isDialogShown.value = false
         updateBoxData(
             boxData.copy(
                 state = BoxState.None,
@@ -105,16 +104,19 @@ fun BoxForEdit(
                         detectTapGestures(
                             onPress = {
                                 onBoxStateChange(boxData.id, BoxState.Active)
-                                isDialogShown.value = true
                             }
                         )
                     }
                     BoxState.Active -> {
                         detectDragGestures(
+                            onDragStart = {
+                                onDialogShownChange(false)
+                            },
                             onDrag = { _, dragAmount ->
                                 position.value += dragAmount
                             },
                             onDragEnd = {
+                                onDialogShownChange(true)
                                 updateBoxData(
                                     boxData.copy(
                                         position = position.value
@@ -161,16 +163,15 @@ fun BoxDialog(
     dialogComponent: List<@Composable () -> Unit>,
     position: Offset,
 ) {
-
     val buttonHeight = ButtonDefaults.MinHeight.value
     val backgroundColor = MaterialTheme.colorScheme.surface
 
     Row(
         Modifier
-            .offset{
+            .offset {
                 IntOffset(
                     position.x.roundToInt(),
-                    (position.y - buttonHeight).roundToInt()
+                    (position.y - buttonHeight * 5f).roundToInt()
                 )
             }
             .background(
@@ -279,6 +280,7 @@ private fun PreviewBox() {
                 innerContent = {
                     TextField(value = "", onValueChange = {})
                 },
+                onDialogShownChange = {}
             )
         }
     }
