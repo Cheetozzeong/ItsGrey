@@ -2,7 +2,4 @@ package com.tntt.user.model.datasource
 
 import java.util.ArrayList
 
-data class UserDto(
-    val id: String,
-    val name: String,
-    val bookIds: ArrayList<String>)
+data class UserDto(val name: String)

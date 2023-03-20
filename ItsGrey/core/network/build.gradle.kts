@@ -1,26 +1,22 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
     namespace = "com.tntt.network"
-    compileSdk = AppConfig.compileSdk
+    compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.tntt.network"
-        minSdk = AppConfig.minSdk
-        targetSdk = AppConfig.targetSdk
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 24
+        targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -39,16 +35,17 @@ android {
 
 dependencies {
 
-    implementation(Libraries.KTX.CORE)
-    implementation(Libraries.AndroidX.APP_COMPAT)
-    implementation(Libraries.AndroidX.MATERIAL)
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation (Libraries.Test.JUNIT)
-    androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation ("com.google.firebase:firebase-bom:31.2.3")
     implementation ("com.google.firebase:firebase-firestore")
     implementation ("com.google.firebase:firebase-firestore-ktx:23.0.4")
     implementation ("com.google.firebase:firebase-analytics:17.2.1")
     implementation ("com.google.firebase:firebase-database:19.2.0")
+
 }
