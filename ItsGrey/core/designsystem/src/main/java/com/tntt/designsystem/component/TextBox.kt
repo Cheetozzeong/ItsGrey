@@ -12,7 +12,6 @@ data class TextBoxData(
     val fontSize: Float,
 )
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun TextBox(
     boxData: BoxData,
@@ -21,10 +20,7 @@ fun TextBox(
     Box(boxData = boxData) {
         Text(
             text = textData.text,
-            fontSize = TextUnit(
-                value = textData.fontSize,
-                type = TextUnitType.Sp
-            )
+            fontSize = textData.fontSize.sp
         )
     }
 }
