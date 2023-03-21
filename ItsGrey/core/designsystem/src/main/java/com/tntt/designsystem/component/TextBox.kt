@@ -1,4 +1,46 @@
 package com.tntt.designsystem.component
 
-class TextBox {
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.*
+
+data class TextBoxData(
+    val text: String,
+    val fontSize: Float,
+)
+
+@OptIn(ExperimentalUnitApi::class)
+@Composable
+fun TextBox(
+    boxData: BoxData,
+    textData: TextBoxData
+) {
+    Box(boxData = boxData) {
+        Text(
+            text = textData.text,
+            fontSize = TextUnit(
+                value = textData.fontSize,
+                type = TextUnitType.Sp
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewTextBox() {
+    val boxData by remember {
+        mutableStateOf(
+            BoxData(
+                id = "abc",
+                size = Size(300f, Float.NaN),
+                position = Offset(0f, 0f)
+            )
+        )
+    }
+
+    TextBox(boxData = boxData, textData = TextBoxData("abcdefg", 25f))
 }
