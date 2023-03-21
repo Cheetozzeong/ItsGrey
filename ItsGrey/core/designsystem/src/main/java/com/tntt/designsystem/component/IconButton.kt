@@ -69,7 +69,7 @@ fun PreviewIconButton(){
         onClick = {},
         icon = {
             Icon(
-                painter = painterResource(id = IgIcons.Add),
+                imageVector = IgIcons.Add,
                 contentDescription = "iconButton"
             )
         }
