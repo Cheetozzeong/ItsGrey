@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -30,10 +32,12 @@ fun IgTabMainRow(
     text: @Composable () -> Unit,
 ) {
     val color = MaterialTheme.colorScheme.secondary
+    val shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
     Tab(
         selected = selected,
         onClick = onClick,
         modifier = modifier
+            .clip(shape)
             .background(MaterialTheme.colorScheme.primary)
             .drawBehind {
                 val borderSize = 4.dp.toPx()
@@ -44,6 +48,7 @@ fun IgTabMainRow(
                         Offset(borderSize/2, 0f),
                         Offset(borderSize/2, size.height),
                         strokeWidth = borderSize,
+                        cap = StrokeCap.Round
                     )
                     drawLine(
                         color,
@@ -78,6 +83,7 @@ fun IgTabMainRow(
                             .padding(vertical = if (selected) 16.dp else 6.dp)
                             .size(width= 100.dp, height = 50.dp)
                             .wrapContentSize(Alignment.Center))
+
                     {
                         text()
                     }
@@ -95,10 +101,9 @@ fun IgTabsMain(
     titles: List<String>,
 ){
     var selectedTabIndex by remember { mutableStateOf(0) }
-//    val titles = listOf("출간", "작업중")
-    // 각 탭의 선택 상태 및 클릭 이벤트 처리
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         verticalAlignment = Alignment.Bottom
     ) {
         titles.forEachIndexed { index, title ->
@@ -112,23 +117,6 @@ fun IgTabsMain(
     }
 }
 
-@Composable
-fun IgTabMainIndicator(
-    tabPosition: List<TabPosition>, index: Int
-) {
-    val width = tabPosition[index].width
-    val offsetStart = tabPosition[index].left
-    Box(
-        Modifier
-            .wrapContentSize(align = Alignment.BottomStart)
-            .offset(x = offsetStart)
-            .width(width)
-            .fillMaxSize()
-            .border(
-                BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
-            )
-    )
-}
 @Composable
 private fun IgTabsTemplateIndicator(
     indicatorWidth: Dp,
