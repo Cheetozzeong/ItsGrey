@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,7 +70,7 @@ fun PreviewIconButton(){
         onClick = {},
         icon = {
             Icon(
-                painter = painterResource(id = IgIcons.Add),
+                imageVector = IgIcons.Add,
                 contentDescription = "iconButton"
             )
         }
