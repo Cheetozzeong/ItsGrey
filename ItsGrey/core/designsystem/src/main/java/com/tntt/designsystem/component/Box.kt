@@ -1,6 +1,5 @@
 package com.tntt.designsystem.component
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -26,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.tntt.core.designsystem.theme.NiaTheme
+import com.tntt.core.designsystem.theme.IgTheme
 import kotlin.math.roundToInt
 
 enum class BoxState {
@@ -265,7 +264,7 @@ private fun PreviewBox() {
                 boxData = boxData.copy(state = BoxState.InActive)
             }
     ) {
-        NiaTheme() {
+        IgTheme {
             BoxForEdit(
                 boxData,
                 onBoxStateChange = { id, state ->
@@ -275,7 +274,6 @@ private fun PreviewBox() {
                     boxData = updateBoxData
                 },
                 onClickDelete = {
-                    Log.d("CORNER DELETE", "delete corner is clicked")
                 },
                 innerContent = {
                     TextField(value = "", onValueChange = {})

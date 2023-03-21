@@ -1,25 +1,18 @@
 package com.tntt.designsystem.component
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.tntt.core.designsystem.theme.NiaTheme
+import com.tntt.core.designsystem.theme.IgTheme
 import itsgrey.core.designsystem.R
 
 @Composable
@@ -105,7 +98,7 @@ private fun PreviewImage() {
                 boxData = boxData.copy(state = BoxState.InActive)
             }
     ) {
-        NiaTheme() {
+        IgTheme {
             ImageBox(
                 boxData = boxData,
                 imageData = ImageBitmap(10, 10, ImageBitmapConfig.Argb8888)
@@ -114,15 +107,12 @@ private fun PreviewImage() {
             ImageBoxForEdit(
                 boxData,
                 onBoxStateChange = { id, state ->
-                    Log.d("STATE_TEST - top", state.toString())
                     boxData = boxData.copy(state = state)
-                    Log.d("STATE_TEST - change", boxData.state.toString())
                 },
                 updateBoxData = { updateBoxData ->
                     boxData = updateBoxData
                 },
                 onClickDelete = {
-                    Log.d("CORNER DELETE", "delete corner is clicked")
                 },
                 imageData = ImageBitmap(300, 300, ImageBitmapConfig.Argb8888),
                 dialogComponent = listOf {
