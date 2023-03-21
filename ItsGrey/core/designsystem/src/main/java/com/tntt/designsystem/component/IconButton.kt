@@ -2,27 +2,30 @@ package com.tntt.designsystem.component
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tntt.designsystem.icon.IgIcons
 
 @Composable
-fun IgTextButton(
+fun IgIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     content: @Composable RowScope.() -> Unit,
 ) {
-    TextButton(
+    Button(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = MaterialTheme.colorScheme.onBackground,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Unspecified,
+            contentColor = Color.Black
         ),
         contentPadding = contentPadding,
         content = content,
@@ -30,42 +33,46 @@ fun IgTextButton(
 }
 
 @Composable
-fun IgTextButton(
+fun IgIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    text: @Composable () -> Unit,
+    icon: @Composable () -> Unit,
 ) {
-    IgTextButton(
+    IgIconButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        contentPadding = ButtonDefaults.TextButtonContentPadding
+        contentPadding = ButtonDefaults.TextButtonContentPadding,
     ) {
-        IgTextButtonContent(
-            text = text,
+        IgButtonContent(
+            Icon = icon,
         )
     }
 }
 
 @Composable
-private fun IgTextButtonContent(
-    text: @Composable () -> Unit,
+private fun IgButtonContent(
+    Icon: @Composable () -> Unit = {},
 ) {
     Box(
-        Modifier
-            .padding(
-                start = 0.dp
-            )
-    )
-    text()
+        modifier = Modifier.padding(start = 0.dp)
+    ) {
+        Icon()
+    }
 }
+
 
 @Preview
 @Composable
-fun PreviewTextButton(){
-    IgTextButton(
+fun PreviewIconButton(){
+    IgIconButton(
         onClick = {},
-        text = { Text(text = "Text") }
+        icon = {
+            Icon(
+                imageVector = IgIcons.Add,
+                contentDescription = "iconButton"
+            )
+        }
     )
 }
