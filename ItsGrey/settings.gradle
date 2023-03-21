@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 dependencyResolutionManagement {
@@ -15,3 +15,8 @@ dependencyResolutionManagement {
 rootProject.name = "ItsGrey"
 include ':app'
 include ':core:designsystem'
+include ':core:network'
+include ':data:book'
+include ':fortest'
+include ':domain:repo'
+include ':domain:model'
