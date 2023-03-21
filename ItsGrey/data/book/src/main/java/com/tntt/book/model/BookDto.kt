@@ -8,4 +8,5 @@ data class BookDto(
     val userId: String,
     val title: String,
     val isPublished: Boolean,
-    val saveDate: Date)
+    val saveDate: Date,
+)
