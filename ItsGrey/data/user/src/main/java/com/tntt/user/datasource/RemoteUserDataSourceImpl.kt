@@ -9,9 +9,14 @@ object RemoteUserDataSourceImpl: RemoteUserDataSource {
     override fun getUser(token: String): UserDto {
         val reference = userCollection.document(token)
         lateinit var userDto: UserDto
-        reference.get().addOnSuccessListener { documentSnapShot ->
-            val userDto = documentSnapShot.toObject(UserDto::class.java)
-        }
+        reference.get()
+            .addOnSuccessListener{document ->
+            userDto = document.toObject(UserDto::class.java)?:UserDto()
+            }
+            .addOnFailureListener{
+                throw NullPointerException()
+            }
+
         return userDto
     }
 }
