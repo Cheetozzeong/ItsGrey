@@ -48,7 +48,6 @@ fun IgTabMainRow(
                         Offset(borderSize/2, 0f),
                         Offset(borderSize/2, size.height),
                         strokeWidth = borderSize,
-                        cap = StrokeCap.Round
                     )
                     drawLine(
                         color,
