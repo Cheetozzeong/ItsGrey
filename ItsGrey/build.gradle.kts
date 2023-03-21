@@ -7,9 +7,3 @@ plugins {
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
-
-buildscript{
-    dependencies{
-        classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}")
-    }
-}

@@ -1,13 +1,10 @@
 package com.tntt.user.datasource
 
-import com.tntt.user.model.datasource.UserDto
+import com.tntt.user.model.UserDto
 
 interface RemoteUserDataSource {
-    fun addBook(bookId: String)
-
-    fun getUser(userId: String): UserDto
-    fun getInProgressBookIds(userId: String): ArrayList<String>
-    fun getPublishedBookIds(userId: String): ArrayList<String>
-
-    fun deleteBook(userId: String, bookId: String)
+    fun getUser(id: String): UserDto
+    fun createUser(userDto: UserDto): String
+    fun updateUser(userDto: UserDto): UserDto
+    fun deleteUser(id: String): Boolean
 }

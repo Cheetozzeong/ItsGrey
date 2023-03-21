@@ -1,10 +1,6 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
-    id ("kotlin-kapt")
-    id ("dagger.hilt.android.plugin")
 }
 
 android {
@@ -56,6 +52,4 @@ dependencies {
     androidTestImplementation(Libraries.Test.JUNIT)
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
-    implementation("com.google.dagger:hilt-android:${Versions.HILT}")
-    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 }
