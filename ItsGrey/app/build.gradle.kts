@@ -11,8 +11,8 @@ android {
         applicationId = "com.tntt.itsgrey"
         minSdk = AppConfig.minSdk
         targetSdk = AppConfig.targetSdk
-        versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
+        versionCode = 2
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -23,6 +23,7 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
+
             )
         }
     }
