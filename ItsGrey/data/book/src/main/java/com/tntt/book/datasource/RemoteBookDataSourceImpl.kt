@@ -17,13 +17,8 @@ object RemoteBookDataSourceImpl: RemoteBookDataSource {
         startIndex: Long,
         bookType: BookType
     ): List<BookDto> {
-        var order = Query.Direction.DESCENDING
-        var by = "saveDate"
-
-        if(sortType == SortType.NAME){
-            order = Query.Direction.ASCENDING
-            by = "name"
-        }
+        var order = sortType.order
+        var by = sortType.by
 
         val bookDtos = mutableListOf<BookDto>()
         val query = bookCollection
