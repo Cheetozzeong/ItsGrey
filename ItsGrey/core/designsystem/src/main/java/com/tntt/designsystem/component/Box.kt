@@ -93,11 +93,10 @@ fun BoxForEdit(
     onDialogShownChange: (Boolean) -> Unit
 ) {
 
+    val density = remember { mutableStateOf(1f) }
     val position = remember { mutableStateOf(boxData.position) }
     val size = remember{ mutableStateOf(boxData.size) }
     val ratio by lazy { boxData.size.width / boxData.size.height }
-
-    val rect = remember(size, position) { mutableStateOf(Rect(position.value, size.value)) }
 
     val borderStyle = if (boxData.state == BoxState.Active) Stroke(width = 4f) else Stroke(width = 2f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
     val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary
@@ -115,13 +114,11 @@ fun BoxForEdit(
     Box(
         Modifier
             .offset {
+                density.value = this.density
                 IntOffset(
                     position.value.x.roundToInt(),
                     position.value.y.roundToInt()
                 )
-            }
-            .onGloballyPositioned() { layoutCoordinates ->
-                rect.value = layoutCoordinates.boundsInRoot()
             }
             .pointerInput(boxData.state) {
                 when (boxData.state) {
@@ -136,7 +133,7 @@ fun BoxForEdit(
                         val event = mutableStateOf(BoxEvent.Move)
                         detectDragGestures(
                             onDragStart = { offset ->
-                                if (isCornerHit(offset, rect.value, size.value)) {
+                                if (isCornerHit(offset, size.value, density.value)) {
                                     event.value = BoxEvent.Resize
                                 }
                             },
@@ -148,12 +145,15 @@ fun BoxForEdit(
                                     BoxEvent.Resize -> {
                                         when (boxData.resizeType) {
                                             ResizeType.Ratio -> {
-
+                                                size.value = Size(
+                                                    size.value.width + (dragAmount.x / density.value),
+                                                    size.value.height + (dragAmount.x / density.value * ratio)
+                                                )
                                             }
                                             ResizeType.Free -> {
                                                 size.value = Size(
-                                                    size.value.width + (dragAmount.x / 2.65f),
-                                                    size.value.height + (dragAmount.y / 2.65f)
+                                                    size.value.width + (dragAmount.x / density.value),
+                                                    size.value.height + (dragAmount.y / density.value)
                                                 )
                                             }
                                         }
@@ -194,15 +194,12 @@ fun BoxForEdit(
     }
 }
 
-private fun isCornerHit(touchOff: Offset, rect: Rect, boxSize: Size): Boolean {
+private fun isCornerHit(touchOff: Offset, boxSize: Size, density: Float): Boolean {
 
-    val ratioX = rect.width / boxSize.width
-    val ratioY = rect.height / boxSize.height
-
-    val resizePointPosition = rect.bottomRight - Offset(x = CORNER_SIZE / 2 * ratioX, y = CORNER_SIZE / 2 * ratioY)
+    val resizePointPosition = Offset(boxSize.width * density, boxSize.height * density) - Offset(x = CORNER_SIZE / 2 * density, y = CORNER_SIZE / 2 * density)
     val distance = sqrt((touchOff.x - resizePointPosition.x).pow(2) + (touchOff.y - resizePointPosition.y).pow(2))
 
-    return distance <= CORNER_SIZE / 2 * ratioX
+    return distance <= CORNER_SIZE / 2 * density
 }
 
 @Composable
@@ -289,7 +286,8 @@ private fun PreviewBox() {
             BoxData(
                 id = "abc",
                 size = Size(200f, 200f),
-                position = Offset(40f, 40f)
+                position = Offset(40f, 40f),
+                resizeType = ResizeType.Ratio
             )
         )
     }
