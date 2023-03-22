@@ -89,8 +89,7 @@ fun BoxForEdit(
     onBoxStateChange: (id: String, state: BoxState) -> Unit,
     updateBoxData: (BoxData) -> Unit,
     onClickDelete: () -> Unit,
-    innerContent: @Composable () -> Unit,
-    onDialogShownChange: (Boolean) -> Unit
+    innerContent: @Composable () -> Unit
 ) {
 
     val density = remember { mutableStateOf(1f) }
@@ -162,7 +161,6 @@ fun BoxForEdit(
                             },
                             onDragEnd = {
                                 event.value = BoxEvent.Move
-                                onDialogShownChange(true)
                                 updateBoxData(
                                     boxData.copy(
                                         position = position.value
@@ -313,8 +311,7 @@ private fun PreviewBox() {
                 },
                 innerContent = {
                     TextField(value = "", onValueChange = {})
-                },
-                onDialogShownChange = {}
+                }
             )
         }
     }

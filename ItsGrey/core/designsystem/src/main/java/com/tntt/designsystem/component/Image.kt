@@ -69,9 +69,6 @@ fun ImageBoxForEdit(
                     modifier = Modifier
                         .fillMaxSize(),
                 )
-            },
-            onDialogShownChange = { dialogState ->
-                isDialogShown.value = dialogState
             }
         )
     }
