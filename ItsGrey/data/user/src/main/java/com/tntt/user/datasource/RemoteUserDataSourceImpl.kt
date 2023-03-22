@@ -11,7 +11,7 @@ object RemoteUserDataSourceImpl: RemoteUserDataSource {
         lateinit var userDto: UserDto
         reference.get()
             .addOnSuccessListener{document ->
-            userDto = document.toObject(UserDto::class.java)?:UserDto()
+                userDto = document.toObject(UserDto::class.java)?:UserDto()
             }
             .addOnFailureListener{
                 throw NullPointerException()
