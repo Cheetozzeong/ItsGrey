@@ -52,5 +52,4 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(Libraries.Test.JUNIT)
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
-
 }
