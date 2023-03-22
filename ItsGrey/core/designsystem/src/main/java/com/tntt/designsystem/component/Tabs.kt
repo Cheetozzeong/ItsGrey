@@ -31,7 +31,7 @@ fun IgTabMainRow(
     enabled: Boolean = true,
     text: @Composable () -> Unit,
 ) {
-    val color = MaterialTheme.colorScheme.secondary
+    val color = MaterialTheme.colorScheme.onPrimary
     val shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
     Tab(
         selected = selected,
