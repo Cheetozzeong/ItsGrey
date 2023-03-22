@@ -17,16 +17,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.tntt.core.designsystem.theme.IgTheme
+import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 enum class BoxState {
     None,
@@ -34,11 +41,22 @@ enum class BoxState {
     InActive
 }
 
+enum class ResizeType {
+    Ratio,
+    Free
+}
+
+enum class BoxEvent {
+    Move,
+    Resize,
+}
+
 data class BoxData(
     val id: String,
     var state: BoxState = BoxState.None,
+    val resizeType: ResizeType = ResizeType.Free,
     var position: Offset = Offset(0f, 0f),
-    var size: Size = Size(0f, 0f)
+    var size: Size = Size(0f, 0f),
 )
 
 @Composable
@@ -63,6 +81,8 @@ fun Box(
     }
 }
 
+private const val CORNER_SIZE = 30
+
 @Composable
 fun BoxForEdit(
     boxData: BoxData,
@@ -72,9 +92,12 @@ fun BoxForEdit(
     innerContent: @Composable () -> Unit,
     onDialogShownChange: (Boolean) -> Unit
 ) {
+
     val position = remember { mutableStateOf(boxData.position) }
     val size = remember{ mutableStateOf(boxData.size) }
-    val ratio = boxData.size.width / boxData.size.height
+    val ratio by lazy { boxData.size.width / boxData.size.height }
+
+    val rect = remember(size, position) { mutableStateOf(Rect(position.value, size.value)) }
 
     val borderStyle = if (boxData.state == BoxState.Active) Stroke(width = 4f) else Stroke(width = 2f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
     val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary
@@ -97,6 +120,9 @@ fun BoxForEdit(
                     position.value.y.roundToInt()
                 )
             }
+            .onGloballyPositioned() { layoutCoordinates ->
+                rect.value = layoutCoordinates.boundsInRoot()
+            }
             .pointerInput(boxData.state) {
                 when (boxData.state) {
                     BoxState.None -> {
@@ -106,15 +132,36 @@ fun BoxForEdit(
                             }
                         )
                     }
-                    BoxState.Active -> {
+                    else -> {
+                        val event = mutableStateOf(BoxEvent.Move)
                         detectDragGestures(
-                            onDragStart = {
-                                onDialogShownChange(false)
+                            onDragStart = { offset ->
+                                if (isCornerHit(offset, rect.value, size.value)) {
+                                    event.value = BoxEvent.Resize
+                                }
                             },
-                            onDrag = { _, dragAmount ->
-                                position.value += dragAmount
+                            onDrag = { change, dragAmount ->
+                                when (event.value) {
+                                    BoxEvent.Move -> {
+                                        position.value += dragAmount
+                                    }
+                                    BoxEvent.Resize -> {
+                                        when (boxData.resizeType) {
+                                            ResizeType.Ratio -> {
+
+                                            }
+                                            ResizeType.Free -> {
+                                                size.value = Size(
+                                                    size.value.width + (dragAmount.x / 2.65f),
+                                                    size.value.height + (dragAmount.y / 2.65f)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             onDragEnd = {
+                                event.value = BoxEvent.Move
                                 onDialogShownChange(true)
                                 updateBoxData(
                                     boxData.copy(
@@ -124,9 +171,7 @@ fun BoxForEdit(
                             }
                         )
                     }
-                    else -> {}
                 }
-
             }
             .drawBehind {
                 drawRect(
@@ -140,13 +185,7 @@ fun BoxForEdit(
         innerContent()
         if (boxData.state == BoxState.Active) {
             DrawResizeCorner(
-                size.value,
-                onDrag = { offset ->
-                    size.value = Size(
-                        size.value.width.plus(offset.x),
-                        size.value.width.plus(offset.x) / ratio
-                    )
-                }
+                size.value
             )
             DrawDeleteCorner() {
                 onClickDelete()
@@ -155,7 +194,16 @@ fun BoxForEdit(
     }
 }
 
-private const val CORNER_SIZE = 30
+private fun isCornerHit(touchOff: Offset, rect: Rect, boxSize: Size): Boolean {
+
+    val ratioX = rect.width / boxSize.width
+    val ratioY = rect.height / boxSize.height
+
+    val resizePointPosition = rect.bottomRight - Offset(x = CORNER_SIZE / 2 * ratioX, y = CORNER_SIZE / 2 * ratioY)
+    val distance = sqrt((touchOff.x - resizePointPosition.x).pow(2) + (touchOff.y - resizePointPosition.y).pow(2))
+
+    return distance <= CORNER_SIZE / 2 * ratioX
+}
 
 @Composable
 fun BoxDialog(
@@ -211,25 +259,15 @@ private fun DrawDeleteCorner(
 @Composable
 private fun DrawResizeCorner(
     size: Size,
-    onDrag: (Offset) -> Unit,
 ) {
-    val cornerOffset = CORNER_SIZE / 2f
-
-    val xOffset = size.width - cornerOffset
-    val yOffset = size.height - cornerOffset
+    val xOffset = size.width - CORNER_SIZE
+    val yOffset = size.height - CORNER_SIZE
 
     Box(
         Modifier
             .size(CORNER_SIZE.dp)
             .offset(xOffset.dp, yOffset.dp)
-            .background(MaterialTheme.colorScheme.primary, CircleShape)
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDrag = { _, dragAmount ->
-                        onDrag(dragAmount)
-                    }
-                )
-            },
+            .background(MaterialTheme.colorScheme.primary, CircleShape),
         contentAlignment = Alignment.Center
     ) {
         Icon(
@@ -250,7 +288,7 @@ private fun PreviewBox() {
         mutableStateOf(
             BoxData(
                 id = "abc",
-                size = Size(300f, 300f),
+                size = Size(200f, 200f),
                 position = Offset(40f, 40f)
             )
         )
