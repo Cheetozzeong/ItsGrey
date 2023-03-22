@@ -13,9 +13,6 @@ object RemoteUserDataSourceImpl: RemoteUserDataSource {
             .addOnSuccessListener { documentSnapShot ->
                 val userDto = documentSnapShot.toObject(UserDto::class.java)
             }
-            .addOnFailureListener{
-
-            }
         return userDto
     }
 

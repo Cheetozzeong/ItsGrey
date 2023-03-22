@@ -49,4 +49,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-analytics:17.2.1")
     implementation ("com.google.firebase:firebase-database:19.2.0")
 
+    implementation(project(":core:network"))
+    implementation(project(":domain:model"))
+    implementation(project(":domain:repo"))
+    implementation(project(":domain:home"))
 }

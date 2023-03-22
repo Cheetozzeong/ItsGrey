@@ -5,7 +5,8 @@ import java.util.ArrayList
 
 data class BookDto(
     val id: String,
+    val userId: String,
     val title: String,
     val isPublished: Boolean,
     val saveDate: Date,
-    val pages: ArrayList<String>)
+)
