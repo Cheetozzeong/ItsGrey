@@ -21,10 +21,16 @@ import com.tntt.core.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTabsMain
 import com.tntt.designsystem.component.IgTopAppBar
 import com.tntt.home.R
+import com.tntt.model.UserInfo
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(name = "tablet", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
 @Composable
 fun Home(modifier: Modifier = Modifier) {
+
+    // fake
+    val user = UserInfo(name = "fakeUser")
+
     IgTheme {
         val colorBackground = MaterialTheme.colorScheme.surface
         val borderColor = MaterialTheme.colorScheme.onPrimary
@@ -35,7 +41,7 @@ fun Home(modifier: Modifier = Modifier) {
             topBar = { IgTopAppBar(
                 titleRes = R.string.home_toolbar_name,
                 actions = {
-                    Text(text = stringResource(R.string.home_toolbar_user))
+                    Text(text = user.name)
                 }) }
         ) { padding ->
             Column(
