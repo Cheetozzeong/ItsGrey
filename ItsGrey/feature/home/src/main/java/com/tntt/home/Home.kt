@@ -36,9 +36,9 @@ fun Home(modifier: Modifier = Modifier) {
         val borderColor = MaterialTheme.colorScheme.onPrimary
 
         Scaffold(
-            modifier = Modifier
-                .padding(25.dp),
+            modifier = Modifier,
             topBar = { IgTopAppBar(
+                modifier = Modifier.padding(horizontal = 25.dp),
                 titleRes = R.string.home_toolbar_name,
                 actions = {
                     Text(text = user.name)
@@ -47,6 +47,7 @@ fun Home(modifier: Modifier = Modifier) {
             Column(
                 Modifier
                     .padding(padding)
+                    .padding(horizontal = 25.dp)
                     .fillMaxWidth()
             ) {
                 Box(modifier = Modifier
@@ -73,7 +74,7 @@ fun Home(modifier: Modifier = Modifier) {
                             val borderSize = 4.dp.toPx()
                             drawLine(
                                 borderColor,
-                                Offset(borderSize / 2, 0.dp.toPx()),
+                                Offset(borderSize / 2, 0.dp.toPx()-3.dp.toPx()),
                                 Offset(borderSize / 2, size.height),
                                 strokeWidth = borderSize,
                             )
