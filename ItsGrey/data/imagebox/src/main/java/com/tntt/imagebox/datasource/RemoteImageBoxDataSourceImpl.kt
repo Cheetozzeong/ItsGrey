@@ -7,6 +7,7 @@ import java.util.UUID
 object RemoteImageBoxDataSourceImpl : RemoteImageBoxDataSource {
 
     val imageBoxCollection by lazy { Firestore.firestore.collection("imageBox") }
+
     override fun createImageBoxDto(imageBoxDto: ImageBoxDto): String {
         val imageBoxId = UUID.randomUUID().toString()
         imageBoxDto.id = imageBoxId
