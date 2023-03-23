@@ -1,13 +1,13 @@
 package com.tntt.book.repository
 
-import com.tntt.book.datasource.RemoteBookDataSource
 import com.tntt.book.datasource.RemoteBookDataSourceImpl
-import com.tntt.home.model.BookType
-import com.tntt.home.model.SortType
+import com.tntt.model.BookType
+import com.tntt.model.SortType
 import com.tntt.model.BookInfo
 import com.tntt.repo.BookRepository
+import javax.inject.Inject
 
-object BookRepositoryImpl: BookRepository {
+class BookRepositoryImpl @Inject constructor() : BookRepository {
 
     val remoteBookDataSource by lazy { RemoteBookDataSourceImpl }
 

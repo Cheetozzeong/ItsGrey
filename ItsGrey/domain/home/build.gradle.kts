@@ -56,6 +56,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-database:19.2.0")
 
     implementation(project(":domain:model"))
+    implementation(project(":domain:repo"))
 
     // Hilt
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
