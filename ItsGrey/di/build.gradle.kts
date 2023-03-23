@@ -1,10 +1,16 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+
+    // Hilt
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
-    namespace = "com.tntt.model"
+    namespace = "com.tntt.di"
     compileSdk = 33
 
     defaultConfig {
@@ -38,15 +44,16 @@ dependencies {
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
-
-    // Firestore
-    implementation ("com.google.firebase:firebase-bom:31.2.3")
-    implementation ("com.google.firebase:firebase-firestore")
-    implementation ("com.google.firebase:firebase-firestore-ktx:23.0.4")
-    implementation ("com.google.firebase:firebase-analytics:17.2.1")
-    implementation ("com.google.firebase:firebase-database:19.2.0")
-
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    implementation(project(":data:book"))
+    implementation(project(":data:user"))
+    implementation(project(":domain:repo"))
+
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:${Versions.HILT}")
+    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 }

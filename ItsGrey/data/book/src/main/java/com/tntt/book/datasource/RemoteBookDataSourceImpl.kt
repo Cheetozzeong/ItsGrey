@@ -1,9 +1,8 @@
 package com.tntt.book.datasource
 
-import com.google.firebase.firestore.Query
 import com.tntt.book.model.BookDto
-import com.tntt.home.model.BookType
-import com.tntt.home.model.SortType
+import com.tntt.model.BookType
+import com.tntt.model.SortType
 import com.tntt.network.Firestore
 import java.util.*
 
