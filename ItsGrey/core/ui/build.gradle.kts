@@ -44,6 +44,9 @@ android {
 
 dependencies {
 
+    implementation(project(":domain:model"))
+    implementation(project(":core:designsystem"))
+
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
     implementation(Libraries.AndroidX.MATERIAL)
