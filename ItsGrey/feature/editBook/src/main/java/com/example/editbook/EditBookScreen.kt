@@ -30,7 +30,7 @@ import com.tntt.editbook.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun EditBookTopAppBar(){
+fun EditBookTopAppBar() {
     IgTopAppBar(
         titleRes = android.R.string.untitled,
         navigationIcon = IgIcons.NavigateBefore,
@@ -60,7 +60,7 @@ private fun SideSection(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.fillMaxHeight()
     ) {
-        items(ThumbnailOfPageData) {item ->
+        items(ThumbnailOfPageData) { item ->
             ThumbnailOfPage(
                 drawable = item,
                 modifier = Modifier.height(150.dp)
@@ -83,6 +83,9 @@ fun ThumbnailOfPage(
             modifier = Modifier.fillMaxHeight()
         ) {
             Image(
+                /*
+                TODO 추후에 resource 삭제 요망
+                * */
                 painter = painterResource(drawable),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -121,7 +124,7 @@ private fun MainSection(
             .padding(9.dp, 50.dp),
         verticalAlignment = Alignment.CenterVertically,
         ) {
-        items(ThumbnailOfPageData) {item ->
+        items(ThumbnailOfPageData) { item ->
             ThumbnailOfPage(
                 drawable = item,
                 modifier = Modifier
