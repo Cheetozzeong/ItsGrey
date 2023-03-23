@@ -10,6 +10,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.ui.Modifier
@@ -38,12 +40,12 @@ fun TextBox(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextBoxForEdit(
     boxData: BoxData,
-    onBoxStateChange: (id: String, state: BoxState) -> Unit,
+    updateBoxData: (BoxData) -> Unit,
     onTextBoxDataChange: (TextBoxData) -> Unit,
+    onClickDelete: () -> Unit,
     textData: TextBoxData
 ) {
 
@@ -51,27 +53,29 @@ fun TextBoxForEdit(
 
     BoxForEdit(
         boxData = boxData,
-        onBoxStateChange = { id, state -> onBoxStateChange(id, state)},
-        updateBoxData = {},
-        onClickDelete = { /*TODO*/ },
+        updateBoxData = { newBoxData ->  updateBoxData(newBoxData) },
+        onClickDelete = { onClickDelete() },
         innerContent = {
-            TextField(
+
+            BasicTextField(
                 value = textData.text,
                 onValueChange = {
                     onTextBoxDataChange(textData.copy(text = it))
                 },
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding((CORNER_SIZE / 2f).dp)
                     .pointerInput(isEnabled) {
                         detectTapGestures {
                             if (!isEnabled) {
-                                onBoxStateChange(boxData.id, BoxState.Active)
+                                updateBoxData(boxData.copy(state = BoxState.Active))
                             }
                             isEnabled != isEnabled
                         }
                     },
                 enabled = isEnabled,
             )
+
         }
     )
 }
@@ -79,7 +83,7 @@ fun TextBoxForEdit(
 @Preview
 @Composable
 private fun PreviewTextBox() {
-    var boxData by remember {
+    val boxData = remember {
         mutableStateOf(
             BoxData(
                 id = "abc",
@@ -99,18 +103,17 @@ private fun PreviewTextBox() {
             Modifier
                 .fillMaxSize()
                 .clickable {
-                    boxData = boxData.copy(state = BoxState.None)
+                    boxData.value = boxData.value.copy(state = BoxState.None)
                 }
         ) {
             //    TextBox(boxData = boxData, textData = TextBoxData("abcdefg", 25f))
 
             TextBoxForEdit(
-                boxData = boxData,
-                onBoxStateChange = {id, state ->
-                    boxData = boxData.copy(state = state)
-                },
+                boxData = boxData.value,
+                textData = textData,
+                updateBoxData = { newBoxData -> boxData.value = newBoxData },
                 onTextBoxDataChange = { textData = it },
-                textData = textData
+                onClickDelete = {}
             )
         }
     }

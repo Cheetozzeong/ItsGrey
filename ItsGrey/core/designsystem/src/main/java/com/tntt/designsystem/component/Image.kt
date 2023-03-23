@@ -36,7 +36,6 @@ fun ImageBox(
 @Composable
 fun ImageBoxForEdit(
     boxData: BoxData,
-    onBoxStateChange: (boxId: String, state: BoxState) -> Unit,
     updateBoxData: (BoxData) -> Unit,
     onClickDelete: () -> Unit,
     imageData: ImageBitmap,
@@ -55,16 +54,10 @@ fun ImageBoxForEdit(
 
         BoxForEdit(
             boxData = boxData,
-            onBoxStateChange = { id, state ->
-                onBoxStateChange(id, state)
-            },
-            updateBoxData = { newBoxData ->
-                updateBoxData(newBoxData)
-            },
-            onClickDelete = {
-
-            },
+            updateBoxData = { newBoxData -> updateBoxData(newBoxData) },
+            onClickDelete = { onClickDelete() },
             innerContent = {
+
                 Image(
                     // TODO: imageData 받는거로 변경
                     painter = painterResource(id = R.drawable.icon_preview_button_48),
@@ -72,6 +65,7 @@ fun ImageBoxForEdit(
                     modifier = Modifier
                         .fillMaxSize(),
                 )
+
             }
         )
     }
@@ -106,14 +100,8 @@ private fun PreviewImage() {
 
             ImageBoxForEdit(
                 boxData,
-                onBoxStateChange = { id, state ->
-                    boxData = boxData.copy(state = state)
-                },
-                updateBoxData = { updateBoxData ->
-                    boxData = updateBoxData
-                },
-                onClickDelete = {
-                },
+                updateBoxData = { updateBoxData -> boxData = updateBoxData },
+                onClickDelete = {},
                 imageData = ImageBitmap(300, 300, ImageBitmapConfig.Argb8888),
                 dialogComponent = listOf {
                     Button(onClick = { /*TODO*/ }) {

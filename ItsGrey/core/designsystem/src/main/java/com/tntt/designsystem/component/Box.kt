@@ -81,12 +81,11 @@ fun Box(
     }
 }
 
-private const val CORNER_SIZE = 30
+const val CORNER_SIZE = 30
 
 @Composable
 fun BoxForEdit(
     boxData: BoxData,
-    onBoxStateChange: (id: String, state: BoxState) -> Unit,
     updateBoxData: (BoxData) -> Unit,
     onClickDelete: () -> Unit,
     innerContent: @Composable () -> Unit
@@ -97,8 +96,8 @@ fun BoxForEdit(
     val size = remember{ mutableStateOf(boxData.size) }
     val ratio by lazy { boxData.size.width / boxData.size.height }
 
-    val borderStyle = if (boxData.state == BoxState.Active) Stroke(width = 4f) else Stroke(width = 2f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
-    val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary
+    val borderStyle = if (boxData.state == BoxState.Active) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
+    val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary
 
     Box(
         Modifier
@@ -114,7 +113,7 @@ fun BoxForEdit(
                     BoxState.None -> {
                         detectTapGestures(
                             onPress = {
-                                onBoxStateChange(boxData.id, BoxState.Active)
+                                updateBoxData(boxData.copy(state = BoxState.Active))
                             }
                         )
                     }
@@ -150,13 +149,13 @@ fun BoxForEdit(
                                 }
                             },
                             onDragEnd = {
-                                event.value = BoxEvent.Move
-                                updateBoxData(
-                                    boxData.copy(
-                                        position = position.value,
-                                        size = size.value
-                                    )
-                                )
+                                when(event.value) {
+                                    BoxEvent.Resize -> {
+                                        updateBoxData(boxData.copy(size = size.value))
+                                        event.value = BoxEvent.Move
+                                    }
+                                    BoxEvent.Move -> { updateBoxData(boxData.copy(position = position.value)) }
+                                }
                             }
                         )
                     }
@@ -253,12 +252,12 @@ private fun DrawResizeCorner(
         Modifier
             .size(CORNER_SIZE.dp)
             .offset(xOffset.dp, yOffset.dp)
-            .background(MaterialTheme.colorScheme.primary, CircleShape),
+            .background(MaterialTheme.colorScheme.onSecondary, CircleShape),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             imageVector = Icons.Default.OpenInFull,
-            tint = MaterialTheme.colorScheme.onPrimary,
+            tint = MaterialTheme.colorScheme.secondary,
             contentDescription = "박스 삭제 아이콘",
             modifier = Modifier.rotate(90f)
         )
@@ -292,9 +291,6 @@ private fun PreviewBox() {
         IgTheme {
             BoxForEdit(
                 boxData,
-                onBoxStateChange = { id, state ->
-                    boxData = boxData.copy(state = state)
-                },
                 updateBoxData = { updateBoxData ->
                     boxData = updateBoxData
                 },
