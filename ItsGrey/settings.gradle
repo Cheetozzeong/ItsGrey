@@ -14,8 +14,11 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ItsGrey"
 include ':app'
+/* core */
 include ':core:designsystem'
-include ':data:book'
+include ':core:ui'
+include ':core:network'
+/* domain */
 include ':domain:repo'
 include ':domain:model'
 include ':domain:home'
@@ -24,6 +27,9 @@ include ':domain:editpage'
 include ':domain:drawing'
 include ':domain:viewer'
 include ':domain:login'
+/* data */
+include ':data:book'
 include ':data:user'
-include ':core:network'
+/* feature */
 include ':feature:home'
+
