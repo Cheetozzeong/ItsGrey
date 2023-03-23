@@ -37,8 +37,7 @@ import kotlin.math.sqrt
 
 enum class BoxState {
     None,
-    Active,
-    InActive
+    Active
 }
 
 enum class ResizeType {
@@ -62,13 +61,14 @@ data class BoxData(
 @Composable
 fun Box(
     boxData: BoxData,
+    modifier: Modifier,
     innerContent: @Composable () -> Unit
 ) {
     val position = remember { mutableStateOf(boxData.position) }
     val size = remember { mutableStateOf(boxData.size) }
 
     Box(
-        Modifier
+        modifier
             .offset {
                 IntOffset(
                     position.value.x.roundToInt(),
@@ -99,16 +99,6 @@ fun BoxForEdit(
 
     val borderStyle = if (boxData.state == BoxState.Active) Stroke(width = 4f) else Stroke(width = 2f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
     val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary
-
-    if(boxData.state == BoxState.InActive) {
-        updateBoxData(
-            boxData.copy(
-                state = BoxState.None,
-                position = position.value,
-                size = size.value
-            )
-        )
-    }
 
     Box(
         Modifier
@@ -163,7 +153,8 @@ fun BoxForEdit(
                                 event.value = BoxEvent.Move
                                 updateBoxData(
                                     boxData.copy(
-                                        position = position.value
+                                        position = position.value,
+                                        size = size.value
                                     )
                                 )
                             }
@@ -295,7 +286,7 @@ private fun PreviewBox() {
         Modifier
             .fillMaxSize()
             .clickable {
-                boxData = boxData.copy(state = BoxState.InActive)
+                boxData = boxData.copy(state = BoxState.None)
             }
     ) {
         IgTheme {

@@ -20,7 +20,10 @@ fun ImageBox(
     boxData: BoxData,
     imageData: ImageBitmap
 ) {
-    Box(boxData = boxData) {
+    Box(
+        boxData = boxData,
+        modifier = Modifier
+    ) {
         Image(
             // TODO: imageData 받는거로 변경
             painter = painterResource(id = R.drawable.icon_preview_button_48),
@@ -92,7 +95,7 @@ private fun PreviewImage() {
         Modifier
             .fillMaxSize()
             .clickable {
-                boxData = boxData.copy(state = BoxState.InActive)
+                boxData = boxData.copy(state = BoxState.None)
             }
     ) {
         IgTheme {
