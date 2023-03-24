@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.tntt.core.designsystem.theme.Black
+import com.tntt.designsystem.theme.Black
 
 @Composable
 fun IgTabMainRow(
@@ -31,7 +31,7 @@ fun IgTabMainRow(
     enabled: Boolean = true,
     text: @Composable () -> Unit,
 ) {
-    val color = MaterialTheme.colorScheme.secondary
+    val color = MaterialTheme.colorScheme.onPrimary
     val shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
     Tab(
         selected = selected,
