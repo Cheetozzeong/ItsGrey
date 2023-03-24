@@ -7,7 +7,12 @@ import com.tntt.layer.datasource.RemoteLayerDataSource
 import com.tntt.layer.datasource.RemoteLayerDataSourceImpl
 import com.tntt.layer.model.LayerDto
 import com.tntt.model.LayerInfo
+import com.tntt.network.retrofit.RetrofitNetwork
 import com.tntt.repo.LayerRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LayerRepositoryImpl : LayerRepository {
 
@@ -43,5 +48,19 @@ class LayerRepositoryImpl : LayerRepository {
 
     override fun getSumLayer(pageId: String): Bitmap {
         TODO("Not yet implemented")
+    }
+
+    // 서버 통신 테스트 메서드
+    fun createRoughSketch() {
+        val apiService = RetrofitNetwork.getApiService("http://146.56.113.80:8000/")
+        GlobalScope.launch(Dispatchers.IO) {
+            val response = apiService.getData()
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    print(data)
+                }
+            }
+        }
     }
 }
