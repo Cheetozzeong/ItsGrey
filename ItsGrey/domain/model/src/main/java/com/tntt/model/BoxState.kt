@@ -4,4 +4,5 @@ data class BoxState(
     val offsetRatioX: Float,
     val offsetRatioY: Float,
     val widthRatio: Float,
+    val heightRatio: Float,
 )

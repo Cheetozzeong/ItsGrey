@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.tntt.core.designsystem.theme.IgTheme
+import com.tntt.designsystem.theme.IgTheme
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
