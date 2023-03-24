@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.network"
+    namespace = "com.tntt.page"
     compileSdk = 33
 
     defaultConfig {
@@ -47,4 +47,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore-ktx:23.0.4")
     implementation ("com.google.firebase:firebase-analytics:17.2.1")
     implementation ("com.google.firebase:firebase-database:19.2.0")
+
+    implementation(project(":core:network"))
+    implementation(project(":domain:repo"))
+    implementation(project(":domain:model"))
 }
