@@ -1,7 +1,7 @@
 package com.tntt.book.repository
 
+import android.util.Log
 import com.tntt.book.datasource.RemoteBookDataSource
-import com.tntt.book.datasource.RemoteBookDataSourceImpl
 import com.tntt.model.BookType
 import com.tntt.model.SortType
 import com.tntt.model.BookInfo
@@ -11,7 +11,9 @@ import javax.inject.Inject
 class BookRepositoryImpl @Inject constructor(
     private val remoteBookDataSource: RemoteBookDataSource
 ) : BookRepository {
-
+    init{
+        Log.d("뭐 hilt test", "레포")
+    }
     override fun getBookInfos(
         userId: String,
         sortType: SortType,

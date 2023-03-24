@@ -19,7 +19,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindsBookRepository(
-        bookRepository: BookRepositoryImpl,
+        bookRepository: BookRepositoryImpl
     ): BookRepository
 
     @Binds

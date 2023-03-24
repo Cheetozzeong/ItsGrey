@@ -6,7 +6,7 @@ import com.tntt.model.SortType
 import com.tntt.network.Firestore
 import java.util.*
 
-object RemoteBookDataSourceImpl: RemoteBookDataSource {
+class RemoteBookDataSourceImpl: RemoteBookDataSource {
 
     val bookCollection by lazy { Firestore.firestore.collection("book") }
 

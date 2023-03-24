@@ -3,10 +3,8 @@ package com.tntt.imagebox.repository
 import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
 import com.tntt.imagebox.datasource.RemoteImageBoxDataSourceImpl
 import com.tntt.imagebox.model.ImageBoxDto
-import com.tntt.model.BoxState
 import com.tntt.model.ImageBoxInfo
 import com.tntt.repo.ImageBoxRepository
-import java.util.UUID
 
 class ImageBoxRepositoryImpl : ImageBoxRepository {
 
