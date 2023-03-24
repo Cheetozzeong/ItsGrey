@@ -1,9 +1,13 @@
-package com.tntt.core.designsystem.theme
+package com.tntt.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import itsgrey.core.designsystem.R
 
 internal val IgTypography = Typography(
     displayLarge = TextStyle(
@@ -97,3 +101,16 @@ internal val IgTypography = Typography(
         letterSpacing = 0.sp,
     ),
 )
+
+object IgFont{
+
+    val gangwon = FontFamily(
+        Font(R.font.gangwon_kr_bold, FontWeight.Bold, FontStyle.Normal),
+        Font(R.font.gangwon_kr_light, FontWeight.Normal, FontStyle.Normal)
+    )
+
+    val noto_sans = FontFamily(
+        Font(R.font.noto_sans_kr_bold, FontWeight.Bold, FontStyle.Normal),
+        Font(R.font.noto_sans_kr_regular, FontWeight.Normal, FontStyle.Normal)
+    )
+}
