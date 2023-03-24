@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.tntt.core.designsystem.theme.IgTheme
+import com.tntt.designsystem.theme.IgTheme
 import itsgrey.core.designsystem.R
 
 @Composable

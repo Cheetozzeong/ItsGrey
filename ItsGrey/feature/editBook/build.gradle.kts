@@ -75,5 +75,8 @@ dependencies {
     androidTestImplementation(Libraries.Test.JUNIT)
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
+    implementation ("com.google.accompanist:accompanist-pager:0.20.1")
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.20.1")
+
     implementation(project(":core:designsystem"))
 }
