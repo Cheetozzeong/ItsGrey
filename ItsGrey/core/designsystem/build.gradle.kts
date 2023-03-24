@@ -56,6 +56,7 @@ dependencies {
     implementation(Libraries.Compose.UI.UI)
     implementation(Libraries.Compose.UI.PREVIEW)
     implementation(Libraries.Compose.UI.TOOLING)
+    implementation(project(mapOf("path" to ":domain:model")))
     // UI Tests
     androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
     debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)

@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.OpenInFull
@@ -21,19 +22,20 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tntt.designsystem.theme.IgTheme
+import com.tntt.model.BoxData
+import com.tntt.model.BoxState
+import com.tntt.model.TextBoxInfo
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
-
-enum class BoxState {
-    None,
-    Active
-}
 
 enum class ResizeType {
     Ratio,
@@ -45,32 +47,22 @@ enum class BoxEvent {
     Resize,
 }
 
-data class BoxData(
-    val id: String,
-    var state: BoxState = BoxState.None,
-    val resizeType: ResizeType = ResizeType.Free,
-    var position: Offset = Offset(0f, 0f),
-    var size: Size = Size(0f, 0f),
-)
-
 @Composable
 fun Box(
-    boxData: BoxData,
-    modifier: Modifier,
+    position: Offset,
+    size: Size,
     innerContent: @Composable () -> Unit
 ) {
-    val position = remember { mutableStateOf(boxData.position) }
-    val size = remember { mutableStateOf(boxData.size) }
 
     Box(
-        modifier
+        Modifier
             .offset {
                 IntOffset(
-                    position.value.x.roundToInt(),
-                    position.value.y.roundToInt()
+                    position.x.roundToInt(),
+                    position.y.roundToInt()
                 )
             }
-            .size(size.value.width.dp, size.value.height.dp)
+            .size(size.width.dp, size.height.dp)
     ) {
         innerContent()
     }
@@ -80,19 +72,23 @@ const val CORNER_SIZE = 30
 
 @Composable
 fun BoxForEdit(
-    boxData: BoxData,
-    updateBoxData: (BoxData) -> Unit,
+    boxState: BoxState,
+    position: Offset,
+    size: Size,
+    updatePosition: (Offset) -> Unit,
+    updateSize: (Size) -> Unit,
+    resizeType: ResizeType,
     onClickDelete: () -> Unit,
     innerContent: @Composable () -> Unit
 ) {
 
     val density = remember { mutableStateOf(1f) }
-    val position = remember { mutableStateOf(boxData.position) }
-    val size = remember{ mutableStateOf(boxData.size) }
-    val ratio by lazy { boxData.size.width / boxData.size.height }
+    val position = remember { mutableStateOf(position) }
+    val size = remember { mutableStateOf(size) }
+    val ratio by lazy { size.value.width / size.value.height }
 
-    val borderStyle = if (boxData.state == BoxState.Active) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
-    val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary
+    val borderStyle = if (boxState == BoxState.Active) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
+    val borderColor = if (boxState == BoxState.Active) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary
 
     Box(
         Modifier
@@ -103,15 +99,9 @@ fun BoxForEdit(
                     position.value.y.roundToInt()
                 )
             }
-            .pointerInput(boxData.state) {
-                when (boxData.state) {
-                    BoxState.None -> {
-                        detectTapGestures(
-                            onPress = {
-                                updateBoxData(boxData.copy(state = BoxState.Active))
-                            }
-                        )
-                    }
+            .pointerInput(boxState) {
+                when (boxState) {
+                    BoxState.None -> return@pointerInput
                     else -> {
                         val event = mutableStateOf(BoxEvent.Move)
                         detectDragGestures(
@@ -126,7 +116,7 @@ fun BoxForEdit(
                                         position.value += dragAmount
                                     }
                                     BoxEvent.Resize -> {
-                                        when (boxData.resizeType) {
+                                        when (resizeType) {
                                             ResizeType.Ratio -> {
                                                 size.value = Size(
                                                     size.value.width + (dragAmount.x / density.value),
@@ -144,12 +134,14 @@ fun BoxForEdit(
                                 }
                             },
                             onDragEnd = {
-                                when(event.value) {
+                                when (event.value) {
                                     BoxEvent.Resize -> {
-                                        updateBoxData(boxData.copy(size = size.value))
+                                        updateSize(size.value)
                                         event.value = BoxEvent.Move
                                     }
-                                    BoxEvent.Move -> { updateBoxData(boxData.copy(position = position.value)) }
+                                    BoxEvent.Move -> {
+                                        updatePosition(position.value)
+                                    }
                                 }
                             }
                         )
@@ -166,13 +158,9 @@ fun BoxForEdit(
 
     ) {
         innerContent()
-        if (boxData.state == BoxState.Active) {
-            DrawResizeCorner(
-                size.value
-            )
-            DrawDeleteCorner() {
-                onClickDelete()
-            }
+        if (boxState == BoxState.Active) {
+            DrawResizeCorner(size.value)
+            DrawDeleteCorner { onClickDelete() }
         }
     }
 }
@@ -259,19 +247,29 @@ private fun DrawResizeCorner(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(device = Devices.PIXEL_2, widthDp = 360, heightDp = 640)
+@Preview(device = Devices.PIXEL_2, widthDp = 200, heightDp = 300)
 @Composable
 private fun PreviewBox() {
 
-    var boxData by remember(BoxState.None) {
+    val textBoxInfo = remember() {
         mutableStateOf(
-            BoxData(
+            TextBoxInfo(
                 id = "abc",
-                size = Size(200f, 200f),
-                position = Offset(40f, 40f),
-                resizeType = ResizeType.Ratio
+                text = "ABCD",
+                fontSizeRatio = 0.1f,
+                boxData = BoxData(
+                    offsetRatioX = 0.2f,
+                    offsetRatioY = 0.1f,
+                    widthRatio = 0.8f,
+                    heightRatio = 0.3f
+                )
             )
+        )
+    }
+
+    val pageSize by remember {
+        mutableStateOf(
+            Size(200f, 300f)
         )
     }
 
@@ -280,19 +278,69 @@ private fun PreviewBox() {
         Modifier
             .fillMaxSize()
             .clickable {
-                boxData = boxData.copy(state = BoxState.None)
+                textBoxInfo.value = textBoxInfo.value.copy(
+                    boxData = textBoxInfo.value.boxData.copy(state = BoxState.None)
+                )
             }
     ) {
         IgTheme {
-            BoxForEdit(
-                boxData,
-                updateBoxData = { updateBoxData ->
-                    boxData = updateBoxData
-                },
-                onClickDelete = {
-                },
+            Box(
+                position = Offset(
+                    textBoxInfo.value.boxData.offsetRatioX * pageSize.width,
+                    textBoxInfo.value.boxData.offsetRatioY * pageSize.height
+                ),
+                size = Size(
+                    textBoxInfo.value.boxData.widthRatio * pageSize.width,
+                    textBoxInfo.value.boxData.heightRatio * pageSize.height
+                ),
                 innerContent = {
-                    TextField(value = "", onValueChange = {})
+                    Text(
+                        text = textBoxInfo.value.text,
+                        fontSize = (textBoxInfo.value.boxData.widthRatio * pageSize.width * textBoxInfo.value.fontSizeRatio).sp
+                    )
+                }
+            )
+
+            BoxForEdit(
+                boxState = textBoxInfo.value.boxData.state,
+                position = Offset(
+                    textBoxInfo.value.boxData.offsetRatioX * pageSize.width,
+                    textBoxInfo.value.boxData.offsetRatioY * pageSize.height
+                ),
+                size = Size(
+                    textBoxInfo.value.boxData.widthRatio * pageSize.width,
+                    textBoxInfo.value.boxData.heightRatio * pageSize.height
+                ),
+                updatePosition = { newPosition ->
+                    textBoxInfo.value = textBoxInfo.value.copy(
+                        boxData = textBoxInfo.value.boxData.copy(
+                            offsetRatioX = newPosition.x / pageSize.width,
+                            offsetRatioY = newPosition.y / pageSize.height
+                        )
+                    )
+                },
+                updateSize = { newSize ->
+                    textBoxInfo.value = textBoxInfo.value.copy(
+                        boxData = textBoxInfo.value.boxData.copy(
+                            widthRatio = newSize.width / pageSize.width,
+                            heightRatio = newSize.height / pageSize.height
+                        )
+                    )
+                },
+                resizeType = ResizeType.Free,
+                onClickDelete = { /*TODO*/ },
+                innerContent = {
+                    BasicTextField(
+                        value = textBoxInfo.value.text,
+                        onValueChange = { newText ->
+                            textBoxInfo.value = textBoxInfo.value.copy(
+                                text = newText
+                            )
+                        },
+                        textStyle = TextStyle(
+                            fontSize = (textBoxInfo.value.boxData.widthRatio * pageSize.width * textBoxInfo.value.fontSizeRatio).sp
+                        )
+                    )
                 }
             )
         }
