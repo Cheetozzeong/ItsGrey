@@ -35,12 +35,11 @@ private fun PreviewPage() {
             Page(thumbnail = Thumbnail(
                 imageBox = ImageBoxInfo(
                     id = "id",
-                    imageRatioX = 4,
-                    imageRatioY = 4,
                     BoxState(
                         offsetRatioX = 0.1f,
                         offsetRatioY = 0.1f,
-                        widthRatio = 0.5f
+                        widthRatio = 0.5f,
+                        heightRatio = 0.3f
                     )
                 ),
                 image = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.happy),
@@ -52,7 +51,8 @@ private fun PreviewPage() {
                         BoxState(
                             offsetRatioX = 0.2f,
                             offsetRatioY = 0.2f,
-                            widthRatio = 0.5f
+                            widthRatio = 0.5f,
+                            heightRatio = 0.3f
                         )
                     )
                 )
@@ -63,12 +63,11 @@ private fun PreviewPage() {
             Page(thumbnail = Thumbnail(
                 imageBox = ImageBoxInfo(
                     id = "id",
-                    imageRatioX = 4,
-                    imageRatioY = 4,
                     BoxState(
                         offsetRatioX = 0.1f,
                         offsetRatioY = 0.1f,
-                        widthRatio = 0.5f
+                        widthRatio = 0.5f,
+                        heightRatio = 0.3f
                     )
                 ),
                 image = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.happy),
@@ -80,7 +79,8 @@ private fun PreviewPage() {
                         BoxState(
                             offsetRatioX = 0.2f,
                             offsetRatioY = 0.2f,
-                            widthRatio = 0.5f
+                            widthRatio = 0.5f,
+                            heightRatio = 0.3f
                         )
                     )
                 )

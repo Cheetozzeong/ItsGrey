@@ -27,9 +27,11 @@ include ':domain:editpage'
 include ':domain:drawing'
 include ':domain:viewer'
 include ':domain:login'
+include ':data:imagebox'
+include ':data:page'
 /* data */
 include ':data:book'
 include ':data:user'
 /* feature */
 include ':feature:home'
-
+include ':feature:editBook'
