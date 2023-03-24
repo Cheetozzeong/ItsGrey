@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.user"
+    namespace = "itsgrey.data.user"
     compileSdk = 33
 
     defaultConfig {

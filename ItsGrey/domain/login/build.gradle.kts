@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.login"
+    namespace = "itsgrey.domain.login"
     compileSdk = 33
 
     defaultConfig {

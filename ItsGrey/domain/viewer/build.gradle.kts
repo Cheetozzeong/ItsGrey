@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.viewer"
+    namespace = "itsgrey.domain.viewer"
     compileSdk = 33
 
     defaultConfig {

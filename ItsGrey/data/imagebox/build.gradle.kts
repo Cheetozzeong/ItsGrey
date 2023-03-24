@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.imagebox"
+    namespace = "itsgrey.data.imagebox"
     compileSdk = 33
 
     defaultConfig {

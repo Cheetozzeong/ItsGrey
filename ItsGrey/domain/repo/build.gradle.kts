@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.repo"
+    namespace = "itsgrey.domain.repo"
     compileSdk = 33
 
     defaultConfig {

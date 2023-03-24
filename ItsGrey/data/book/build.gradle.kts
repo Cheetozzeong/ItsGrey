@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.book"
+    namespace = "itsgrey.data.book"
     compileSdk = AppConfig.compileSdk
 
     defaultConfig {

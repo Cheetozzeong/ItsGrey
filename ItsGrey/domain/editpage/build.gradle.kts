@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.editpage"
+    namespace = "itsgrey.domain.editpage"
     compileSdk = 33
 
     defaultConfig {

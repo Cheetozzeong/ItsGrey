@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.editbook"
+    namespace = "itsgrey.feature.editbook"
     compileSdk = 33
 
     defaultConfig {
@@ -76,4 +76,5 @@ dependencies {
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
     implementation(project(":core:designsystem"))
+    implementation ("androidx.startup:startup-runtime:1.0.0")
 }

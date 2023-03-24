@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.model"
+    namespace = "itsgrey.domain.model"
     compileSdk = 33
 
     defaultConfig {

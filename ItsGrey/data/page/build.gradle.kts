@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.page"
+    namespace = "itsgrey.data.page"
     compileSdk = 33
 
     defaultConfig {

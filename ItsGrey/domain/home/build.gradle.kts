@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.home"
+    namespace = "itsgrey.domain.home"
     compileSdk = 33
 
     defaultConfig {

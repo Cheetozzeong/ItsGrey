@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.network"
+    namespace = "itsgrey.core.network"
     compileSdk = 33
 
     defaultConfig {
