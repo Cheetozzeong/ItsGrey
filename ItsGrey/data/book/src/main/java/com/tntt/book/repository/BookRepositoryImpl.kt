@@ -1,5 +1,6 @@
 package com.tntt.book.repository
 
+import com.tntt.book.datasource.RemoteBookDataSource
 import com.tntt.book.datasource.RemoteBookDataSourceImpl
 import com.tntt.model.BookType
 import com.tntt.model.SortType
@@ -7,9 +8,9 @@ import com.tntt.model.BookInfo
 import com.tntt.repo.BookRepository
 import javax.inject.Inject
 
-class BookRepositoryImpl @Inject constructor() : BookRepository {
-
-    val remoteBookDataSource by lazy { RemoteBookDataSourceImpl }
+class BookRepositoryImpl @Inject constructor(
+    private val remoteBookDataSource: RemoteBookDataSource
+) : BookRepository {
 
     override fun getBookInfos(
         userId: String,
