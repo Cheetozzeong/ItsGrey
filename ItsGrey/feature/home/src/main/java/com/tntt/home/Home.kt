@@ -12,16 +12,14 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.tntt.core.designsystem.theme.IgTheme
+import com.tntt.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTabsMain
 import com.tntt.designsystem.component.IgTopAppBar
-import com.tntt.home.R
-import com.tntt.model.UserInfo
+import com.tntt.home.model.User
+import itsgrey.feature.home.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(name = "tablet", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
@@ -29,7 +27,7 @@ import com.tntt.model.UserInfo
 fun Home(modifier: Modifier = Modifier) {
 
     // fake
-    val user = UserInfo(name = "fakeUser")
+    val user = User(name = "fakeUser",id = "id")
 
     IgTheme {
         val colorBackground = MaterialTheme.colorScheme.surface
