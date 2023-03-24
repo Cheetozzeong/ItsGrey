@@ -1,4 +1,4 @@
-package com.tntt.di
+package com.tntt.data.di
 
 import com.tntt.book.datasource.RemoteBookDataSource
 import com.tntt.book.datasource.RemoteBookDataSourceImpl
@@ -24,30 +24,8 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface DataSourceModule {
 
-    @Binds
-    fun bindsBookDataSource(
-        bookDataSource: RemoteBookDataSourceImpl,
-    ): RemoteBookDataSource
 
-    @Binds
-    fun bindsDrawingDataSource(
-        drawingDataSource: RemoteDrawingDataSourceImpl,
-    ): RemoteDrawingDataSource
 
-    @Binds
-    fun bindsImageBoxDataSource(
-        imageBoxDataSource: RemoteImageBoxDataSourceImpl,
-    ): RemoteImageBoxDataSource
-
-    @Binds
-    fun bindsLayerDataSource(
-        layerDataSource: RemoteLayerDataSourceImpl,
-    ): RemoteLayerDataSource
-
-    @Binds
-    fun bindsPageDataSource(
-        pageDataSource: RemotePageDataSourceImpl,
-    ): RemotePageDataSource
 
     @Binds
     fun bindsTextBoxDataSource(

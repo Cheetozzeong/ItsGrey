@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.di"
+    namespace = "com.tntt.data.di"
     compileSdk = 33
 
     defaultConfig {
@@ -52,7 +52,6 @@ dependencies {
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 
-    implementation(project(":domain:repo"))
     implementation(project(":data:book"))
     implementation(project(":data:drawing"))
     implementation(project(":data:imagebox"))

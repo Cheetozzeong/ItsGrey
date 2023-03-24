@@ -6,10 +6,11 @@ import com.tntt.model.BookType
 import com.tntt.model.SortType
 import com.tntt.model.BookInfo
 import com.tntt.repo.BookRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
-    private val remoteBookDataSource: RemoteBookDataSource
+    @ApplicationContext private val remoteBookDataSource: RemoteBookDataSource
 ) : BookRepository {
     init{
         Log.d("뭐 hilt test", "레포")
