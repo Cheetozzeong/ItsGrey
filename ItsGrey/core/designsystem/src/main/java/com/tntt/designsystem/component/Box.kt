@@ -153,18 +153,12 @@ fun BoxForEdit(
         }
     )
 
-    if (boxState == BoxState.Active) {
-        DrawDeleteCorner { onClickDelete() }
+    DrawDeleteCorner(
+        position = position.value.times(1 / density.value),
+        boxState = boxState
+    ) {
+        onClickDelete()
     }
-}
-
-
-private fun isCornerHit(touchOff: Offset, boxSize: Size, density: Float): Boolean {
-
-    val resizePointPosition = Offset(boxSize.width * density, boxSize.height * density) - Offset(x = CORNER_SIZE / 2 * density, y = CORNER_SIZE / 2 * density)
-    val distance = sqrt((touchOff.x - resizePointPosition.x).pow(2) + (touchOff.y - resizePointPosition.y).pow(2))
-
-    return distance <= CORNER_SIZE / 2 * density
 }
 
 @Composable
@@ -196,25 +190,30 @@ fun BoxDialog(
 
 @Composable
 private fun DrawDeleteCorner(
+    boxState: BoxState,
+    position: Offset,
     onClick: () -> Unit
 ) {
-    val cornerOffset = CORNER_SIZE / 2f
-    val xOffset = -cornerOffset
-    val yOffset = -cornerOffset
+    if(boxState == BoxState.Active) {
 
-    Box(
-        modifier = Modifier
-            .size(CORNER_SIZE.dp)
-            .offset(xOffset.dp, yOffset.dp)
-            .background(MaterialTheme.colorScheme.error, CircleShape)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Cancel,
-            tint = MaterialTheme.colorScheme.onError,
-            contentDescription = "Delete this box",
-        )
+        val cornerOffset = CORNER_SIZE / 2f
+        val xOffset = position.x - cornerOffset
+        val yOffset = position.y - cornerOffset
+
+        Box(
+            modifier = Modifier
+                .size(CORNER_SIZE.dp)
+                .offset(xOffset.dp, yOffset.dp)
+                .background(MaterialTheme.colorScheme.error, CircleShape)
+                .clickable { onClick() },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Cancel,
+                tint = MaterialTheme.colorScheme.onError,
+                contentDescription = "Delete this box",
+            )
+        }
     }
 }
 
@@ -227,15 +226,16 @@ private fun DrawResizeCorner(
     onDrag: (dragAmount: Offset) -> Unit,
     onDragEnd: () -> Unit
 ) {
-    val cornerOffset = CORNER_SIZE / 2f
-    val xOffset by remember(position, size) {
-        mutableStateOf(position.x + size.width - cornerOffset)
-    }
-    val yOffset by remember(position, size) {
-        mutableStateOf(position.y + size.height - cornerOffset)
-    }
-
     if(boxState == BoxState.Active) {
+
+        val cornerOffset = CORNER_SIZE / 2f
+        val xOffset by remember(position, size) {
+            mutableStateOf(position.x + size.width - cornerOffset)
+        }
+        val yOffset by remember(position, size) {
+            mutableStateOf(position.y + size.height - cornerOffset)
+        }
+
         Box(
             Modifier
                 .size(CORNER_SIZE.dp)
