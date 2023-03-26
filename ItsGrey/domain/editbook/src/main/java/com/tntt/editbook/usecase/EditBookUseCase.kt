@@ -36,13 +36,11 @@ class EditBookUseCase @Inject constructor(
     }
 
     fun saveBook(book: Book, userId: String, bookType: BookType = BookType.EDIT): Boolean {
-        return bookRepository.updateBookInfo(book.bookInfo, userId, bookType)
+        return (savePages(book.bookInfo.id, book.pages) && bookRepository.updateBookInfo(book.bookInfo, userId, bookType))
     }
 
     fun publishBook(book: Book, userId: String): Boolean {
         if (!pageRepository.hasCover(book.bookInfo.id))   return false
-
-        if(savePages(book.bookInfo.id, book.pages) && saveBook(book, userId, BookType.PUBLISHED))    return true
-        return false
+        return saveBook(book, userId, BookType.PUBLISHED)
     }
 }
