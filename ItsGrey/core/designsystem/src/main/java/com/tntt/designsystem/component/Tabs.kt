@@ -98,7 +98,9 @@ fun IgTabMainRow(
 @Composable
 fun IgTabsMain(
     titles: List<String>,
+    selectedTabIndex: (Int) -> Unit
 ){
+
     var selectedTabIndex by remember { mutableStateOf(0) }
     Row(
         modifier = Modifier
@@ -108,7 +110,8 @@ fun IgTabsMain(
         titles.forEachIndexed { index, title ->
             IgTabMainRow(
                 selected = selectedTabIndex == index,
-                onClick = { selectedTabIndex = index },
+                onClick = { selectedTabIndex = index;
+                          selectedTabIndex(selectedTabIndex)},
                 text = { Text(text = title) },
                 modifier = Modifier.weight(1f),
             )
@@ -232,7 +235,9 @@ fun IgTabsTemplate() {
 @Composable
 fun TapsMainPreview() {
     val titles = listOf("출간", "작업중", "abc")
-    IgTabsMain(titles)
+    IgTabsMain(titles, selectedTabIndex = {
+        // 여기서 it을 쓰는 형태얍~!
+    })
 }
 
 
