@@ -1,5 +1,6 @@
 package com.tntt.designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -35,6 +36,7 @@ import com.tntt.designsystem.theme.IgTheme
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.model.TextBoxInfo
+import java.security.Key
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -42,11 +44,6 @@ import kotlin.math.sqrt
 enum class ResizeType {
     Ratio,
     Free
-}
-
-enum class BoxEvent {
-    Move,
-    Resize,
 }
 
 const val CORNER_SIZE = 30
@@ -84,12 +81,12 @@ fun BoxForEdit(
     updateSize: (Size) -> Unit,
     resizeType: ResizeType,
     onClickDelete: () -> Unit,
-    innerContent: @Composable () -> Unit
+    innerContent: @Composable () -> Unit,
 ) {
 
     val density = rememberSaveable { mutableStateOf(1f) }
     val position = remember(inputPosition) { mutableStateOf(inputPosition) }
-    val size = remember(inputSize) { mutableStateOf(inputSize) }
+    val size = remember(inputSize) { mutableStateOf(inputSize.times(1 / density.value)) }
     val ratio by lazy { inputSize.width / inputSize.height }
 
     val borderStyle = if (boxState == BoxState.Active) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
@@ -104,50 +101,16 @@ fun BoxForEdit(
                     position.value.y.roundToInt()
                 )
             }
-            .pointerInput(boxState) {
+            .pointerInput(inputPosition, boxState) {
                 when (boxState) {
                     BoxState.None -> return@pointerInput
                     else -> {
-                        val event = mutableStateOf(BoxEvent.Move)
                         detectDragGestures(
-                            onDragStart = { offset ->
-                                if (isCornerHit(offset, size.value, density.value)) {
-                                    event.value = BoxEvent.Resize
-                                }
-                            },
-                            onDrag = { change, dragAmount ->
-                                when (event.value) {
-                                    BoxEvent.Move -> {
-                                        position.value += dragAmount
-                                    }
-                                    BoxEvent.Resize -> {
-                                        when (resizeType) {
-                                            ResizeType.Ratio -> {
-                                                size.value = Size(
-                                                    size.value.width + (dragAmount.x / density.value),
-                                                    size.value.height + (dragAmount.x / density.value * ratio)
-                                                )
-                                            }
-                                            ResizeType.Free -> {
-                                                size.value = Size(
-                                                    size.value.width + (dragAmount.x / density.value),
-                                                    size.value.height + (dragAmount.y / density.value)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
+                            onDrag = { _, dragAmount ->
+                                position.value += dragAmount
                             },
                             onDragEnd = {
-                                when (event.value) {
-                                    BoxEvent.Resize -> {
-                                        updateSize(size.value)
-                                        event.value = BoxEvent.Move
-                                    }
-                                    BoxEvent.Move -> {
-                                        updatePosition(position.value)
-                                    }
-                                }
+                                updatePosition(position.value)
                             }
                         )
                     }
@@ -159,16 +122,42 @@ fun BoxForEdit(
                     style = borderStyle
                 )
             }
-            .size((size.value.width / density.value).dp, (size.value.height / density.value).dp)
-
+            .size(size.value.width.dp, size.value.height.dp)
     ) {
         innerContent()
-        if (boxState == BoxState.Active) {
-            DrawResizeCorner(size.value)
-            DrawDeleteCorner { onClickDelete() }
+    }
+
+    DrawResizeCorner(
+        key = inputSize,
+        boxState,
+        position.value.times(1 / density.value),
+        size.value,
+        onDrag = { dragAmount ->
+            when (resizeType) {
+                ResizeType.Ratio -> {
+                    size.value = Size(
+                        size.value.width + dragAmount.x / density.value,
+                        size.value.height + dragAmount.x * ratio / density.value
+                    )
+                }
+                ResizeType.Free -> {
+                    size.value = Size(
+                        size.value.width + dragAmount.x / density.value,
+                        size.value.height + dragAmount.y / density.value
+                    )
+                }
+            }
+        },
+        onDragEnd = {
+            updateSize(size.value.times(density.value))
         }
+    )
+
+    if (boxState == BoxState.Active) {
+        DrawDeleteCorner { onClickDelete() }
     }
 }
+
 
 private fun isCornerHit(touchOff: Offset, boxSize: Size, density: Float): Boolean {
 
@@ -231,24 +220,48 @@ private fun DrawDeleteCorner(
 
 @Composable
 private fun DrawResizeCorner(
+    key: Size,
+    boxState: BoxState,
+    position: Offset,
     size: Size,
+    onDrag: (dragAmount: Offset) -> Unit,
+    onDragEnd: () -> Unit
 ) {
-    val xOffset = size.width - CORNER_SIZE
-    val yOffset = size.height - CORNER_SIZE
+    val cornerOffset = CORNER_SIZE / 2f
+    val xOffset by remember(position, size) {
+        mutableStateOf(position.x + size.width - cornerOffset)
+    }
+    val yOffset by remember(position, size) {
+        mutableStateOf(position.y + size.height - cornerOffset)
+    }
 
-    Box(
-        Modifier
-            .size(CORNER_SIZE.dp)
-            .offset(xOffset.dp, yOffset.dp)
-            .background(MaterialTheme.colorScheme.onSecondary, CircleShape),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.OpenInFull,
-            tint = MaterialTheme.colorScheme.secondary,
-            contentDescription = "박스 삭제 아이콘",
-            modifier = Modifier.rotate(90f)
-        )
+    if(boxState == BoxState.Active) {
+        Box(
+            Modifier
+                .size(CORNER_SIZE.dp)
+                .offset(xOffset.dp, yOffset.dp)
+                .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
+                .pointerInput(key) {
+                    detectDragGestures(
+                        onDrag = { _, dragAmount ->
+                            onDrag(dragAmount)
+                        },
+                        onDragEnd = {
+                            onDragEnd()
+                        }
+
+                    )
+                }
+            ,
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.OpenInFull,
+                tint = MaterialTheme.colorScheme.secondary,
+                contentDescription = "박스 삭제 아이콘",
+                modifier = Modifier.rotate(90f)
+            )
+        }
     }
 }
 

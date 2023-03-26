@@ -263,9 +263,13 @@ private fun PreviewTextBox() {
                         )
                     }
             ) {
-                TextBox(
-                    parent = parentR,
+                TextBoxForEdit(
+                    parent = parentL,
                     textBoxInfo = textBoxInfoR.value,
+                    updateTextBoxInfo = { newTextBoxInfo ->
+                        textBoxInfoR.value = newTextBoxInfo
+                    },
+                    onClickDelete = {}
                 )
             }
 
