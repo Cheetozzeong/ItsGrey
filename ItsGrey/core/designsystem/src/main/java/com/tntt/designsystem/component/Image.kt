@@ -5,8 +5,10 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -17,11 +19,13 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.tntt.designsystem.theme.IgTheme
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
@@ -48,48 +52,100 @@ fun ImageBox(
         Image(
             bitmap = imageBitmap,
             contentDescription = "",
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         )
     }
 }
 
-//@Composable
-//fun ImageBoxForEdit(
-//    boxData: BoxData,
-//    updateBoxData: (BoxData) -> Unit,
-//    onClickDelete: () -> Unit,
-//    imageData: ImageBitmap,
-//    dialogComponent: List<@Composable () -> Unit>,
-//) {
-//
-//    val isDialogShown = remember(boxData.state) { mutableStateOf(boxData.state == BoxState.Active) }
-//
-//    Box() {
-//        if(isDialogShown.value) {
-//            BoxDialog(
-//                dialogComponent = dialogComponent,
-//                position = boxData.position
-//            )
-//        }
-//
-//        BoxForEdit(
-//            boxData = boxData,
-//            updateBoxData = { newBoxData -> updateBoxData(newBoxData) },
-//            onClickDelete = { onClickDelete() },
-//            innerContent = {
-//
-//                Image(
-//                    // TODO: imageData 받는거로 변경
-//                    painter = painterResource(id = R.drawable.icon_preview_button_48),
-//                    contentDescription = "",
-//                    modifier = Modifier
-//                        .fillMaxSize(),
-//                )
-//
-//            }
-//        )
-//    }
-//}
+@Composable
+fun ImageBoxForEdit(
+    parent: Rect,
+    imageBoxInfo: ImageBoxInfo,
+    imageBitmap: ImageBitmap,
+    updateImageBoxInfo: (ImageBoxInfo) -> Unit,
+    onClickDelete: () -> Unit,
+    dialogComponent: List<@Composable () -> Unit>,
+) {
+
+    val isDialogShown = remember(imageBoxInfo.boxData.state) { mutableStateOf(imageBoxInfo.boxData.state == BoxState.Active) }
+    val position = remember(parent) {
+        mutableStateOf(
+            Offset(
+                imageBoxInfo.boxData.offsetRatioX * parent.width,
+                imageBoxInfo.boxData.offsetRatioY * parent.height
+            )
+        )
+    }
+    val size = remember(parent) {
+        mutableStateOf(
+            Size(
+                imageBoxInfo.boxData.widthRatio * parent.width,
+                imageBoxInfo.boxData.heightRatio * parent.height
+            )
+        )
+    }
+
+    if(imageBoxInfo.boxData.state == BoxState.InActive) {
+        updateImageBoxInfo(
+            ImageBoxInfo(
+                id = imageBoxInfo.id,
+                boxData = BoxData(
+                    offsetRatioX = position.value.x / parent.width,
+                    offsetRatioY = position.value.y / parent.height,
+                    widthRatio = size.value.width / parent.width,
+                    heightRatio = size.value.height / parent.height,
+                    state = BoxState.None
+                )
+            )
+        )
+    }
+
+
+    Box() {
+        if(isDialogShown.value) {
+            BoxDialog(
+                dialogComponent = dialogComponent,
+                position = position.value
+            )
+        }
+
+        BoxForEdit(
+            boxState = imageBoxInfo.boxData.state,
+            inputPosition = position.value,
+            inputSize = size.value,
+            resizeType = ResizeType.Ratio,
+            updatePosition = { newPosition ->
+                position.value = newPosition
+            },
+            updateSize = { newSize ->
+                size.value = newSize
+            },
+            onClickDelete = { onClickDelete() },
+            innerContent = {
+                Image(
+                    bitmap = imageBitmap,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(imageBoxInfo.boxData.state) {
+                            if(imageBoxInfo.boxData.state == BoxState.None) {
+                                detectTapGestures {
+                                    updateImageBoxInfo(
+                                        imageBoxInfo.copy(
+                                            boxData = imageBoxInfo.boxData.copy(
+                                                state = BoxState.Active
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+                        },
+                )
+            }
+        )
+    }
+}
 
 @Preview
 @Composable
@@ -133,26 +189,23 @@ private fun PreviewImage() {
             }
     ) {
         IgTheme {
-            ImageBox(
+//            ImageBox(
+//                imageBoxInfo = imageBoxInfo.value,
+//                imageBitmap = bitmap,
+//                parent = parentL
+//            )
+
+            ImageBoxForEdit(
+                parent = parentL,
                 imageBoxInfo = imageBoxInfo.value,
                 imageBitmap = bitmap,
-                parent = parentL
+                updateImageBoxInfo = { newImageBoxInfo -> imageBoxInfo.value = newImageBoxInfo },
+                onClickDelete = {},
+                dialogComponent = listOf {
+                    IgTextButton(onClick = { /*TODO*/ }, text = { Text(text = "abc") })
+                    IgTextButton(onClick = { /*TODO*/ }, text = { Text(text = "abc") })
+                }
             )
-
-//            ImageBoxForEdit(
-//                boxData,
-//                updateBoxData = { updateBoxData -> boxData = updateBoxData },
-//                onClickDelete = {},
-//                imageData = ImageBitmap(300, 300, ImageBitmapConfig.Argb8888),
-//                dialogComponent = listOf {
-//                    Button(onClick = { /*TODO*/ }) {
-//
-//                    }
-//                    Button(onClick = { /*TODO*/ }) {
-//
-//                    }
-//                }
-//            )
         }
     }
 }
