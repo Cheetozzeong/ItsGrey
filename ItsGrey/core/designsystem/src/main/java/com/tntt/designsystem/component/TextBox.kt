@@ -74,13 +74,17 @@ fun TextBox(
 
 @Composable
 fun TextBoxForEdit(
+    activeBoxId: String,
     parent: Rect,
     textBoxInfo: TextBoxInfo,
     updateTextBoxInfo: (TextBoxInfo) -> Unit,
+    onClick: (id: String) -> Unit,
     onClickDelete: () -> Unit,
 ) {
 
-    val isEnabled by remember(textBoxInfo) { mutableStateOf(textBoxInfo.boxData.state == BoxState.Active) }
+    val state = remember(activeBoxId) {
+        mutableStateOf(if(activeBoxId == textBoxInfo.id) BoxState.Active else BoxState.None)
+    }
     val position = remember(parent) {
         mutableStateOf(
             Offset(
@@ -126,7 +130,7 @@ fun TextBoxForEdit(
     }
 
     BoxForEdit(
-        boxState = textBoxInfo.boxData.state,
+        boxState = state.value,
         inputPosition = position.value,
         inputSize = size.value,
         resizeType = ResizeType.Free,
@@ -147,21 +151,12 @@ fun TextBoxForEdit(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding((CORNER_SIZE / 2f).dp)
-                    .pointerInput(isEnabled) {
+                    .pointerInput(state.value) {
                         detectTapGestures {
-                            if (!isEnabled) {
-                                updateTextBoxInfo(
-                                    textBoxInfo.copy(
-                                        boxData = textBoxInfo.boxData.copy(
-                                            state = BoxState.Active
-                                        )
-                                    )
-                                )
-                            }
-                            isEnabled != isEnabled
+                            if (state.value == BoxState.None) { onClick(textBoxInfo.id) }
                         }
                     },
-                enabled = isEnabled,
+                enabled = state.value == BoxState.Active,
                 textStyle = TextStyle(
                     fontSize = fontSize.value.sp
                 )
@@ -238,14 +233,14 @@ private fun PreviewTextBox() {
                         )
                     }
             ) {
-                TextBoxForEdit(
-                    parent = parentL,
-                    textBoxInfo = textBoxInfoL.value,
-                    updateTextBoxInfo = { newTextBoxInfo ->
-                        textBoxInfoL.value = newTextBoxInfo
-                    },
-                    onClickDelete = {}
-                )
+//                TextBoxForEdit(
+//                    parent = parentL,
+//                    textBoxInfo = textBoxInfoL.value,
+//                    updateTextBoxInfo = { newTextBoxInfo ->
+//                        textBoxInfoL.value = newTextBoxInfo
+//                    },
+//                    onClickDelete = {}
+//                )
             }
             Box(
                 Modifier
@@ -263,14 +258,14 @@ private fun PreviewTextBox() {
                         )
                     }
             ) {
-                TextBoxForEdit(
-                    parent = parentL,
-                    textBoxInfo = textBoxInfoR.value,
-                    updateTextBoxInfo = { newTextBoxInfo ->
-                        textBoxInfoR.value = newTextBoxInfo
-                    },
-                    onClickDelete = {}
-                )
+//                TextBoxForEdit(
+//                    parent = parentL,
+//                    textBoxInfo = textBoxInfoR.value,
+//                    updateTextBoxInfo = { newTextBoxInfo ->
+//                        textBoxInfoR.value = newTextBoxInfo
+//                    },
+//                    onClickDelete = {}
+//                )
             }
 
         }

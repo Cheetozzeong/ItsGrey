@@ -60,15 +60,20 @@ fun ImageBox(
 
 @Composable
 fun ImageBoxForEdit(
+    activeBoxId: String,
     parent: Rect,
     imageBoxInfo: ImageBoxInfo,
     imageBitmap: ImageBitmap,
     updateImageBoxInfo: (ImageBoxInfo) -> Unit,
+    onClick: (id: String) -> Unit,
     onClickDelete: () -> Unit,
     dialogComponent: List<@Composable () -> Unit>,
 ) {
 
     val isDialogShown = remember(imageBoxInfo.boxData.state) { mutableStateOf(imageBoxInfo.boxData.state == BoxState.Active) }
+    val state = remember(activeBoxId) {
+        mutableStateOf(if(activeBoxId == imageBoxInfo.id) BoxState.Active else BoxState.None)
+    }
     val position = remember(parent) {
         mutableStateOf(
             Offset(
@@ -111,7 +116,7 @@ fun ImageBoxForEdit(
         }
 
         BoxForEdit(
-            boxState = imageBoxInfo.boxData.state,
+            boxState = state.value,
             inputPosition = position.value,
             inputSize = size.value,
             resizeType = ResizeType.Ratio,
@@ -128,16 +133,10 @@ fun ImageBoxForEdit(
                     contentDescription = "",
                     modifier = Modifier
                         .fillMaxSize()
-                        .pointerInput(imageBoxInfo.boxData.state) {
-                            if(imageBoxInfo.boxData.state == BoxState.None) {
+                        .pointerInput(state.value) {
+                            if (state.value == BoxState.None) {
                                 detectTapGestures {
-                                    updateImageBoxInfo(
-                                        imageBoxInfo.copy(
-                                            boxData = imageBoxInfo.boxData.copy(
-                                                state = BoxState.Active
-                                            )
-                                        )
-                                    )
+                                    onClick(imageBoxInfo.id)
                                 }
                             }
                         },
@@ -195,17 +194,17 @@ private fun PreviewImage() {
 //                parent = parentL
 //            )
 
-            ImageBoxForEdit(
-                parent = parentL,
-                imageBoxInfo = imageBoxInfo.value,
-                imageBitmap = bitmap,
-                updateImageBoxInfo = { newImageBoxInfo -> imageBoxInfo.value = newImageBoxInfo },
-                onClickDelete = {},
-                dialogComponent = listOf {
-                    IgTextButton(onClick = { /*TODO*/ }, text = { Text(text = "abc") })
-                    IgTextButton(onClick = { /*TODO*/ }, text = { Text(text = "abc") })
-                }
-            )
+//            ImageBoxForEdit(
+//                parent = parentL,
+//                imageBoxInfo = imageBoxInfo.value,
+//                imageBitmap = bitmap,
+//                updateImageBoxInfo = { newImageBoxInfo -> imageBoxInfo.value = newImageBoxInfo },
+//                onClickDelete = {},
+//                dialogComponent = listOf {
+//                    IgTextButton(onClick = { /*TODO*/ }, text = { Text(text = "abc") })
+//                    IgTextButton(onClick = { /*TODO*/ }, text = { Text(text = "abc") })
+//                }
+//            )
         }
     }
 }
