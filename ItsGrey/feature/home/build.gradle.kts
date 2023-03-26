@@ -44,6 +44,7 @@ dependencies {
 
     implementation(project(":core:designsystem"))
     implementation(project(":domain:home"))
+    implementation(project(":domain:model"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
