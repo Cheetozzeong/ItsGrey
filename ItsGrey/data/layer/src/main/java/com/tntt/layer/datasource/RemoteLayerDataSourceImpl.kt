@@ -67,4 +67,8 @@ class RemoteLayerDataSourceImpl @Inject constructor(
             }
         return result
     }
+
+    override fun getSumLayer(imageBoxId: String): Bitmap {
+        TODO("Not yet implemented")
+    }
 }

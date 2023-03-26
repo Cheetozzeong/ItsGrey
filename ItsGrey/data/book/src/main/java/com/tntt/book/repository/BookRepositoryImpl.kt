@@ -2,6 +2,7 @@ package com.tntt.book.repository
 
 import android.util.Log
 import com.tntt.book.datasource.RemoteBookDataSource
+import com.tntt.book.model.BookDto
 import com.tntt.model.BookType
 import com.tntt.model.SortType
 import com.tntt.model.BookInfo
@@ -38,11 +39,15 @@ class BookRepositoryImpl @Inject constructor(
         return bookList
     }
 
-    override fun createBook(userId: String): String {
+    override fun createBookInfo(userId: String): String {
         return bookDataSource.createBookDto(userId)
     }
 
-    override fun deleteBook(bookIdList: List<String>): Boolean {
+    override fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Boolean {
+        return bookDataSource.updateBookDto(BookDto(bookInfo.id, userId, bookInfo.title, bookType, bookInfo.saveDate))
+    }
+
+    override fun deleteBookInfo(bookIdList: List<String>): Boolean {
         return bookDataSource.deleteBook(bookIdList)
     }
 }

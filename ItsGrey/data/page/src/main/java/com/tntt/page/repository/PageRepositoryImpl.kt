@@ -1,14 +1,23 @@
 package com.tntt.page.repository
 
+import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
+import com.tntt.layer.datasource.RemoteLayerDataSource
+import com.tntt.model.ImageBoxInfo
 import com.tntt.model.PageInfo
+import com.tntt.model.TextBoxInfo
+import com.tntt.model.Thumbnail
 import com.tntt.page.datasource.RemotePageDataSource
 import com.tntt.page.datasource.RemotePageDataSourceImpl
 import com.tntt.page.model.PageDto
 import com.tntt.repo.PageRepository
+import com.tntt.textbox.datasource.RemoteTextBoxDataSource
 import javax.inject.Inject
 
 class PageRepositoryImpl @Inject constructor(
-    private val pageDataSource: RemotePageDataSource
+    private val pageDataSource: RemotePageDataSource,
+    private val imageBoxDataSource: RemoteImageBoxDataSource,
+    private val textBoxDataSource: RemoteTextBoxDataSource,
+    private val layerDataSource: RemoteLayerDataSource,
 ): PageRepository {
 
     override fun createPageInfo(bookId: String, pageInfo: PageInfo): String {
@@ -43,5 +52,21 @@ class PageRepositoryImpl @Inject constructor(
             pageDtoList.add(PageDto(pageInfo.id, bookId, pageInfo.order))
         }
         return pageDataSource.updatePageDto(pageDtoList)
+    }
+
+    override fun getThumbnail(pageId: String): Thumbnail {
+        val imageBoxDto = imageBoxDataSource.getImageBoxDto(pageId)
+        val imageBoxInfo = ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxState)
+        val textBoxDtoList = textBoxDataSource.getTextBoxDtoList(pageId)
+        val textBoxInfoList = mutableListOf<TextBoxInfo>()
+        for (textBoxDto in textBoxDtoList) {
+            textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxState))
+        }
+        val sumLayer = layerDataSource.getSumLayer(imageBoxInfo.id)
+        return Thumbnail(imageBoxInfo, sumLayer, textBoxInfoList)
+    }
+
+    override fun hasCover(bookId: String): Boolean {
+        return pageDataSource.hasCover(bookId)
     }
 }

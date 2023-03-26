@@ -47,9 +47,6 @@ class LayerRepositoryImpl @Inject constructor(
         return layerDataSource.deleteLayerDtoList(imageBoxId)
     }
 
-    override fun getSumLayer(pageId: String): Bitmap {
-        TODO("Not yet implemented")
-    }
 
     // 서버 통신 테스트 메서드
 //    fun createRoughSketch() {

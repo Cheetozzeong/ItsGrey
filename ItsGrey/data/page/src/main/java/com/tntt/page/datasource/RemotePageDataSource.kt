@@ -8,4 +8,5 @@ interface RemotePageDataSource {
     fun getFirstPageDto(bookId: String): PageDto
     fun getPageDtoList(bookId: String): List<PageDto>
     fun updatePageDto(pageDtoList: List<PageDto>): Boolean
+    fun hasCover(bookId: String): Boolean
 }
