@@ -5,19 +5,15 @@ plugins {
 
 android {
     namespace = "com.tntt.ui"
-    compileSdk = AppConfig.compileSdk
+    compileSdk = 33
 
     defaultConfig {
         minSdk = AppConfig.minSdk
         targetSdk = AppConfig.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
 
-    }
-
-    buildFeatures {
-        compose = true
-        viewBinding = true
     }
 
     composeOptions {
@@ -25,7 +21,7 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -40,12 +36,16 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        compose = true
+    }
 }
+
 
 dependencies {
 
-    implementation(project(":domain:model"))
     implementation(project(":core:designsystem"))
+    implementation(project(":domain:model"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
@@ -72,4 +72,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation (Libraries.Test.JUNIT)
     androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
+
+    implementation ("androidx.startup:startup-runtime:1.0.0")
 }
