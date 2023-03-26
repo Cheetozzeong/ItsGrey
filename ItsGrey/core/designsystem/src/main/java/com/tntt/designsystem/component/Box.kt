@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -26,6 +27,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +49,8 @@ enum class BoxEvent {
     Resize,
 }
 
+const val CORNER_SIZE = 30
+
 @Composable
 fun Box(
     position: Offset,
@@ -54,27 +58,28 @@ fun Box(
     innerContent: @Composable () -> Unit
 ) {
 
+    val density = rememberSaveable { mutableStateOf(1f) }
+
     Box(
         Modifier
             .offset {
+                density.value = this.density
                 IntOffset(
                     position.x.roundToInt(),
                     position.y.roundToInt()
                 )
             }
-            .size(size.width.dp, size.height.dp)
+            .size((size.width / density.value).dp, (size.height / density.value).dp)
     ) {
         innerContent()
     }
 }
 
-const val CORNER_SIZE = 30
-
 @Composable
 fun BoxForEdit(
     boxState: BoxState,
-    position: Offset,
-    size: Size,
+    inputPosition: Offset,
+    inputSize: Size,
     updatePosition: (Offset) -> Unit,
     updateSize: (Size) -> Unit,
     resizeType: ResizeType,
@@ -82,10 +87,10 @@ fun BoxForEdit(
     innerContent: @Composable () -> Unit
 ) {
 
-    val density = remember { mutableStateOf(1f) }
-    val position = remember { mutableStateOf(position) }
-    val size = remember { mutableStateOf(size) }
-    val ratio by lazy { size.value.width / size.value.height }
+    val density = rememberSaveable { mutableStateOf(1f) }
+    val position = remember(inputPosition) { mutableStateOf(inputPosition) }
+    val size = remember(inputSize) { mutableStateOf(inputSize) }
+    val ratio by lazy { inputSize.width / inputSize.height }
 
     val borderStyle = if (boxState == BoxState.Active) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
     val borderColor = if (boxState == BoxState.Active) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary
@@ -154,7 +159,7 @@ fun BoxForEdit(
                     style = borderStyle
                 )
             }
-            .size(size.value.width.dp, size.value.height.dp)
+            .size((size.value.width / density.value).dp, (size.value.height / density.value).dp)
 
     ) {
         innerContent()
@@ -303,11 +308,11 @@ private fun PreviewBox() {
 
             BoxForEdit(
                 boxState = textBoxInfo.value.boxData.state,
-                position = Offset(
+                inputPosition = Offset(
                     textBoxInfo.value.boxData.offsetRatioX * pageSize.width,
                     textBoxInfo.value.boxData.offsetRatioY * pageSize.height
                 ),
-                size = Size(
+                inputSize = Size(
                     textBoxInfo.value.boxData.widthRatio * pageSize.width,
                     textBoxInfo.value.boxData.heightRatio * pageSize.height
                 ),

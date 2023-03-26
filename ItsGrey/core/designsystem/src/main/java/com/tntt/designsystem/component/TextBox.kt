@@ -39,8 +39,8 @@ fun TextBox(
     val position = remember(parent) {
         mutableStateOf(
             Offset(
-                parent.left + textBoxInfo.boxData.offsetRatioX * parent.width,
-                parent.top + textBoxInfo.boxData.offsetRatioY * parent.height
+                textBoxInfo.boxData.offsetRatioX * parent.width,
+                textBoxInfo.boxData.offsetRatioY * parent.height
             )
         )
     }
@@ -52,9 +52,9 @@ fun TextBox(
             )
         )
     }
-    val fontSize = remember(parent) {
+    val fontSize = remember(parent, textBoxInfo) {
         mutableStateOf(
-            textBoxInfo.fontSizeRatio * textBoxInfo.boxData.offsetRatioX * parent.width
+            textBoxInfo.fontSizeRatio * textBoxInfo.boxData.widthRatio * parent.width
         )
     }
 
@@ -65,7 +65,9 @@ fun TextBox(
         Text(
             text = textBoxInfo.text,
             fontSize = fontSize.value.sp,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding((CORNER_SIZE / 2f).dp)
         )
     }
 }
@@ -79,15 +81,15 @@ fun TextBoxForEdit(
 ) {
 
     val isEnabled by remember(textBoxInfo) { mutableStateOf(textBoxInfo.boxData.state == BoxState.Active) }
-    val position = remember(parent, textBoxInfo) {
+    val position = remember(parent) {
         mutableStateOf(
             Offset(
-                parent.left + textBoxInfo.boxData.offsetRatioX * parent.width,
-                parent.top + textBoxInfo.boxData.offsetRatioY * parent.height
+                textBoxInfo.boxData.offsetRatioX * parent.width,
+                textBoxInfo.boxData.offsetRatioY * parent.height
             )
         )
     }
-    val size = remember(parent, textBoxInfo) {
+    val size = remember(parent) {
         mutableStateOf(
             Size(
                 textBoxInfo.boxData.widthRatio * parent.width,
@@ -97,10 +99,10 @@ fun TextBoxForEdit(
     }
     val fontSize = remember(parent, textBoxInfo) {
         mutableStateOf(
-            textBoxInfo.fontSizeRatio * textBoxInfo.boxData.offsetRatioX * parent.width
+            textBoxInfo.fontSizeRatio * textBoxInfo.boxData.widthRatio * parent.width
         )
     }
-    val text = remember(textBoxInfo) {
+    val text = remember {
         mutableStateOf(
             textBoxInfo.text
         )
@@ -125,8 +127,8 @@ fun TextBoxForEdit(
 
     BoxForEdit(
         boxState = textBoxInfo.boxData.state,
-        position = position.value,
-        size = size.value,
+        inputPosition = position.value,
+        inputSize = size.value,
         resizeType = ResizeType.Free,
         updatePosition = { newPosition ->
             position.value = newPosition
@@ -177,11 +179,11 @@ private fun PreviewTextBox() {
             TextBoxInfo(
                 id = "abc",
                 text = "LEFT",
-                fontSizeRatio = 0.1f,
+                fontSizeRatio = 0.05f,
                 boxData = BoxData(
                     offsetRatioX = 0.2f,
                     offsetRatioY = 0.1f,
-                    widthRatio = 0.8f,
+                    widthRatio = 0.5f,
                     heightRatio = 0.3f
                 )
             )
@@ -192,11 +194,11 @@ private fun PreviewTextBox() {
             TextBoxInfo(
                 id = "abc",
                 text = "RIGHT",
-                fontSizeRatio = 0.1f,
+                fontSizeRatio = 0.05f,
                 boxData = BoxData(
                     offsetRatioX = 0.2f,
                     offsetRatioY = 0.1f,
-                    widthRatio = 0.8f,
+                    widthRatio = 0.5f,
                     heightRatio = 0.3f
                 )
             )
@@ -225,12 +227,12 @@ private fun PreviewTextBox() {
                     .weight(1f)
                     .aspectRatio(2f / 3f)
                     .onGloballyPositioned { layoutCoordinates ->
-                        parentR = layoutCoordinates.boundsInRoot()
-                        Log.d("TEST - right", "${layoutCoordinates.boundsInRoot()}")
+                        parentL = layoutCoordinates.boundsInRoot()
+                        Log.d("TEST - left", "${layoutCoordinates.boundsInRoot()}")
                     }
                     .clickable {
-                        textBoxInfoR.value = textBoxInfoR.value.copy(
-                            boxData = textBoxInfoR.value.boxData.copy(
+                        textBoxInfoL.value = textBoxInfoL.value.copy(
+                            boxData = textBoxInfoL.value.boxData.copy(
                                 state = BoxState.InActive
                             )
                         )
