@@ -165,7 +165,7 @@ private fun PreviewImage() {
         )
     }
 
-    val bitmap = ImageBitmap.imageResource(R.drawable.happy)
+    val bitmap = ImageBitmap.imageResource(R.drawable.icon_add_button_48)
 
     var parentL by rememberSaveable(stateSaver = RectSaver) {
         mutableStateOf(

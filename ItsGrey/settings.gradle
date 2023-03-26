@@ -16,8 +16,8 @@ rootProject.name = "ItsGrey"
 include ':app'
 /* core */
 include ':core:designsystem'
-include ':core:ui'
 include ':core:network'
+include ':core:ui'
 /* domain */
 include ':domain:repo'
 include ':domain:model'

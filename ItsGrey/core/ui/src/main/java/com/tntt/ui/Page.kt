@@ -1,110 +1,172 @@
-//package com.tntt.ui
-//
-//import android.content.res.Resources
-//import android.graphics.BitmapFactory
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.remember
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.geometry.Offset
-//import androidx.compose.ui.graphics.asImageBitmap
-//import androidx.compose.ui.layout.onGloballyPositioned
-//import androidx.compose.ui.tooling.preview.Preview
-//import com.tntt.designsystem.component.BoxData
-//import com.tntt.designsystem.component.ImageBox
-//import com.tntt.designsystem.component.ResizeType
-//import com.tntt.model.*
-//
-//@Composable
-//fun PageForView(
-//    thumbnail: Thumbnail,
-//) {
-//
-//    val imageBoxInfo = remember { mutableListOf(thumbnail.imageBox) }
-//
-//    Box(
-//        Modifier
-//            .fillMaxWidth()
-//            .aspectRatio(2f / 3f)
-//            .onGloballyPositioned { layoutCoordinates ->
-//                imageBoxInfo.
-//                layoutCoordinates.size.height
-//                layoutCoordinates.size.width
-//            }
-//    ) {
-//        BoxData(
-//            id = thumbnail.imageBox.id,
-//            resizeType = ResizeType.Ratio,
-//            position = Offset(imageBoxInfo.size)
-//        )
-//        ImageBox(
-//            boxData = thumbnail.imageBox.boxState,
-//            imageData = thumbnail.image.asImageBitmap()
-//        )
-//    }
-//}
-//
-//@Composable
-//@Preview
-//private fun PreviewPage() {
-//
-//    Row(
-//        Modifier.fillMaxSize()
-//    ) {
-//        Box(modifier = Modifier.weight(1f)) {
-//            PageForView(thumbnail = Thumbnail(
-//                imageBox = ImageBoxInfo(
-//                    id = "id",
-//                    BoxState(
-//                        offsetRatioX = 0.1f,
-//                        offsetRatioY = 0.1f,
-//                        widthRatio = 0.5f,
-//                        heightRatio = 0.3f
-//                    )
-//                ),
-//                image = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.happy),
-//                textBoxes = listOf(
-//                    TextBoxInfo(
-//                        id = "a",
-//                        text = "A",
-//                        fontSizeRatio = 0.1f,
-//                        BoxState(
-//                            offsetRatioX = 0.2f,
-//                            offsetRatioY = 0.2f,
-//                            widthRatio = 0.5f,
-//                            heightRatio = 0.3f
-//                        )
-//                    )
-//                )
-//            ))
-//        }
-//
-//        Box(modifier = Modifier.weight(1f)) {
-//            PageForView(thumbnail = Thumbnail(
-//                imageBox = ImageBoxInfo(
-//                    id = "id",
-//                    BoxData(
-//                        offsetRatioX = 0.1f,
-//                        offsetRatioY = 0.1f,
-//                        widthRatio = 0.5f,
-//                        heightRatio = 0.3f
-//                    )
-//                ),
-//                image = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.happy),
-//                textBoxes = listOf(
-//                    TextBoxInfo(
-//                        id = "a",
-//                        text = "A",
-//                        fontSizeRatio = 0.1f,
-//                        BoxData(
-//                            offsetRatioX = 0.2f,
-//                            offsetRatioY = 0.2f,
-//                            widthRatio = 0.5f,
-//                            heightRatio = 0.3f
-//                        )
-//                    )
-//                )
-//            ))
-//        }
-//    }
-//}
+package com.tntt.ui
+
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import com.tntt.designsystem.component.ImageBox
+import com.tntt.designsystem.component.RectSaver
+import com.tntt.designsystem.component.TextBox
+import com.tntt.model.BoxData
+import com.tntt.model.ImageBoxInfo
+import com.tntt.model.TextBoxInfo
+import com.tntt.model.Thumbnail
+
+@Composable
+fun PageForView(
+    modifier: Modifier,
+    thumbnail: Thumbnail,
+) {
+    var parent by rememberSaveable(stateSaver = RectSaver){
+        mutableStateOf(
+            Rect(Offset.Zero, Size.Zero)
+        )
+    }
+    val imageBoxInfo = remember{ mutableStateOf(thumbnail.imageBox) }
+    val contentBoxInfoList = remember{
+        thumbnail.textBoxes.toMutableStateList()
+    }
+
+    Box(
+        modifier
+            .aspectRatio(2f / 3f)
+            .onGloballyPositioned { layoutCoordinates ->
+                parent = layoutCoordinates.boundsInRoot()
+            }
+    ){
+        ImageBox(parent = parent, imageBoxInfo = imageBoxInfo.value, imageBitmap = thumbnail.image.asImageBitmap())
+        contentBoxInfoList.map{textBoxInfo->
+            with(textBoxInfo){
+                TextBox(
+                    parent = parent,
+                    textBoxInfo = TextBoxInfo(
+                        id,
+                        text,
+                        fontSizeRatio,
+                        boxData
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun PreviewPage() {
+
+    Row (
+        Modifier.fillMaxSize()
+    ){
+        PageForView(
+            modifier = Modifier.weight(1f),
+            thumbnail = Thumbnail(
+                ImageBoxInfo(
+                    id = "abc",
+                    boxData = BoxData(
+                        offsetRatioX = 0.2f,
+                        offsetRatioY = 0.2f,
+                        widthRatio = 0.5f,
+                        heightRatio = 0.3f
+                    )
+                ),
+                image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888),
+                listOf(
+                    TextBoxInfo(
+                        id = "abc",
+                        text = "ABC",
+                        fontSizeRatio = 0.05f,
+                        boxData = BoxData(
+                            offsetRatioX = 0.2f,
+                            offsetRatioY = 0.2f,
+                            widthRatio = 0.5f,
+                            heightRatio = 0.3f
+                        )
+                    ),
+                    TextBoxInfo(
+                        id = "def",
+                        text = "DEF",
+                        fontSizeRatio = 0.05f,
+                        boxData = BoxData(
+                            offsetRatioX = 0.2f,
+                            offsetRatioY = 0.4f,
+                            widthRatio = 0.5f,
+                            heightRatio = 0.3f
+                        )
+                    ),
+                    TextBoxInfo(
+                        id = "ghi",
+                        text = "GHI",
+                        fontSizeRatio = 0.05f,
+                        boxData = BoxData(
+                            offsetRatioX = 0.2f,
+                            offsetRatioY = 0.6f,
+                            widthRatio = 0.5f,
+                            heightRatio = 0.3f
+                        )
+                    )
+                )
+            )
+        )
+        PageForView(
+            modifier = Modifier.weight(1f),
+            thumbnail = Thumbnail(
+                ImageBoxInfo(
+                    id = "abc",
+                    boxData = BoxData(
+                        offsetRatioX = 0.2f,
+                        offsetRatioY = 0.1f,
+                        widthRatio = 0.8f,
+                        heightRatio = 0.5f
+                    )
+                ),
+                image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.img),
+                listOf(
+                    TextBoxInfo(
+                        id = "abc",
+                        text = "ABC",
+                        fontSizeRatio = 0.05f,
+                        boxData = BoxData(
+                            offsetRatioX = 0.2f,
+                            offsetRatioY = 0.5f,
+                            widthRatio = 0.5f,
+                            heightRatio = 0.3f
+                        )
+                    ),
+                    TextBoxInfo(
+                        id = "def",
+                        text = "DEF",
+                        fontSizeRatio = 0.05f,
+                        boxData = BoxData(
+                            offsetRatioX = 0.2f,
+                            offsetRatioY = 0.7f,
+                            widthRatio = 0.5f,
+                            heightRatio = 0.3f
+                        )
+                    ),
+                    TextBoxInfo(
+                        id = "ghi",
+                        text = "GHI",
+                        fontSizeRatio = 0.05f,
+                        boxData = BoxData(
+                            offsetRatioX = 0.1f,
+                            offsetRatioY = 0.8f,
+                            widthRatio = 0.6f,
+                            heightRatio = 0.3f
+                        )
+                    )
+                )
+            )
+        )
+    }
+}
