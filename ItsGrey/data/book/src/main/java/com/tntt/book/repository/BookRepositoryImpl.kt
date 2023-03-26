@@ -6,22 +6,31 @@ import com.tntt.model.BookType
 import com.tntt.model.SortType
 import com.tntt.model.BookInfo
 import com.tntt.repo.BookRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
-    @ApplicationContext private val remoteBookDataSource: RemoteBookDataSource
+    private val bookDataSource: RemoteBookDataSource
 ) : BookRepository {
     init{
         Log.d("뭐 hilt test", "레포")
     }
+
+    override fun getBookInfo(bookId: String): BookInfo {
+        val bookDto = bookDataSource.getBookDto(bookId)
+
+        val id = bookDto.id
+        val title = bookDto.title
+        val saveDate = bookDto.saveDate
+        return BookInfo(id, title, saveDate)
+    }
+
     override fun getBookInfos(
         userId: String,
         sortType: SortType,
         startIndex: Long,
         bookType: BookType
     ): List<BookInfo> {
-        val bookDtoList = remoteBookDataSource.getBookDtos(userId, sortType, startIndex, bookType)
+        val bookDtoList = bookDataSource.getBookDtos(userId, sortType, startIndex, bookType)
         val bookList = mutableListOf<BookInfo>()
         for (bookDto in bookDtoList){
             bookList.add(BookInfo(bookDto.id, bookDto.title, bookDto.saveDate))
@@ -30,10 +39,10 @@ class BookRepositoryImpl @Inject constructor(
     }
 
     override fun createBook(userId: String): String {
-        return remoteBookDataSource.createBookDto(userId)
+        return bookDataSource.createBookDto(userId)
     }
 
-    override fun deleteBook(bookIds: List<String>): Boolean {
-        return remoteBookDataSource.deleteBook(bookIds)
+    override fun deleteBook(bookIdList: List<String>): Boolean {
+        return bookDataSource.deleteBook(bookIdList)
     }
 }

@@ -57,6 +57,7 @@ dependencies {
 
     implementation(project(":domain:model"))
     implementation(project(":domain:repo"))
+    implementation(project(":di"))
 
     // Hilt
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")

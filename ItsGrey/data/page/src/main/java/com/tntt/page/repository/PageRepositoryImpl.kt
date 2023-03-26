@@ -5,10 +5,11 @@ import com.tntt.page.datasource.RemotePageDataSource
 import com.tntt.page.datasource.RemotePageDataSourceImpl
 import com.tntt.page.model.PageDto
 import com.tntt.repo.PageRepository
+import javax.inject.Inject
 
-object PageRepositoryImpl : PageRepository {
-
-    val pageDataSource:RemotePageDataSource by lazy { RemotePageDataSourceImpl }
+class PageRepositoryImpl @Inject constructor(
+    private val pageDataSource: RemotePageDataSource
+): PageRepository {
 
     override fun createPageInfo(bookId: String, pageInfo: PageInfo): String {
         val pageDto = PageDto("", bookId, pageInfo.order)
@@ -18,6 +19,11 @@ object PageRepositoryImpl : PageRepository {
     override fun getPageInfo(bookId: String, pageOrder: Int): PageInfo {
         val pageDto = pageDataSource.getPageDto(bookId, pageOrder)
         return PageInfo(pageDto.id, pageDto.order)
+    }
+
+    override fun getFirstPageInfo(bookId: String): PageInfo {
+        val pageDto = pageDataSource.getFirstPageDto(bookId)
+        return getPageInfo(pageDto.id, pageDto.order)
     }
 
     override fun getPageInfoList(bookId: String): List<PageInfo> {

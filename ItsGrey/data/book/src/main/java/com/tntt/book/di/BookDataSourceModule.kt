@@ -12,8 +12,8 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface BookDataSourceModule {
 
-    @Provides
-    fun providesBookDataSource(
+    @Binds
+    fun bindsBookDataSource(
         bookDataSource: RemoteBookDataSourceImpl,
     ): RemoteBookDataSource
 }

@@ -1,13 +1,17 @@
 package com.tntt.layer.datasource
 
 import android.graphics.Bitmap
+import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.layer.model.LayerDto
 import com.tntt.network.Firestore
 import java.util.*
+import javax.inject.Inject
 
-object RemoteLayerDataSourceImpl : RemoteLayerDataSource {
+class RemoteLayerDataSourceImpl @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : RemoteLayerDataSource {
 
-    val layerCollection by lazy { Firestore.firestore.collection("layer") }
+    val layerCollection by lazy { firestore.collection("layer") }
 
     override fun createLayerDto(layerDto: LayerDto): String {
         val id = UUID.randomUUID().toString()

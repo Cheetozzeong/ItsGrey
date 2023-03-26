@@ -13,11 +13,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LayerRepositoryImpl : LayerRepository {
-
-    val layerDataSource: RemoteLayerDataSource by lazy { RemoteLayerDataSourceImpl }
-    val imageBoxDataSource: RemoteImageBoxDataSource by lazy { RemoteImageBoxDataSourceImpl }
+class LayerRepositoryImpl @Inject constructor(
+    private val layerDataSource: RemoteLayerDataSource,
+    private val imageBoxDataSource: RemoteImageBoxDataSource
+): LayerRepository {
 
     override fun createLayerInfo(imageBoxId: String, layerInfo: LayerInfo): String {
         return layerDataSource.createLayerDto(LayerDto("", imageBoxId, layerInfo.order, layerInfo.bitmap))
@@ -51,16 +52,16 @@ class LayerRepositoryImpl : LayerRepository {
     }
 
     // 서버 통신 테스트 메서드
-    fun createRoughSketch() {
-        val apiService = RetrofitNetwork.getApiService("http://146.56.113.80:8000/")
-        GlobalScope.launch(Dispatchers.IO) {
-            val response = apiService.getData()
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    val data = response.body()
-                    print(data)
-                }
-            }
-        }
-    }
+//    fun createRoughSketch() {
+//        val apiService = RetrofitNetwork.getApiService("http://146.56.113.80:8000/")
+//        GlobalScope.launch(Dispatchers.IO) {
+//            val response = apiService.getData()
+//            withContext(Dispatchers.Main) {
+//                if (response.isSuccessful) {
+//                    val data = response.body()
+//                    print(data)
+//                }
+//            }
+//        }
+//    }
 }
