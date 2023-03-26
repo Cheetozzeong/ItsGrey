@@ -277,7 +277,7 @@ private fun PreviewTextBox() {
     }
 }
 
-private val RectSaver = Saver<Rect, Bundle>(
+val RectSaver = Saver<Rect, Bundle>(
     save = { rect ->
         Bundle().apply {
             putFloat("left", rect.left)
