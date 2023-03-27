@@ -236,7 +236,7 @@ fun IgTabsTemplate() {
 fun TapsMainPreview() {
     val titles = listOf("출간", "작업중", "abc")
     IgTabsMain(titles, selectedTabIndex = {
-        // 여기서 it을 쓰는 형태얍~!
+
     })
 }
 

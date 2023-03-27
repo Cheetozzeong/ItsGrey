@@ -1,8 +1,15 @@
 package com.tntt.home
 
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -13,29 +20,634 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tntt.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTabsMain
 import com.tntt.designsystem.component.IgTopAppBar
+import com.tntt.home.model.Book
 import com.tntt.home.model.User
 import com.tntt.model.*
 import itsgrey.feature.home.R
 import java.util.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 
-private enum class TabPage {
-    Published, Working
+private enum class TabPage(val title: String) {
+    Published("출판"),
+    Working("작업중"),
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(name = "tablet", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
 @Composable
 fun Home(modifier: Modifier = Modifier) {
 
-    // fake
+    val a101 = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.a101)
+    val gunbam = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.gunbam)
+
+    // dummy data
+    val publishedBookList =
+        listOf(
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "2번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 15.0f,
+                            offsetRatioY = 15.0f,
+                            widthRatio = 400.0f,
+                            heightRatio = 500.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "789",
+                            fontSizeRatio = 100.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 300.0f,
+                                offsetRatioY = 0.0f,
+                                widthRatio = 1000.0f,
+                                heightRatio = 1000.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "101112",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 25.0f,
+                                offsetRatioY = 25.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "1번 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 400.0f,
+                            offsetRatioY = 20.0f,
+                            widthRatio = 200.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = gunbam,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "123",
+                            fontSizeRatio = 80.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 100.0f,
+                                heightRatio = 100.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "456",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+
+            )
+
+    val workingBookList =
+        listOf(
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "작업중인 1번 책 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 15.0f,
+                            offsetRatioY = 15.0f,
+                            widthRatio = 100.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = a101,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "789",
+                            fontSizeRatio = 5.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 5.0f,
+                                heightRatio = 5.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "101112",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            ),
+            Book(
+                bookInfo = BookInfo(
+                    id = "1",
+                    title = "작업중인 2번 책 제목",
+                    saveDate = Date()
+                ),
+                thumbnail = Thumbnail(
+                    imageBox = ImageBoxInfo(
+                        id = "1",
+                        boxState = BoxState(
+                            offsetRatioX = 15.0f,
+                            offsetRatioY = 15.0f,
+                            widthRatio = 100.0f,
+                            heightRatio = 100.0f,
+                        )
+                    ),
+                    image = a101,
+                    textBoxes = listOf(
+                        TextBoxInfo(
+                            id = "1",
+                            text = "789",
+                            fontSizeRatio = 5.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 5.0f,
+                                offsetRatioY = 5.0f,
+                                widthRatio = 5.0f,
+                                heightRatio = 5.0f,
+
+                                ),
+                        ),
+                        TextBoxInfo(
+                            id = "2",
+                            text = "101112",
+                            fontSizeRatio = 10.0f,
+                            boxState = BoxState(
+                                offsetRatioX = 10.0f,
+                                offsetRatioY = 10.0f,
+                                widthRatio = 10.0f,
+                                heightRatio = 10.0f,
+
+                                ),
+                        ),
+                    )
+                )
+            )
+        )
+
+    // dummy data
     val user = User(name = "fakeUser",id = "id")
 
     var tabPage by remember { mutableStateOf(TabPage.Published) }
+
+    val list = if (tabPage == TabPage.Published) publishedBookList else workingBookList
 
     IgTheme {
         val colorBackground = MaterialTheme.colorScheme.surface
@@ -45,7 +657,7 @@ fun Home(modifier: Modifier = Modifier) {
             modifier = Modifier,
             topBar = { IgTopAppBar(
                 modifier = Modifier.padding(horizontal = 25.dp),
-                titleRes = R.string.home_toolbar_name,
+                titleRes = stringResource(R.string.home_toolbar_name),
                 actions = {
                     Text(text = user.name)
                 }) }
@@ -68,12 +680,8 @@ fun Home(modifier: Modifier = Modifier) {
                         )
                     }
                 ) {
-                    val titles = listOf("출판","작업중")
-                    IgTabsMain(titles = titles, selectedTabIndex = {
-                            if(it == 0) tabPage = TabPage.Published
-                            else if (it == 1) tabPage = TabPage.Working
-                        }
-                    )
+                    val titles = TabPage.values().map { it.title }
+                    IgTabsMain(titles = titles, selectedTabIndex = { tabPage = TabPage.values()[it] })
                 }
                 Box(
                     modifier = Modifier
@@ -84,7 +692,7 @@ fun Home(modifier: Modifier = Modifier) {
                             val borderSize = 4.dp.toPx()
                             drawLine(
                                 borderColor,
-                                Offset(borderSize / 2, 0.dp.toPx()-3.dp.toPx()),
+                                Offset(borderSize / 2, 0.dp.toPx() - 3.dp.toPx()),
                                 Offset(borderSize / 2, size.height),
                                 strokeWidth = borderSize,
                             )
@@ -102,7 +710,7 @@ fun Home(modifier: Modifier = Modifier) {
                             )
                         }
                 ) {
-                    BookList(modifier, tabPage)
+                    BookList(modifier, list)
                 }
             }
         }
@@ -112,11 +720,60 @@ fun Home(modifier: Modifier = Modifier) {
 @Composable
 private fun BookList(
     modifier: Modifier = Modifier,
-    tabPage: TabPage
+    books: List<Book>
 ) {
-    IgTheme() {
-        var text = if (tabPage == TabPage.Published) "출판됨" else "안댐"
-        Text(text = text, textAlign = TextAlign.Center)
+    IgTheme {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = modifier.fillMaxHeight()
+            ) {
+                items(books) { book ->
+                    BookItem(modifier = Modifier, book = book)
+                }
+            }
+    }
+}
 
+@Composable
+private fun BookItem(
+    modifier: Modifier,
+    book: Book
+){
+    Column() {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row {
+                Spacer(modifier = Modifier.width(20.dp))
+                // TODO Page 이용해서 Thumbnail관련 코드들 받아오기
+                Box(
+                    modifier
+                        .border(
+                            width = 5.dp,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            shape = RectangleShape
+                        )
+                        .fillMaxSize()
+                        .clickable(
+                            /*TODO View로 이동*/
+                            onClick = {Log.d("toViewr","toViewr") }
+                        )
+                )
+                {
+                    Box(
+
+                    ) {
+
+                    }
+                    Box(
+
+                    ) {
+                        // BookInfo 출력
+                        Text(text = book.bookInfo.title)
+                    }
+
+                }
+        }
     }
 }
