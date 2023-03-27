@@ -24,9 +24,9 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 val id = data?.get("id") as String
                 val userId = data?.get("userId") as String
                 val title = data?.get("data") as String
-                val isPublished = data?.get("isPublished") as Boolean
+                val bookType = data?.get("bookType") as BookType
                 val saveDate = data?.get("saveDate") as Date
-                bookDto = BookDto(id, userId, title, isPublished, saveDate)
+                bookDto = BookDto(id, userId, title, bookType, saveDate)
             }
         return bookDto
     }
@@ -60,7 +60,12 @@ class RemoteBookDataSourceImpl @Inject constructor(
 
         query.get().addOnSuccessListener {documents ->
             for(document in documents){
-                bookDtos.add(BookDto(document.get("id").toString(), document.get("userId").toString(), document.get("title").toString(), document.getBoolean("isPublished")?:false, document.getTimestamp("saveDate")?.toDate()?: Date(0)))
+                val id = document.get("id") as String
+                val userId = document.get("userId") as String
+                val title = document.get("title") as String
+                val bookType = document.get("bookType") as BookType
+                val saveDate = document.getDate("saveDate") as Date
+                bookDtos.add(BookDto(id, userId, title, bookType, saveDate))
             }
         }
         return bookDtos
@@ -68,9 +73,20 @@ class RemoteBookDataSourceImpl @Inject constructor(
 
     override fun createBookDto(userId: String): String {
         val bookId = UUID.randomUUID().toString()
-        val bookDto = BookDto(bookId, userId, "Untitled", false, Date())
-        bookCollection.document(bookId).set(bookDto)
+        val bookDto = BookDto(bookId, userId, "Untitled", BookType.EDIT, Date())
+        bookCollection
+            .document(bookId)
+            .set(bookDto)
         return bookId
+    }
+
+    override fun updateBookDto(bookDto: BookDto): Boolean {
+        var result = true
+        bookCollection
+            .document(bookDto.id)
+            .set(bookDto)
+            .addOnFailureListener { result = false }
+        return result
     }
 
     override fun deleteBook(bookIdList: List<String>): Boolean {

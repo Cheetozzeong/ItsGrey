@@ -8,5 +8,4 @@ interface LayerRepository {
     fun getLayerInfoList(imageBoxId: String): List<LayerInfo>
     fun updateLayerInfoList(imageBoxId: String, layerInfoList: List<LayerInfo>): Boolean
     fun deleteLayerInfoList(imageBoxId: String): Boolean
-    fun getSumLayer(pageId: String): Bitmap
 }

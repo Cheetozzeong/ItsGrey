@@ -88,4 +88,19 @@ class RemotePageDataSourceImpl @Inject constructor(
         }
         return result
     }
+
+    override fun hasCover(bookId: String): Boolean {
+        var result = true
+        pageCollection
+            .whereEqualTo("bookId", bookId)
+            .orderBy("order")
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw NullPointerException()
+                val data = documentSnapshot.data
+                result = (data?.get("order") as Int == 0)
+            }
+        return result
+    }
 }

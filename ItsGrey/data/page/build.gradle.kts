@@ -61,4 +61,7 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":domain:repo"))
     implementation(project(":domain:model"))
+    implementation(project(":data:imagebox"))
+    implementation(project(":data:textbox"))
+    implementation(project(":data:layer"))
 }

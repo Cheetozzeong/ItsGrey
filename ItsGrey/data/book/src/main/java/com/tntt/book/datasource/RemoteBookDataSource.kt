@@ -8,5 +8,6 @@ interface RemoteBookDataSource{
     fun getBookDto(bookId: String): BookDto
     fun getBookDtos(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): List<BookDto>
     fun createBookDto(userId: String): String
+    fun updateBookDto(bookDto: BookDto): Boolean
     fun deleteBook(bookIdList: List<String>): Boolean
 }
