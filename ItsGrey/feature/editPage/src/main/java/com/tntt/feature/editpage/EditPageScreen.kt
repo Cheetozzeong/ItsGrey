@@ -46,6 +46,7 @@ fun EditBookScreen(
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // ToolBar
             Row() {
                 CreateImageBoxButton()
                 CreateTextBoxButton()
@@ -54,6 +55,7 @@ fun EditBookScreen(
                     openDialog = { isFontSizeDialogShown.value = true }
                 )
             }
+            // Page
             Box(
                 Modifier
                     .fillMaxSize()
