@@ -2,8 +2,7 @@ package com.tntt.imagebox.datasource
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.imagebox.model.ImageBoxDto
-import com.tntt.model.BoxState
-import com.tntt.network.Firestore
+import com.tntt.model.BoxData
 import java.util.UUID
 import javax.inject.Inject
 
@@ -33,9 +32,9 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
                 val data = documentSnapshot.data
                 val id: String = data?.get("id") as String
-                val boxState: BoxState = data?.get("boxState") as BoxState
+                val boxData: BoxData = data?.get("boxState") as BoxData
 
-                imageBoxDto = ImageBoxDto(id, pageId, boxState)
+                imageBoxDto = ImageBoxDto(id, pageId, boxData)
             }
         return imageBoxDto
     }

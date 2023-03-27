@@ -7,7 +7,6 @@ import com.tntt.model.PageInfo
 import com.tntt.model.TextBoxInfo
 import com.tntt.model.Thumbnail
 import com.tntt.page.datasource.RemotePageDataSource
-import com.tntt.page.datasource.RemotePageDataSourceImpl
 import com.tntt.page.model.PageDto
 import com.tntt.repo.PageRepository
 import com.tntt.textbox.datasource.RemoteTextBoxDataSource
@@ -56,11 +55,11 @@ class PageRepositoryImpl @Inject constructor(
 
     override fun getThumbnail(pageId: String): Thumbnail {
         val imageBoxDto = imageBoxDataSource.getImageBoxDto(pageId)
-        val imageBoxInfo = ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxState)
+        val imageBoxInfo = ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData)
         val textBoxDtoList = textBoxDataSource.getTextBoxDtoList(pageId)
         val textBoxInfoList = mutableListOf<TextBoxInfo>()
         for (textBoxDto in textBoxDtoList) {
-            textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxState))
+            textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
         }
         val sumLayer = layerDataSource.getSumLayer(imageBoxInfo.id)
         return Thumbnail(imageBoxInfo, sumLayer, textBoxInfoList)
