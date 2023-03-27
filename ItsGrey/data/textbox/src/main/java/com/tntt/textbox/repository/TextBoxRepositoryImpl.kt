@@ -3,7 +3,6 @@ package com.tntt.textbox.repository
 import com.tntt.model.TextBoxInfo
 import com.tntt.repo.TextBoxRepository
 import com.tntt.textbox.datasource.RemoteTextBoxDataSource
-import com.tntt.textbox.datasource.RemoteTextBoxDataSourceImpl
 import com.tntt.textbox.model.TextBoxDto
 import javax.inject.Inject
 

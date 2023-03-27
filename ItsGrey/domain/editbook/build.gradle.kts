@@ -3,10 +3,6 @@ import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-
-    // Hilt
-    kotlin("kapt")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -52,7 +48,5 @@ dependencies {
     implementation(project(":domain:repo"))
     implementation(project(":di"))
 
-    // Hilt
-    implementation("com.google.dagger:hilt-android:${Versions.HILT}")
-    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
+    implementation("javax.inject:javax.inject:1")
 }
