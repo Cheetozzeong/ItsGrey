@@ -12,7 +12,7 @@ class RemoteUserDataSourceImpl @Inject constructor(
 
     override fun getUser(id: String): UserDto {
         val reference = userCollection.document(id)
-        lateinit var userDto: UserDto
+        var userDto: UserDto = UserDto("1", "1")
         reference.get()
             .addOnSuccessListener { documentSnapShot ->
                 val userDto = documentSnapShot.toObject(UserDto::class.java)

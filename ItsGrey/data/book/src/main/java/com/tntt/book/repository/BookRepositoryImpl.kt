@@ -12,9 +12,6 @@ import javax.inject.Inject
 class BookRepositoryImpl @Inject constructor(
     private val bookDataSource: RemoteBookDataSource
 ) : BookRepository {
-    init{
-        Log.d("뭐 hilt test", "레포")
-    }
 
     override fun getBookInfo(bookId: String): BookInfo {
         val bookDto = bookDataSource.getBookDto(bookId)
@@ -40,6 +37,7 @@ class BookRepositoryImpl @Inject constructor(
     }
 
     override fun createBookInfo(userId: String): String {
+        println("createBookInfo(${userId}}")
         return bookDataSource.createBookDto(userId)
     }
 

@@ -30,7 +30,9 @@ class PageRepositoryImpl @Inject constructor(
     }
 
     override fun getFirstPageInfo(bookId: String): PageInfo {
+        println("getFirstPageInfo(${bookId})")
         val pageDto = pageDataSource.getFirstPageDto(bookId)
+        println("pageDto = ${pageDto})")
         return getPageInfo(pageDto.id, pageDto.order)
     }
 
@@ -54,6 +56,7 @@ class PageRepositoryImpl @Inject constructor(
     }
 
     override fun getThumbnail(pageId: String): Thumbnail {
+        println("getThumnail(${pageId})")
         val imageBoxDto = imageBoxDataSource.getImageBoxDto(pageId)
         val imageBoxInfo = ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData)
         val textBoxDtoList = textBoxDataSource.getTextBoxDtoList(pageId)
@@ -62,6 +65,7 @@ class PageRepositoryImpl @Inject constructor(
             textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
         }
         val sumLayer = layerDataSource.getSumLayer(imageBoxInfo.id)
+        println("sumLayer = ${sumLayer})")
         return Thumbnail(imageBoxInfo, sumLayer, textBoxInfoList)
     }
 

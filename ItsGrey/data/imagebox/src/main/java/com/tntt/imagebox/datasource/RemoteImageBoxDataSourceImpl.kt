@@ -24,7 +24,7 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
     }
 
     override fun getImageBoxDto(pageId: String): ImageBoxDto {
-        lateinit var imageBoxDto: ImageBoxDto
+        var imageBoxDto: ImageBoxDto = ImageBoxDto("1", "1", BoxData(0.0f, 0.0f, 0.0f, 0.0f))
 
         imageBoxCollection
             .whereEqualTo("pageId", pageId)

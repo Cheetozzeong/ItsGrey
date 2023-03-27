@@ -9,8 +9,6 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import com.google.firebase.FirebaseApp
-import com.tntt.home.usecase.HomeUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import itsgrey.app.R
 import itsgrey.app.databinding.ActivityMainBinding

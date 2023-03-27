@@ -11,11 +11,15 @@ class HomeUseCase @Inject constructor(
     private val pageRepository: PageRepository,
 ) {
     fun createBook(userId: String): Book {
+        println("createBook(${userId})")
+
         val bookId = bookRepository.createBookInfo(userId)
 
+        println("bookId = ${bookId})")
         val bookInfo = bookRepository.getBookInfo(bookId)
+        println("bookInfo = ${bookInfo})")
         val firstPage = pageRepository.getFirstPageInfo(bookId)
-
+        println("firstPage = ${firstPage})")
         return Book(bookInfo, pageRepository.getThumbnail(firstPage.id))
     }
 

@@ -1,7 +1,10 @@
 package com.tntt.layer.datasource
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.tntt.layer.model.LayerDto
 import com.tntt.network.Firestore
 import java.util.*
@@ -69,6 +72,31 @@ class RemoteLayerDataSourceImpl @Inject constructor(
     }
 
     override fun getSumLayer(imageBoxId: String): Bitmap {
-        TODO("Not yet implemented")
+        val bitmapList = mutableListOf<Bitmap>()
+        var width = 100
+        var height = 100
+
+        layerCollection
+            .whereEqualTo("imageBoxId", imageBoxId)
+            .orderBy("order")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val documentSnapshot = querySnapshot.documents
+                for (document in documentSnapshot) {
+                    val bitmap = document.data?.get("bitmap") as Bitmap
+                    bitmapList.add(bitmap)
+                    width = bitmap.width
+                    height = bitmap.height
+                }
+            }
+
+        val sumLayer = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        sumLayer.eraseColor(Color.WHITE)
+
+        val canvas = Canvas(sumLayer)
+        for (bitmap in bitmapList) {
+            canvas.drawBitmap(bitmap, 0f, 0f, null)
+        }
+        return sumLayer
     }
 }

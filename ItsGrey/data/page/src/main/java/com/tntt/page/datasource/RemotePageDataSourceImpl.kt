@@ -20,7 +20,7 @@ class RemotePageDataSourceImpl @Inject constructor(
     }
 
     override fun getPageDto(bookId: String, pageOrder: Int): PageDto {
-        lateinit var pageDto: PageDto
+        var pageDto: PageDto = PageDto("1", "1", 1)
         pageCollection
             .whereEqualTo("bookId", bookId)
             .whereEqualTo("order", pageOrder)
@@ -39,7 +39,7 @@ class RemotePageDataSourceImpl @Inject constructor(
     }
 
     override fun getFirstPageDto(bookId: String): PageDto {
-        lateinit var pageDto: PageDto
+        var pageDto: PageDto = PageDto("1", "1", 1)
         pageCollection
             .whereEqualTo("bookId", bookId)
             .orderBy("order")
