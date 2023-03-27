@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.imageResource
@@ -53,7 +54,8 @@ fun ImageBox(
             bitmap = imageBitmap,
             contentDescription = "",
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            contentScale = ContentScale.FillBounds
         )
     }
 }

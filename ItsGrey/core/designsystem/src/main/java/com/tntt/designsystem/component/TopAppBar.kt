@@ -62,7 +62,7 @@ fun IgTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IgTopAppBar(
-    @StringRes titleRes: Int,
+    titleRes: String,
     navigationIcon: ImageVector,
     navigationIconContentDescription: String?,
     actions: @Composable RowScope.() -> Unit,
@@ -71,7 +71,7 @@ fun IgTopAppBar(
     onNavigationClick: () -> Unit = {},
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(id = titleRes)) },
+        title = { Text(text = titleRes) },
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
                 Icon(
@@ -132,7 +132,7 @@ private fun PreviewMainViewTopAppBar() {
 @Composable
 private fun PreviewMakeViewTopAppBar() {
     IgTopAppBar(
-        titleRes = android.R.string.untitled,
+        titleRes = stringResource(id = android.R.string.untitled),
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Before",
         actions = {
@@ -152,7 +152,7 @@ private fun PreviewMakeViewTopAppBar() {
 @Composable
 private fun PreviewEditViewTopAppBar() {
     IgTopAppBar(
-        titleRes = android.R.string.untitled,
+        titleRes = stringResource(id = android.R.string.untitled),
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Before",
         actions = {
@@ -199,7 +199,7 @@ private fun PreviewGalleryViewTopAppBar() {
 @Composable
 private fun PreviewImageEditViewTopAppBar() {
     IgTopAppBar(
-        titleRes = android.R.string.untitled,
+        titleRes = stringResource(id = android.R.string.untitled),
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Before",
         actions = {

@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tntt.designsystem.theme.IgTheme
@@ -32,7 +33,7 @@ import com.tntt.editbook.R
 @Composable
 fun EditBookTopAppBar() {
     IgTopAppBar(
-        titleRes = android.R.string.untitled,
+        titleRes = stringResource(id = android.R.string.untitled),
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Back",
         onNavigationClick = { /*TODO*/ },
