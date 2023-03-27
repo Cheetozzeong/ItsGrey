@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -45,8 +44,6 @@ private enum class TabPage(val title: String) {
 fun Home(modifier: Modifier = Modifier) {
 
     val a101 = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.a101)
-    val gunbam = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.gunbam)
-
     // dummy data
     val publishedBookList =
         listOf(
@@ -59,20 +56,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -84,7 +81,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -104,20 +101,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 15.0f,
                             offsetRatioY = 15.0f,
                             widthRatio = 400.0f,
                             heightRatio = 500.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "789",
                             fontSizeRatio = 100.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 300.0f,
                                 offsetRatioY = 0.0f,
                                 widthRatio = 1000.0f,
@@ -129,7 +126,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "101112",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 25.0f,
                                 offsetRatioY = 25.0f,
                                 widthRatio = 10.0f,
@@ -149,20 +146,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -174,7 +171,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -194,20 +191,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -219,7 +216,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -239,20 +236,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -264,7 +261,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -284,20 +281,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -309,7 +306,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -329,20 +326,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -354,7 +351,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -374,20 +371,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -399,7 +396,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -419,20 +416,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -444,7 +441,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -464,20 +461,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -489,7 +486,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -509,20 +506,20 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 400.0f,
                             offsetRatioY = 20.0f,
                             widthRatio = 200.0f,
                             heightRatio = 100.0f,
                         )
                     ),
-                    image = gunbam,
-                    textBoxes = listOf(
+                    image = a101,
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "123",
                             fontSizeRatio = 80.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 100.0f,
@@ -534,7 +531,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "456",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -559,7 +556,7 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 15.0f,
                             offsetRatioY = 15.0f,
                             widthRatio = 100.0f,
@@ -567,12 +564,12 @@ fun Home(modifier: Modifier = Modifier) {
                         )
                     ),
                     image = a101,
-                    textBoxes = listOf(
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "789",
                             fontSizeRatio = 5.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 5.0f,
@@ -584,7 +581,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "101112",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,
@@ -604,7 +601,7 @@ fun Home(modifier: Modifier = Modifier) {
                 thumbnail = Thumbnail(
                     imageBox = ImageBoxInfo(
                         id = "1",
-                        boxState = BoxState(
+                        boxData = BoxData(
                             offsetRatioX = 15.0f,
                             offsetRatioY = 15.0f,
                             widthRatio = 100.0f,
@@ -612,12 +609,12 @@ fun Home(modifier: Modifier = Modifier) {
                         )
                     ),
                     image = a101,
-                    textBoxes = listOf(
+                    textBoxList = listOf(
                         TextBoxInfo(
                             id = "1",
                             text = "789",
                             fontSizeRatio = 5.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 5.0f,
                                 offsetRatioY = 5.0f,
                                 widthRatio = 5.0f,
@@ -629,7 +626,7 @@ fun Home(modifier: Modifier = Modifier) {
                             id = "2",
                             text = "101112",
                             fontSizeRatio = 10.0f,
-                            boxState = BoxState(
+                            boxData = BoxData(
                                 offsetRatioX = 10.0f,
                                 offsetRatioY = 10.0f,
                                 widthRatio = 10.0f,

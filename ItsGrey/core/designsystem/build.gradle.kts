@@ -1,8 +1,7 @@
 plugins {
-    id ("com.android.application")
+    id ("com.android.library")
     id ("org.jetbrains.kotlin.android")
 }
-
 
 android {
     namespace = "itsgrey.core.designsystem"
@@ -56,6 +55,7 @@ dependencies {
     implementation(Libraries.Compose.UI.UI)
     implementation(Libraries.Compose.UI.PREVIEW)
     implementation(Libraries.Compose.UI.TOOLING)
+    implementation(project(mapOf("path" to ":domain:model")))
     // UI Tests
     androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
     debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
@@ -70,4 +70,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation (Libraries.Test.JUNIT)
     androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
+
+    implementation(project(":domain:model"))
 }

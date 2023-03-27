@@ -2,12 +2,14 @@ package com.tntt.user.repository
 
 import com.tntt.model.UserInfo
 import com.tntt.repo.UserRepository
+import com.tntt.user.datasource.RemoteUserDataSource
 import com.tntt.user.datasource.RemoteUserDataSourceImpl
 import com.tntt.user.model.UserDto
+import javax.inject.Inject
 
-class UserRepositoryImpl: UserRepository {
-
-    val remoteUserDataSource by lazy { RemoteUserDataSourceImpl }
+class UserRepositoryImpl @Inject constructor(
+    private val remoteUserDataSource: RemoteUserDataSource
+): UserRepository {
 
     override fun getUser(id: String): UserInfo {
         val userDto = remoteUserDataSource.getUser(id)

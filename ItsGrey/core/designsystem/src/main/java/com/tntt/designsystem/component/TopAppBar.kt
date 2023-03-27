@@ -17,13 +17,13 @@ import com.tntt.designsystem.icon.IgIcons
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IgTopAppBar(
-    @StringRes titleRes: Int,
+    titleRes: String,
     actions: @Composable RowScope.() -> Unit,
     modifier: Modifier = Modifier,
     colors: TopAppBarColors = TopAppBarDefaults.smallTopAppBarColors(),
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(id = titleRes)) },
+        title = { Text(text = titleRes)},
         actions = actions,
         colors = colors,
         modifier = modifier.testTag("igTopAppBar"),
@@ -120,7 +120,7 @@ fun IgCenterTopAppBar(
 @Composable
 private fun PreviewMainViewTopAppBar() {
     IgTopAppBar(
-        titleRes = android.R.string.untitled,
+        titleRes = "untitled",
         actions = {
             Text(text = "UnKnown")
         }
