@@ -1,6 +1,7 @@
 package com.tntt.imagebox.datasource
 
 import com.tntt.imagebox.model.ImageBoxDto
+import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
 import java.util.UUID
@@ -29,9 +30,9 @@ object RemoteImageBoxDataSourceImpl : RemoteImageBoxDataSource {
 
                 val data = documentSnapshot.data
                 val id: String = data?.get("id") as String
-                val boxState: BoxState = data?.get("boxState") as BoxState
+                val boxData: BoxData = data?.get("boxData") as BoxData
 
-                imageBoxDto = ImageBoxDto(id, pageId, boxState)
+                imageBoxDto = ImageBoxDto(id, pageId, boxData)
             }
         return imageBoxDto
     }

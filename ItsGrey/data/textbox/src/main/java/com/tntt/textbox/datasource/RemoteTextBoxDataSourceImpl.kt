@@ -1,5 +1,6 @@
 package com.tntt.textbox.datasource
 
+import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
 import com.tntt.textbox.model.TextBoxDto
@@ -32,8 +33,8 @@ object RemoteTextBoxDataSourceImpl : RemoteTextBoxDataSource {
                     val id = data?.get("id") as String
                     val text = data?.get("text") as String
                     val fontSizeRatio = data?.get("fontSizeRatio") as Float
-                    val boxState = data?.get("boxState") as BoxState
-                    textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxState))
+                    val boxData = data?.get("boxData") as BoxData
+                    textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxData))
                 }
             }
         return textBoxDtoList
