@@ -28,6 +28,7 @@ include ':domain:drawing'
 include ':domain:viewer'
 include ':domain:login'
 include ':data:imagebox'
+include ':data:textbox'
 include ':data:page'
 /* data */
 include ':data:book'

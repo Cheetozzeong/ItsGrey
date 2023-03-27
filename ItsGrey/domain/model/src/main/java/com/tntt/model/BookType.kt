@@ -1,4 +1,4 @@
-package com.tntt.home.model
+package com.tntt.model
 
 enum class BookType {
     PUBLISHED, EDIT

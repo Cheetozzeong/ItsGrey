@@ -1,8 +1,8 @@
 package com.tntt.book.datasource
 
 import com.tntt.book.model.BookDto
-import com.tntt.home.model.BookType
-import com.tntt.home.model.SortType
+import com.tntt.model.BookType
+import com.tntt.model.SortType
 
 interface RemoteBookDataSource{
     fun getBookDtos(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): List<BookDto>
