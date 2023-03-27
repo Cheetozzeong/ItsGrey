@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.tntt.core.designsystem.theme.IgTheme
+import com.tntt.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTabsMain
 import com.tntt.designsystem.component.IgTopAppBar
 import com.tntt.home.R
@@ -29,7 +29,7 @@ import com.tntt.model.UserInfo
 fun Home(modifier: Modifier = Modifier) {
 
     // fake
-    val user = UserInfo(name = "fakeUser")
+    val user = UserInfo(name = "fakeUser", id = "")
 
     IgTheme {
         val colorBackground = MaterialTheme.colorScheme.surface

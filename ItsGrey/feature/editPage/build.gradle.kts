@@ -1,9 +1,8 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-
+    kotlin("android")
     kotlin("kapt")
-    id("com.google.dagger.hilt.android")
+    id("com.android.library")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -12,6 +11,7 @@ android {
 
     defaultConfig {
         minSdk = AppConfig.minSdk
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -60,14 +60,12 @@ dependencies {
 
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
+    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt("androidx.hilt:hilt-compiler:1.0.0-alpha03")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(Libraries.Test.JUNIT)
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
     androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
     debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
-}
-
-kapt {
-    correctErrorTypes = true
 }
