@@ -1,14 +1,18 @@
 package com.tntt.imagebox.datasource
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
 import java.util.UUID
+import javax.inject.Inject
 
-object RemoteImageBoxDataSourceImpl : RemoteImageBoxDataSource {
+class RemoteImageBoxDataSourceImpl @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : RemoteImageBoxDataSource {
 
-    val imageBoxCollection by lazy { Firestore.firestore.collection("imageBox") }
+    val imageBoxCollection by lazy { firestore.collection("imageBox") }
 
     override fun createImageBoxDto(imageBoxDto: ImageBoxDto): String {
         val imageBoxId = UUID.randomUUID().toString()

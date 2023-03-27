@@ -1,14 +1,18 @@
 package com.tntt.textbox.datasource
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
 import com.tntt.textbox.model.TextBoxDto
 import java.util.UUID
+import javax.inject.Inject
 
-object RemoteTextBoxDataSourceImpl : RemoteTextBoxDataSource {
+class RemoteTextBoxDataSourceImpl @Inject constructor(
+    private val firestore: FirebaseFirestore
+): RemoteTextBoxDataSource {
 
-    val textBoxCollection by lazy { Firestore.firestore.collection("textBox") }
+    val textBoxCollection by lazy { firestore.collection("textBox") }
 
     override fun createTextBoxDto(textBoxDto: TextBoxDto): String {
         val id = UUID.randomUUID().toString()

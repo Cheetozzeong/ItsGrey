@@ -1,14 +1,35 @@
 package com.tntt.book.datasource
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.book.model.BookDto
 import com.tntt.model.BookType
 import com.tntt.model.SortType
 import com.tntt.network.Firestore
 import java.util.*
+import javax.inject.Inject
 
-object RemoteBookDataSourceImpl: RemoteBookDataSource {
+class RemoteBookDataSourceImpl @Inject constructor(
+    private val firestore: FirebaseFirestore,
+): RemoteBookDataSource {
 
-    val bookCollection by lazy { Firestore.firestore.collection("book") }
+    val bookCollection by lazy { firestore.collection("book") }
+
+    override fun getBookDto(bookId: String): BookDto {
+        lateinit var bookDto: BookDto
+        bookCollection
+            .document(bookId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val data = documentSnapshot.data
+                val id = data?.get("id") as String
+                val userId = data?.get("userId") as String
+                val title = data?.get("data") as String
+                val isPublished = data?.get("isPublished") as Boolean
+                val saveDate = data?.get("saveDate") as Date
+                bookDto = BookDto(id, userId, title, isPublished, saveDate)
+            }
+        return bookDto
+    }
 
     override fun getBookDtos(
         userId: String,
@@ -48,14 +69,19 @@ object RemoteBookDataSourceImpl: RemoteBookDataSource {
     override fun createBookDto(userId: String): String {
         val bookId = UUID.randomUUID().toString()
         val bookDto = BookDto(bookId, userId, "Untitled", false, Date())
-        bookCollection.add(bookDto)
+        bookCollection.document(bookId).set(bookDto)
         return bookId
     }
 
-    override fun deleteBook(bookIds: List<String>): Boolean {
+    override fun deleteBook(bookIdList: List<String>): Boolean {
         var result = true
-        for(bookId in bookIds){
-            bookCollection.document(bookId).delete().addOnFailureListener{ result = false }
+        for(bookId in bookIdList){
+            bookCollection
+                .document(bookId)
+                .delete()
+                .addOnFailureListener{
+                    result = false
+                }
         }
         return result
     }

@@ -1,12 +1,16 @@
 package com.tntt.drawing.datasource
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.drawing.model.DrawingDto
 import com.tntt.network.Firestore
 import java.util.UUID
+import javax.inject.Inject
 
-object RemoteDrawingDataSourceImpl : RemoteDrawingDataSource {
+class RemoteDrawingDataSourceImpl @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : RemoteDrawingDataSource {
 
-    val drawingCollection by lazy { Firestore.firestore.collection("drawing") }
+    val drawingCollection by lazy { firestore.collection("drawing") }
 
     override fun createDrawingDto(drawingDto: DrawingDto): String {
         val id = UUID.randomUUID().toString()

@@ -5,10 +5,11 @@ import com.tntt.drawing.datasource.RemoteDrawingDataSourceImpl
 import com.tntt.drawing.model.DrawingDto
 import com.tntt.model.DrawingInfo
 import com.tntt.repo.DrawingRepository
+import javax.inject.Inject
 
-class DrawingRepositoryImpl : DrawingRepository {
-
-    val drawingDataSource: RemoteDrawingDataSource by lazy { RemoteDrawingDataSourceImpl }
+class DrawingRepositoryImpl @Inject constructor(
+    private val drawingDataSource: RemoteDrawingDataSource
+): DrawingRepository {
 
     override fun createDrawingInfo(imageBoxId: String, drawingInfo: DrawingInfo): String {
         return drawingDataSource.createDrawingDto(DrawingDto(drawingInfo.id, imageBoxId, drawingInfo.penColor, drawingInfo.recentColors))
