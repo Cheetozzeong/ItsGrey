@@ -6,12 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import com.tntt.designsystem.component.IgIconButton
 import com.tntt.designsystem.component.IgTextButton
 import com.tntt.designsystem.component.IgTopAppBar
 import com.tntt.designsystem.icon.IgIcons
@@ -33,15 +39,20 @@ fun EditBookScreen(
         topBar = {EditBookTopAppBar()},
     ) { paddingValues ->
 
+        val isFontSizeDialogShown = remember { mutableStateOf(false) }
+
         Column(
             Modifier
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row() {
-                Text("TEST-TEST")
-                Text("TEST-TEST")
-                Text("TEST-TEST")
+                CreateImageBoxButton()
+                CreateTextBoxButton()
+                OpenFontSizeDialogButton(
+                    fontSize = 0,
+                    openDialog = { isFontSizeDialogShown.value = true }
+                )
             }
             Box(
                 Modifier
@@ -51,13 +62,61 @@ fun EditBookScreen(
             ) {
                 PageForEdit(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxHeight()
                         .padding(20.dp)
                         .background(MaterialTheme.colorScheme.background),
                     thumbnail = thumbnail
                 )
             }
         }
+
+        if(isFontSizeDialogShown.value) {
+            RegulateFontSizeDialog()
+        }
+    }
+}
+
+@Composable
+private fun CreateImageBoxButton() {
+    IgIconButton(
+        onClick = { /*TODO*/ },
+        icon = {
+            Icon(
+                imageVector = IgIcons.AddImageBox,
+                contentDescription = "AddImageBox"
+            )
+        },
+    )
+}
+
+@Composable
+private fun CreateTextBoxButton() {
+    IgIconButton(
+        onClick = { /*TODO*/ },
+        icon = {
+            Icon(
+                imageVector = IgIcons.AddTextBox,
+                contentDescription = "AddTextBox"
+            )
+        },
+    )
+}
+
+@Composable
+private fun OpenFontSizeDialogButton(fontSize: Int, openDialog: () -> Unit) {
+    IgTextButton(
+        onClick = { openDialog() },
+        content = {
+            Text(text = "$fontSize pt")
+        }
+    )
+}
+
+@Composable
+private fun RegulateFontSizeDialog() {
+
+    Dialog(onDismissRequest = { /*TODO*/ }) {
+
     }
 }
 
@@ -71,13 +130,15 @@ fun EditBookTopAppBar() {
         navigationIconContentDescription = "Back",
         onNavigationClick = { /*TODO*/ },
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = IgIcons.Template,
-                    contentDescription = "Preview",
-                    tint = Color.Black,
-                )
-            }
+            IgIconButton(
+                onClick = { /*TODO*/ },
+                icon = {
+                    Icon(
+                        imageVector = IgIcons.Template,
+                        contentDescription = "Preview",
+                    )
+                }
+            )
             IgTextButton(
                 onClick = { /*TODO*/ },
                 text = { Text(text = "저장") }
@@ -87,7 +148,7 @@ fun EditBookTopAppBar() {
 }
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(name = "tablet", device = "spec:shape=Normal,width=590,height=1200,unit=dp,dpi=480")
+@Preview(name = "tablet", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
 @Composable
 private fun PreviewEditPageScreen() {
 
