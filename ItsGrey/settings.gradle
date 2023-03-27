@@ -35,3 +35,4 @@ include ':data:user'
 /* feature */
 include ':feature:home'
 include ':feature:editBook'
+include ':feature:editPage'
