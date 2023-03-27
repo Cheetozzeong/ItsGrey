@@ -43,4 +43,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation(project(":domain:model"))
+    implementation(project(":domain:repo"))
+    implementation(project(":di"))
+
+    implementation("javax.inject:javax.inject:1")
 }
