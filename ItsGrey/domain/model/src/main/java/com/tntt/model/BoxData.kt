@@ -6,3 +6,9 @@ data class BoxData(
     val widthRatio: Float,
     val heightRatio: Float,
 )
+
+enum class BoxState {
+    None,
+    Active,
+    InActive
+}

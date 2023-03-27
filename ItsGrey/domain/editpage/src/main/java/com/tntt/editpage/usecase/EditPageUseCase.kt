@@ -31,7 +31,7 @@ class EditPageUseCase @Inject constructor(
     }
 
     fun savePage(page: Page): Boolean {
-        return (imageBoxRepository.updateImageBoxInfo(page.id, page.thumbnail.imageBox) && textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxeList))
+        return (imageBoxRepository.updateImageBoxInfo(page.id, page.thumbnail.imageBox) && textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList))
     }
 
     fun deleteImageBox(imageBoxId: String): Boolean {

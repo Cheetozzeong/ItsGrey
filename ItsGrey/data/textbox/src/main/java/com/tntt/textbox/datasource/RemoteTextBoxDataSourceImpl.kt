@@ -2,6 +2,8 @@ package com.tntt.textbox.datasource
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.model.BoxData
+import com.tntt.model.BoxState
+import com.tntt.network.Firestore
 import com.tntt.textbox.model.TextBoxDto
 import java.util.UUID
 import javax.inject.Inject
@@ -35,7 +37,7 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
                     val id = data?.get("id") as String
                     val text = data?.get("text") as String
                     val fontSizeRatio = data?.get("fontSizeRatio") as Float
-                    val boxData = data?.get("boxState") as BoxData
+                    val boxData = data?.get("boxData") as BoxData
                     textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxData))
                 }
             }
