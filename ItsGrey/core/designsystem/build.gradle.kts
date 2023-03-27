@@ -1,8 +1,7 @@
 plugins {
-    id ("com.android.application")
+    id ("com.android.library")
     id ("org.jetbrains.kotlin.android")
 }
-
 
 android {
     namespace = "itsgrey.core.designsystem"

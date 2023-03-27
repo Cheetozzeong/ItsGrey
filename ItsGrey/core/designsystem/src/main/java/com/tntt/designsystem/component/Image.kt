@@ -61,6 +61,7 @@ fun ImageBox(
 @Composable
 fun ImageBoxForEdit(
     activeBoxId: String,
+    inActiveBoxId: String,
     parent: Rect,
     imageBoxInfo: ImageBoxInfo,
     imageBitmap: ImageBitmap,
@@ -70,9 +71,8 @@ fun ImageBoxForEdit(
     dialogComponent: List<@Composable () -> Unit>,
 ) {
 
-    val isDialogShown = remember(imageBoxInfo.boxData.state) { mutableStateOf(imageBoxInfo.boxData.state == BoxState.Active) }
     val state = remember(activeBoxId) {
-        mutableStateOf(if(activeBoxId == imageBoxInfo.id) BoxState.Active else BoxState.None)
+        mutableStateOf(if(activeBoxId == imageBoxInfo.id) BoxState.Active else if (inActiveBoxId == imageBoxInfo.id) BoxState.InActive else BoxState.None)
     }
     val position = remember(parent) {
         mutableStateOf(
@@ -91,7 +91,8 @@ fun ImageBoxForEdit(
         )
     }
 
-    if(imageBoxInfo.boxData.state == BoxState.InActive) {
+    if(state.value == BoxState.InActive) {
+        state.value = BoxState.None
         updateImageBoxInfo(
             ImageBoxInfo(
                 id = imageBoxInfo.id,
@@ -100,7 +101,6 @@ fun ImageBoxForEdit(
                     offsetRatioY = position.value.y / parent.height,
                     widthRatio = size.value.width / parent.width,
                     heightRatio = size.value.height / parent.height,
-                    state = BoxState.None
                 )
             )
         )
@@ -108,7 +108,7 @@ fun ImageBoxForEdit(
 
 
     Box() {
-        if(isDialogShown.value) {
+        if(state.value == BoxState.Active) {
             BoxDialog(
                 dialogComponent = dialogComponent,
                 position = position.value
@@ -181,9 +181,7 @@ private fun PreviewImage() {
             }
             .clickable {
                 imageBoxInfo.value = imageBoxInfo.value.copy(
-                    boxData = imageBoxInfo.value.boxData.copy(
-                        state = BoxState.InActive
-                    )
+                    boxData = imageBoxInfo.value.boxData.copy()
                 )
             }
     ) {

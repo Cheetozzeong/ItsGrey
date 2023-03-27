@@ -1,10 +1,8 @@
 package com.tntt.designsystem.component
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,11 +22,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,10 +32,7 @@ import com.tntt.designsystem.theme.IgTheme
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.model.TextBoxInfo
-import java.security.Key
-import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 enum class ResizeType {
     Ratio,
@@ -102,18 +95,15 @@ fun BoxForEdit(
                 )
             }
             .pointerInput(inputPosition, boxState) {
-                when (boxState) {
-                    BoxState.None -> return@pointerInput
-                    else -> {
-                        detectDragGestures(
-                            onDrag = { _, dragAmount ->
-                                position.value += dragAmount
-                            },
-                            onDragEnd = {
-                                updatePosition(position.value)
-                            }
-                        )
-                    }
+                if(boxState == BoxState.Active) {
+                    detectDragGestures(
+                        onDrag = { _, dragAmount ->
+                            position.value += dragAmount
+                        },
+                        onDragEnd = {
+                            updatePosition(position.value)
+                        }
+                    )
                 }
             }
             .drawBehind {
@@ -296,9 +286,6 @@ private fun PreviewBox() {
         Modifier
             .fillMaxSize()
             .clickable {
-                textBoxInfo.value = textBoxInfo.value.copy(
-                    boxData = textBoxInfo.value.boxData.copy(state = BoxState.None)
-                )
             }
     ) {
         IgTheme {
@@ -320,7 +307,7 @@ private fun PreviewBox() {
             )
 
             BoxForEdit(
-                boxState = textBoxInfo.value.boxData.state,
+                boxState = BoxState.None,
                 inputPosition = Offset(
                     textBoxInfo.value.boxData.offsetRatioX * pageSize.width,
                     textBoxInfo.value.boxData.offsetRatioY * pageSize.height

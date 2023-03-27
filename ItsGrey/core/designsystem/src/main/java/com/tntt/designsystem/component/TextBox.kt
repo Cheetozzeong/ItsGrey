@@ -67,7 +67,7 @@ fun TextBox(
             fontSize = fontSize.value.sp,
             modifier = Modifier
                 .fillMaxSize()
-                .padding((CORNER_SIZE / 2f).dp)
+                .padding(horizontal = (CORNER_SIZE / 2f).dp)
         )
     }
 }
@@ -75,6 +75,7 @@ fun TextBox(
 @Composable
 fun TextBoxForEdit(
     activeBoxId: String,
+    inActiveBoxId: String,
     parent: Rect,
     textBoxInfo: TextBoxInfo,
     updateTextBoxInfo: (TextBoxInfo) -> Unit,
@@ -83,7 +84,7 @@ fun TextBoxForEdit(
 ) {
 
     val state = remember(activeBoxId) {
-        mutableStateOf(if(activeBoxId == textBoxInfo.id) BoxState.Active else BoxState.None)
+        mutableStateOf(if(inActiveBoxId == textBoxInfo.id) BoxState.InActive else if (activeBoxId == textBoxInfo.id) BoxState.Active else BoxState.None)
     }
     val position = remember(parent) {
         mutableStateOf(
@@ -112,7 +113,8 @@ fun TextBoxForEdit(
         )
     }
 
-    if(textBoxInfo.boxData.state == BoxState.InActive) {
+    if(state.value == BoxState.InActive) {
+        state.value = BoxState.None
         updateTextBoxInfo(
             TextBoxInfo(
                 id = textBoxInfo.id,
@@ -123,7 +125,6 @@ fun TextBoxForEdit(
                     offsetRatioY = position.value.y / parent.height,
                     widthRatio = size.value.width / parent.width,
                     heightRatio = size.value.height / parent.height,
-                    state = BoxState.None
                 )
             )
         )
@@ -150,7 +151,7 @@ fun TextBoxForEdit(
                 },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding((CORNER_SIZE / 2f).dp)
+                    .padding(horizontal = (CORNER_SIZE / 2f).dp)
                     .pointerInput(state.value) {
                         detectTapGestures {
                             if (state.value == BoxState.None) { onClick(textBoxInfo.id) }
@@ -227,9 +228,7 @@ private fun PreviewTextBox() {
                     }
                     .clickable {
                         textBoxInfoL.value = textBoxInfoL.value.copy(
-                            boxData = textBoxInfoL.value.boxData.copy(
-                                state = BoxState.InActive
-                            )
+                            boxData = textBoxInfoL.value.boxData.copy()
                         )
                     }
             ) {
@@ -252,9 +251,7 @@ private fun PreviewTextBox() {
                     }
                     .clickable {
                         textBoxInfoR.value = textBoxInfoR.value.copy(
-                            boxData = textBoxInfoR.value.boxData.copy(
-                                state = BoxState.InActive
-                            )
+                            boxData = textBoxInfoR.value.boxData.copy()
                         )
                     }
             ) {
