@@ -5,11 +5,10 @@ data class BoxData(
     val offsetRatioY: Float,
     val widthRatio: Float,
     val heightRatio: Float,
-    val state: BoxState = BoxState.None
 )
 
 enum class BoxState {
     None,
     Active,
-    InActive,
+    InActive
 }
