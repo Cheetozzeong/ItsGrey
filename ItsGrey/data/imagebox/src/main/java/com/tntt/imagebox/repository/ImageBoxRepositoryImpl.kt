@@ -12,17 +12,17 @@ class ImageBoxRepositoryImpl @Inject constructor(
 ) : ImageBoxRepository {
 
     override fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): String {
-        val imageBoxDto = ImageBoxDto("", pageId, imageBoxInfo.boxState)
+        val imageBoxDto = ImageBoxDto("", pageId, imageBoxInfo.boxData)
         return imageBoxDataSource.createImageBoxDto(imageBoxDto)
     }
 
     override fun getImageBoxInfo(pageId: String): ImageBoxInfo {
         val imageBoxDto = imageBoxDataSource.getImageBoxDto(pageId)
-        return ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxState)
+        return ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData)
     }
 
     override fun updateImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Boolean {
-        return imageBoxDataSource.updateImageBoxDto(ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxState))
+        return imageBoxDataSource.updateImageBoxDto(ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData))
     }
 
     override fun deleteImageBoxInfo(id: String): Boolean {

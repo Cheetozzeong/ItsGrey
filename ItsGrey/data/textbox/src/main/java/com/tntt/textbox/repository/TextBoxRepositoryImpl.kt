@@ -12,7 +12,7 @@ class TextBoxRepositoryImpl @Inject constructor(
 ) : TextBoxRepository {
 
     override fun createTextBoxInfo(pageId: String, textBoxInfo: TextBoxInfo): String {
-        return textBoxDataSource.createTextBoxDto(TextBoxDto("", pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxState))
+        return textBoxDataSource.createTextBoxDto(TextBoxDto("", pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxData))
     }
 
     override fun getTextBoxInfoList(pageId: String): List<TextBoxInfo> {
@@ -20,7 +20,7 @@ class TextBoxRepositoryImpl @Inject constructor(
 
         val textBoxInfoList = mutableListOf<TextBoxInfo>()
         for (textBoxDto in textBoxDtoList) {
-            textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxState))
+            textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
         }
         return textBoxInfoList
     }
@@ -28,7 +28,7 @@ class TextBoxRepositoryImpl @Inject constructor(
     override fun updateTextBoxInfoList(pageId: String, textBoxInfoList: List<TextBoxInfo>): Boolean {
         val textBoxDtoList = mutableListOf<TextBoxDto>()
         for (textBoxInfo in textBoxDtoList) {
-            textBoxDtoList.add(TextBoxDto(textBoxInfo.id, pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxState))
+            textBoxDtoList.add(TextBoxDto(textBoxInfo.id, pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxData))
         }
         return textBoxDataSource.updateTextBoxDtoList(textBoxDtoList)
     }

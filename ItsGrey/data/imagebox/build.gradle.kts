@@ -55,11 +55,12 @@ dependencies {
     implementation ("com.google.firebase:firebase-analytics:17.2.1")
     implementation ("com.google.firebase:firebase-database:19.2.0")
 
-    // Hilt
-    implementation("com.google.dagger:hilt-android:${Versions.HILT}")
-    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 
     implementation(project(":core:network"))
     implementation(project(":domain:model"))
     implementation(project(":domain:repo"))
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:${Versions.HILT}")
+    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 }

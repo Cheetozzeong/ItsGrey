@@ -3,101 +3,87 @@ package com.tntt.designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tntt.designsystem.theme.IgTheme
-import kotlin.math.pow
+import com.tntt.model.BoxData
+import com.tntt.model.BoxState
+import com.tntt.model.TextBoxInfo
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
-
-enum class BoxState {
-    None,
-    Active
-}
 
 enum class ResizeType {
     Ratio,
     Free
 }
 
-enum class BoxEvent {
-    Move,
-    Resize,
-}
-
-data class BoxData(
-    val id: String,
-    var state: BoxState = BoxState.None,
-    val resizeType: ResizeType = ResizeType.Free,
-    var position: Offset = Offset(0f, 0f),
-    var size: Size = Size(0f, 0f),
-)
+const val CORNER_SIZE = 30
 
 @Composable
 fun Box(
-    boxData: BoxData,
-    modifier: Modifier,
+    position: Offset,
+    size: Size,
     innerContent: @Composable () -> Unit
 ) {
-    val position = remember { mutableStateOf(boxData.position) }
-    val size = remember { mutableStateOf(boxData.size) }
+
+    val density = rememberSaveable { mutableStateOf(1f) }
 
     Box(
-        modifier
+        Modifier
             .offset {
+                density.value = this.density
                 IntOffset(
-                    position.value.x.roundToInt(),
-                    position.value.y.roundToInt()
+                    position.x.roundToInt(),
+                    position.y.roundToInt()
                 )
             }
-            .size(size.value.width.dp, size.value.height.dp)
+            .size((size.width / density.value).dp, (size.height / density.value).dp)
     ) {
         innerContent()
     }
 }
 
-const val CORNER_SIZE = 30
-
 @Composable
 fun BoxForEdit(
-    boxData: BoxData,
-    updateBoxData: (BoxData) -> Unit,
+    boxState: BoxState,
+    inputPosition: Offset,
+    inputSize: Size,
+    updatePosition: (Offset) -> Unit,
+    updateSize: (Size) -> Unit,
+    resizeType: ResizeType,
     onClickDelete: () -> Unit,
-    innerContent: @Composable () -> Unit
+    innerContent: @Composable () -> Unit,
 ) {
 
-    val density = remember { mutableStateOf(1f) }
-    val position = remember { mutableStateOf(boxData.position) }
-    val size = remember{ mutableStateOf(boxData.size) }
-    val ratio by lazy { boxData.size.width / boxData.size.height }
+    val density = rememberSaveable { mutableStateOf(1f) }
+    val position = remember(inputPosition) { mutableStateOf(inputPosition) }
+    val size = remember(inputSize) { mutableStateOf(inputSize.times(1 / density.value)) }
+    val ratio by lazy { inputSize.width / inputSize.height }
 
-    val borderStyle = if (boxData.state == BoxState.Active) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
-    val borderColor = if (boxData.state == BoxState.Active) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary
+    val borderStyle = if (boxState == BoxState.Active) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
+    val borderColor = if (boxState == BoxState.Active) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary
 
     Box(
         Modifier
@@ -108,57 +94,16 @@ fun BoxForEdit(
                     position.value.y.roundToInt()
                 )
             }
-            .pointerInput(boxData.state) {
-                when (boxData.state) {
-                    BoxState.None -> {
-                        detectTapGestures(
-                            onPress = {
-                                updateBoxData(boxData.copy(state = BoxState.Active))
-                            }
-                        )
-                    }
-                    else -> {
-                        val event = mutableStateOf(BoxEvent.Move)
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                if (isCornerHit(offset, size.value, density.value)) {
-                                    event.value = BoxEvent.Resize
-                                }
-                            },
-                            onDrag = { change, dragAmount ->
-                                when (event.value) {
-                                    BoxEvent.Move -> {
-                                        position.value += dragAmount
-                                    }
-                                    BoxEvent.Resize -> {
-                                        when (boxData.resizeType) {
-                                            ResizeType.Ratio -> {
-                                                size.value = Size(
-                                                    size.value.width + (dragAmount.x / density.value),
-                                                    size.value.height + (dragAmount.x / density.value * ratio)
-                                                )
-                                            }
-                                            ResizeType.Free -> {
-                                                size.value = Size(
-                                                    size.value.width + (dragAmount.x / density.value),
-                                                    size.value.height + (dragAmount.y / density.value)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            onDragEnd = {
-                                when(event.value) {
-                                    BoxEvent.Resize -> {
-                                        updateBoxData(boxData.copy(size = size.value))
-                                        event.value = BoxEvent.Move
-                                    }
-                                    BoxEvent.Move -> { updateBoxData(boxData.copy(position = position.value)) }
-                                }
-                            }
-                        )
-                    }
+            .pointerInput(inputPosition, boxState) {
+                if(boxState == BoxState.Active) {
+                    detectDragGestures(
+                        onDrag = { _, dragAmount ->
+                            position.value += dragAmount
+                        },
+                        onDragEnd = {
+                            updatePosition(position.value)
+                        }
+                    )
                 }
             }
             .drawBehind {
@@ -168,26 +113,42 @@ fun BoxForEdit(
                 )
             }
             .size(size.value.width.dp, size.value.height.dp)
-
     ) {
         innerContent()
-        if (boxData.state == BoxState.Active) {
-            DrawResizeCorner(
-                size.value
-            )
-            DrawDeleteCorner() {
-                onClickDelete()
-            }
-        }
     }
-}
 
-private fun isCornerHit(touchOff: Offset, boxSize: Size, density: Float): Boolean {
+    DrawResizeCorner(
+        key = inputSize,
+        boxState,
+        position.value.times(1 / density.value),
+        size.value,
+        onDrag = { dragAmount ->
+            when (resizeType) {
+                ResizeType.Ratio -> {
+                    size.value = Size(
+                        size.value.width + dragAmount.x / density.value,
+                        size.value.height + dragAmount.x * ratio / density.value
+                    )
+                }
+                ResizeType.Free -> {
+                    size.value = Size(
+                        size.value.width + dragAmount.x / density.value,
+                        size.value.height + dragAmount.y / density.value
+                    )
+                }
+            }
+        },
+        onDragEnd = {
+            updateSize(size.value.times(density.value))
+        }
+    )
 
-    val resizePointPosition = Offset(boxSize.width * density, boxSize.height * density) - Offset(x = CORNER_SIZE / 2 * density, y = CORNER_SIZE / 2 * density)
-    val distance = sqrt((touchOff.x - resizePointPosition.x).pow(2) + (touchOff.y - resizePointPosition.y).pow(2))
-
-    return distance <= CORNER_SIZE / 2 * density
+    DrawDeleteCorner(
+        position = position.value.times(1 / density.value),
+        boxState = boxState
+    ) {
+        onClickDelete()
+    }
 }
 
 @Composable
@@ -219,64 +180,104 @@ fun BoxDialog(
 
 @Composable
 private fun DrawDeleteCorner(
+    boxState: BoxState,
+    position: Offset,
     onClick: () -> Unit
 ) {
-    val cornerOffset = CORNER_SIZE / 2f
-    val xOffset = -cornerOffset
-    val yOffset = -cornerOffset
+    if(boxState == BoxState.Active) {
 
-    Box(
-        modifier = Modifier
-            .size(CORNER_SIZE.dp)
-            .offset(xOffset.dp, yOffset.dp)
-            .background(MaterialTheme.colorScheme.error, CircleShape)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Cancel,
-            tint = MaterialTheme.colorScheme.onError,
-            contentDescription = "Delete this box",
-        )
+        val cornerOffset = CORNER_SIZE / 2f
+        val xOffset = position.x - cornerOffset
+        val yOffset = position.y - cornerOffset
+
+        Box(
+            modifier = Modifier
+                .size(CORNER_SIZE.dp)
+                .offset(xOffset.dp, yOffset.dp)
+                .background(MaterialTheme.colorScheme.error, CircleShape)
+                .clickable { onClick() },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Cancel,
+                tint = MaterialTheme.colorScheme.onError,
+                contentDescription = "Delete this box",
+            )
+        }
     }
 }
 
 @Composable
 private fun DrawResizeCorner(
+    key: Size,
+    boxState: BoxState,
+    position: Offset,
     size: Size,
+    onDrag: (dragAmount: Offset) -> Unit,
+    onDragEnd: () -> Unit
 ) {
-    val xOffset = size.width - CORNER_SIZE
-    val yOffset = size.height - CORNER_SIZE
+    if(boxState == BoxState.Active) {
 
-    Box(
-        Modifier
-            .size(CORNER_SIZE.dp)
-            .offset(xOffset.dp, yOffset.dp)
-            .background(MaterialTheme.colorScheme.onSecondary, CircleShape),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.OpenInFull,
-            tint = MaterialTheme.colorScheme.secondary,
-            contentDescription = "박스 삭제 아이콘",
-            modifier = Modifier.rotate(90f)
-        )
+        val cornerOffset = CORNER_SIZE / 2f
+        val xOffset by remember(position, size) {
+            mutableStateOf(position.x + size.width - cornerOffset)
+        }
+        val yOffset by remember(position, size) {
+            mutableStateOf(position.y + size.height - cornerOffset)
+        }
+
+        Box(
+            Modifier
+                .size(CORNER_SIZE.dp)
+                .offset(xOffset.dp, yOffset.dp)
+                .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
+                .pointerInput(key) {
+                    detectDragGestures(
+                        onDrag = { _, dragAmount ->
+                            onDrag(dragAmount)
+                        },
+                        onDragEnd = {
+                            onDragEnd()
+                        }
+
+                    )
+                }
+            ,
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.OpenInFull,
+                tint = MaterialTheme.colorScheme.secondary,
+                contentDescription = "박스 삭제 아이콘",
+                modifier = Modifier.rotate(90f)
+            )
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(device = Devices.PIXEL_2, widthDp = 360, heightDp = 640)
+@Preview(device = Devices.PIXEL_2, widthDp = 200, heightDp = 300)
 @Composable
 private fun PreviewBox() {
 
-    var boxData by remember(BoxState.None) {
+    val textBoxInfo = remember() {
         mutableStateOf(
-            BoxData(
+            TextBoxInfo(
                 id = "abc",
-                size = Size(200f, 200f),
-                position = Offset(40f, 40f),
-                resizeType = ResizeType.Ratio
+                text = "ABCD",
+                fontSizeRatio = 0.1f,
+                boxData = BoxData(
+                    offsetRatioX = 0.2f,
+                    offsetRatioY = 0.1f,
+                    widthRatio = 0.8f,
+                    heightRatio = 0.3f
+                )
             )
+        )
+    }
+
+    val pageSize by remember {
+        mutableStateOf(
+            Size(200f, 300f)
         )
     }
 
@@ -285,19 +286,66 @@ private fun PreviewBox() {
         Modifier
             .fillMaxSize()
             .clickable {
-                boxData = boxData.copy(state = BoxState.None)
             }
     ) {
         IgTheme {
-            BoxForEdit(
-                boxData,
-                updateBoxData = { updateBoxData ->
-                    boxData = updateBoxData
-                },
-                onClickDelete = {
-                },
+            Box(
+                position = Offset(
+                    textBoxInfo.value.boxData.offsetRatioX * pageSize.width,
+                    textBoxInfo.value.boxData.offsetRatioY * pageSize.height
+                ),
+                size = Size(
+                    textBoxInfo.value.boxData.widthRatio * pageSize.width,
+                    textBoxInfo.value.boxData.heightRatio * pageSize.height
+                ),
                 innerContent = {
-                    TextField(value = "", onValueChange = {})
+                    Text(
+                        text = textBoxInfo.value.text,
+                        fontSize = (textBoxInfo.value.boxData.widthRatio * pageSize.width * textBoxInfo.value.fontSizeRatio).sp
+                    )
+                }
+            )
+
+            BoxForEdit(
+                boxState = BoxState.None,
+                inputPosition = Offset(
+                    textBoxInfo.value.boxData.offsetRatioX * pageSize.width,
+                    textBoxInfo.value.boxData.offsetRatioY * pageSize.height
+                ),
+                inputSize = Size(
+                    textBoxInfo.value.boxData.widthRatio * pageSize.width,
+                    textBoxInfo.value.boxData.heightRatio * pageSize.height
+                ),
+                updatePosition = { newPosition ->
+                    textBoxInfo.value = textBoxInfo.value.copy(
+                        boxData = textBoxInfo.value.boxData.copy(
+                            offsetRatioX = newPosition.x / pageSize.width,
+                            offsetRatioY = newPosition.y / pageSize.height
+                        )
+                    )
+                },
+                updateSize = { newSize ->
+                    textBoxInfo.value = textBoxInfo.value.copy(
+                        boxData = textBoxInfo.value.boxData.copy(
+                            widthRatio = newSize.width / pageSize.width,
+                            heightRatio = newSize.height / pageSize.height
+                        )
+                    )
+                },
+                resizeType = ResizeType.Free,
+                onClickDelete = { /*TODO*/ },
+                innerContent = {
+                    BasicTextField(
+                        value = textBoxInfo.value.text,
+                        onValueChange = { newText ->
+                            textBoxInfo.value = textBoxInfo.value.copy(
+                                text = newText
+                            )
+                        },
+                        textStyle = TextStyle(
+                            fontSize = (textBoxInfo.value.boxData.widthRatio * pageSize.width * textBoxInfo.value.fontSizeRatio).sp
+                        )
+                    )
                 }
             )
         }

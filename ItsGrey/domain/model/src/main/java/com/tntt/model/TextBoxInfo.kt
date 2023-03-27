@@ -4,5 +4,5 @@ data class TextBoxInfo(
     val id: String,
     val text: String,
     val fontSizeRatio: Float,
-    val boxState: BoxState,
+    val boxData: BoxData,
 )
