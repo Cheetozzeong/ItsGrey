@@ -1,7 +1,9 @@
 package com.tntt.model
 
 data class DrawingInfo(
-    val id: String,
+    var id: String,
+    val penSizeList: List<Int>,
+    val eraserSizeList: List<Int>,
     val penColor: String,
-    val recentColors: List<String>,
+    val recentColorList: List<String>,
 )

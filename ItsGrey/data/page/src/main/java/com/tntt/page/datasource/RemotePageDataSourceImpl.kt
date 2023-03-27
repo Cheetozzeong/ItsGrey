@@ -1,12 +1,16 @@
 package com.tntt.page.datasource
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.network.Firestore
 import com.tntt.page.model.PageDto
 import java.util.UUID
+import javax.inject.Inject
 
-object RemotePageDataSourceImpl : RemotePageDataSource {
+class RemotePageDataSourceImpl @Inject constructor(
+    private val firestore: FirebaseFirestore
+): RemotePageDataSource {
 
-    val pageCollection by lazy { Firestore.firestore.collection("page") }
+    val pageCollection by lazy { firestore.collection("page") }
 
     override fun createPageDto(pageDto: PageDto): String {
         val pageId = UUID.randomUUID().toString()
@@ -24,13 +28,31 @@ object RemotePageDataSourceImpl : RemotePageDataSource {
             .addOnSuccessListener { querySnapshot ->
                 val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw  NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().documentSnapshot")
 
-                if (documentSnapshot != null) {
-                    val id = documentSnapshot.id
-                    val data = documentSnapshot.data
-                    val order = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+                val id = documentSnapshot.id
+                val data = documentSnapshot.data
+                val order = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
 
-                    pageDto = PageDto(id, bookId, order)
-                }
+                pageDto = PageDto(id, bookId, order)
+
+            }
+        return pageDto
+    }
+
+    override fun getFirstPageDto(bookId: String): PageDto {
+        lateinit var pageDto: PageDto
+        pageCollection
+            .whereEqualTo("bookId", bookId)
+            .orderBy("order")
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw  NullPointerException()
+
+                val id = documentSnapshot.id
+                val data = documentSnapshot.data
+                val order = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+
+                pageDto = PageDto(id, bookId, order)
             }
         return pageDto
     }
@@ -64,6 +86,21 @@ object RemotePageDataSourceImpl : RemotePageDataSource {
                 .set(pageDto)
                 .addOnFailureListener { result = false }
         }
+        return result
+    }
+
+    override fun hasCover(bookId: String): Boolean {
+        var result = true
+        pageCollection
+            .whereEqualTo("bookId", bookId)
+            .orderBy("order")
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw NullPointerException()
+                val data = documentSnapshot.data
+                result = (data?.get("order") as Int == 0)
+            }
         return result
     }
 }

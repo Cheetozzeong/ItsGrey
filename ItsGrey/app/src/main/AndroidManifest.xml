@@ -5,6 +5,7 @@
     android:versionName="1.0.1">
 
     <application
+        android:name="com.tntt.itsgrey.ItsGreyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
