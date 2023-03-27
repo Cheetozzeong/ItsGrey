@@ -7,6 +7,8 @@ plugins {
     // Hilt
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+
+    id("com.google.gms.google-services") version "4.3.10"
 }
 
 android {
@@ -59,7 +61,20 @@ dependencies {
     androidTestImplementation(Libraries.Test.JUNIT)
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
+    // Firebase-Firestore
+    implementation ("com.google.firebase:firebase-bom:31.2.3")
+    implementation ("com.google.firebase:firebase-firestore")
+    implementation ("com.google.firebase:firebase-firestore-ktx:23.0.4")
+    implementation ("com.google.firebase:firebase-analytics:17.2.1")
+    implementation ("com.google.firebase:firebase-database:19.2.0")
+
     // Hilt
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
+
+    implementation(project(":domain:home"))
+}
+
+kapt {
+    correctErrorTypes = true
 }
