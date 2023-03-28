@@ -6,13 +6,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,16 +19,23 @@ import androidx.compose.ui.unit.dp
 import com.tntt.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTabsMain
 import com.tntt.designsystem.component.IgTopAppBar
-import com.tntt.home.R
-import com.tntt.model.UserInfo
+import com.tntt.home.model.User
+import com.tntt.model.*
+import itsgrey.feature.home.R
+import java.util.*
 
+private enum class TabPage {
+    Published, Working
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(name = "tablet", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
 @Composable
 fun Home(modifier: Modifier = Modifier) {
 
     // fake
-    val user = UserInfo(name = "fakeUser", id = "")
+    val user = User(name = "fakeUser",id = "id")
+
+    var tabPage by remember { mutableStateOf(TabPage.Published) }
 
     IgTheme {
         val colorBackground = MaterialTheme.colorScheme.surface
@@ -39,7 +45,7 @@ fun Home(modifier: Modifier = Modifier) {
             modifier = Modifier,
             topBar = { IgTopAppBar(
                 modifier = Modifier.padding(horizontal = 25.dp),
-                titleRes = R.string.home_toolbar_name,
+                title = stringResource(id = R.string.home_toolbar_name),
                 actions = {
                     Text(text = user.name)
                 }) }
@@ -63,7 +69,11 @@ fun Home(modifier: Modifier = Modifier) {
                     }
                 ) {
                     val titles = listOf("출판","작업중")
-                    IgTabsMain(titles = titles)
+                    IgTabsMain(titles = titles, selectedTabIndex = {
+                            if(it == 0) tabPage = TabPage.Published
+                            else if (it == 1) tabPage = TabPage.Working
+                        }
+                    )
                 }
                 Box(
                     modifier = Modifier
@@ -74,7 +84,7 @@ fun Home(modifier: Modifier = Modifier) {
                             val borderSize = 4.dp.toPx()
                             drawLine(
                                 borderColor,
-                                Offset(borderSize / 2, 0.dp.toPx()-3.dp.toPx()),
+                                Offset(borderSize / 2, 0.dp.toPx() - 3.dp.toPx()),
                                 Offset(borderSize / 2, size.height),
                                 strokeWidth = borderSize,
                             )
@@ -92,7 +102,7 @@ fun Home(modifier: Modifier = Modifier) {
                             )
                         }
                 ) {
-                    BookList(modifier)
+                    BookList(modifier, tabPage)
                 }
             }
         }
@@ -100,8 +110,13 @@ fun Home(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BookList(modifier: Modifier = Modifier) {
+private fun BookList(
+    modifier: Modifier = Modifier,
+    tabPage: TabPage
+) {
     IgTheme() {
-        Text(text = "여기는 북 리스트가 들어갈 자리 입니다.", textAlign = TextAlign.Center)
+        var text = if (tabPage == TabPage.Published) "출판됨" else "안댐"
+        Text(text = text, textAlign = TextAlign.Center)
+
     }
 }

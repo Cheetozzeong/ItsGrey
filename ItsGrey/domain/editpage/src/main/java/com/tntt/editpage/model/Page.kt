@@ -4,5 +4,5 @@ import com.tntt.model.Thumbnail
 
 data class Page(
     val id: String,
-    val thumbnail: Thumbnail
+    val thumbnail: Thumbnail,
 )

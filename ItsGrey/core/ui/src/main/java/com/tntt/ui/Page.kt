@@ -34,7 +34,7 @@ fun PageForView(
     }
     val imageBoxInfo = remember{ mutableStateOf(thumbnail.imageBox) }
     val contentBoxInfoList = remember{
-        thumbnail.textBoxes.toMutableStateList()
+        thumbnail.textBoxList.toMutableStateList()
     }
 
     Box(
@@ -70,7 +70,7 @@ fun PageForEdit(
     val inActiveBoxId = remember { mutableStateOf("") }
     var parent by rememberSaveable(stateSaver = RectSaver) { mutableStateOf(Rect(Offset.Zero, Size.Zero)) }
     val imageBoxInfo = remember { mutableStateOf(thumbnail.imageBox) }
-    val contentBoxInfoList = remember(activeBoxId) { mutableStateOf(thumbnail.textBoxes.toMutableList()) }
+    val contentBoxInfoList = remember(activeBoxId) { mutableStateOf(thumbnail.textBoxList.toMutableList()) }
 
     Box(
         modifier

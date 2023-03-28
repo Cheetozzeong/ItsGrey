@@ -1,13 +1,11 @@
 package com.tntt.designsystem.component
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.tntt.designsystem.icon.IgIcons
 
@@ -17,13 +15,13 @@ import com.tntt.designsystem.icon.IgIcons
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IgTopAppBar(
-    @StringRes titleRes: Int,
+    title: String,
     actions: @Composable RowScope.() -> Unit,
     modifier: Modifier = Modifier,
     colors: TopAppBarColors = TopAppBarDefaults.smallTopAppBarColors(),
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(id = titleRes)) },
+        title = { Text(text = title) },
         actions = actions,
         colors = colors,
         modifier = modifier.testTag("igTopAppBar"),
@@ -36,7 +34,7 @@ fun IgTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IgTopAppBar(
-    @StringRes titleRes: Int,
+    title: String,
     navigationIcon: ImageVector,
     navigationIconContentDescription: String?,
     modifier: Modifier = Modifier,
@@ -44,7 +42,7 @@ fun IgTopAppBar(
     onNavigationClick: () -> Unit = {},
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(id = titleRes)) },
+        title = { Text(text = title) },
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
                 Icon(
@@ -62,7 +60,7 @@ fun IgTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IgTopAppBar(
-    titleRes: String,
+    title: String,
     navigationIcon: ImageVector,
     navigationIconContentDescription: String?,
     actions: @Composable RowScope.() -> Unit,
@@ -71,7 +69,7 @@ fun IgTopAppBar(
     onNavigationClick: () -> Unit = {},
 ) {
     TopAppBar(
-        title = { Text(text = titleRes) },
+        title = { Text(text = title) },
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
                 Icon(
@@ -90,7 +88,7 @@ fun IgTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IgCenterTopAppBar(
-    @StringRes titleRes: Int,
+    title: String,
     navigationIcon: ImageVector,
     navigationIconContentDescription: String?,
     actions: @Composable RowScope.() -> Unit,
@@ -99,7 +97,7 @@ fun IgCenterTopAppBar(
     onNavigationClick: () -> Unit = {},
 ) {
     CenterAlignedTopAppBar(
-        title = { Text(text = stringResource(id = titleRes)) },
+        title = { Text(text = title) },
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
                 Icon(
@@ -120,7 +118,7 @@ fun IgCenterTopAppBar(
 @Composable
 private fun PreviewMainViewTopAppBar() {
     IgTopAppBar(
-        titleRes = android.R.string.untitled,
+        title = "title",
         actions = {
             Text(text = "UnKnown")
         }
@@ -132,7 +130,7 @@ private fun PreviewMainViewTopAppBar() {
 @Composable
 private fun PreviewMakeViewTopAppBar() {
     IgTopAppBar(
-        titleRes = stringResource(id = android.R.string.untitled),
+        title = "title",
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Before",
         actions = {
@@ -152,7 +150,7 @@ private fun PreviewMakeViewTopAppBar() {
 @Composable
 private fun PreviewEditViewTopAppBar() {
     IgTopAppBar(
-        titleRes = stringResource(id = android.R.string.untitled),
+        title = "title",
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Before",
         actions = {
@@ -179,7 +177,7 @@ private fun PreviewEditViewTopAppBar() {
 @Composable
 private fun PreviewGalleryViewTopAppBar() {
     IgCenterTopAppBar(
-        titleRes = android.R.string.untitled,
+        title = "title",
         navigationIcon = IgIcons.Close,
         navigationIconContentDescription = "Close",
         actions = {
@@ -199,7 +197,7 @@ private fun PreviewGalleryViewTopAppBar() {
 @Composable
 private fun PreviewImageEditViewTopAppBar() {
     IgTopAppBar(
-        titleRes = stringResource(id = android.R.string.untitled),
+        title = "title",
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Before",
         actions = {
@@ -233,7 +231,7 @@ private fun PreviewImageEditViewTopAppBar() {
 @Composable
 private fun PreviewBookViewTopAppBar() {
     IgTopAppBar(
-        titleRes = android.R.string.untitled,
+        title = "title",
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Before",
     )

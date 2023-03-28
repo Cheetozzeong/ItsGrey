@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.home"
+    namespace = "itsgrey.feature.home"
     compileSdk = 33
 
     defaultConfig {
@@ -43,6 +43,7 @@ android {
 dependencies {
 
     implementation(project(":core:designsystem"))
+    implementation(project(":domain:home"))
     implementation(project(":domain:model"))
 
     implementation(Libraries.KTX.CORE)
@@ -70,4 +71,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation (Libraries.Test.JUNIT)
     androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
+
+    implementation ("androidx.startup:startup-runtime:1.0.0")
 }
