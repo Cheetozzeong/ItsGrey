@@ -46,20 +46,13 @@ class FirstFragment : Fragment() {
 
         binding.buttonFirst.setOnClickListener {
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-            firestoreTest()
-            homeUseCase.createBook("1")
+            println("button click!")
+            println("result = ${homeUseCase.createBook("1")}")
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun firestoreTest() {
-        println("firestoreTest")
-        val hashMap = hashMapOf<String, Int>("123" to 123)
-//        FirebaseFirestore.getInstance().collection("test").document("t").set(hashMap)
-        Firebase.firestore.collection("book").document("asdf").set(hashMap)
     }
 }

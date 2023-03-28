@@ -21,12 +21,13 @@ class RemotePageDataSourceImpl @Inject constructor(
 
     override fun getPageDto(bookId: String, pageOrder: Int): PageDto {
         var pageDto: PageDto = PageDto("1", "1", 1)
+        println("getPageDto(${bookId}, ${pageOrder})")
         pageCollection
             .whereEqualTo("bookId", bookId)
             .whereEqualTo("order", pageOrder)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw  NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().documentSnapshot")
+                val documentSnapshot = querySnapshot.documents.first() ?: throw  NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().documentSnapshot")
 
                 val id = documentSnapshot.id
                 val data = documentSnapshot.data
@@ -90,7 +91,7 @@ class RemotePageDataSourceImpl @Inject constructor(
     }
 
     override fun hasCover(bookId: String): Boolean {
-        var result = true
+        var result = false
         pageCollection
             .whereEqualTo("bookId", bookId)
             .orderBy("order")

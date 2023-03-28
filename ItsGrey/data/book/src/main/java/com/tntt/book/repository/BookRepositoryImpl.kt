@@ -7,15 +7,16 @@ import com.tntt.model.BookType
 import com.tntt.model.SortType
 import com.tntt.model.BookInfo
 import com.tntt.repo.BookRepository
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
     private val bookDataSource: RemoteBookDataSource
 ) : BookRepository {
 
-    override fun getBookInfo(bookId: String): BookInfo {
+    override suspend fun getBookInfo(bookId: String): BookInfo {
         val bookDto = bookDataSource.getBookDto(bookId)
-
+        println("getBookInfo(${bookId}) -> bookDto = ${bookDto}")
         val id = bookDto.id
         val title = bookDto.title
         val saveDate = bookDto.saveDate
@@ -37,7 +38,7 @@ class BookRepositoryImpl @Inject constructor(
     }
 
     override fun createBookInfo(userId: String): String {
-        println("createBookInfo(${userId}}")
+        println("createBookInfo(${userId})")
         return bookDataSource.createBookDto(userId)
     }
 

@@ -51,9 +51,12 @@ dependencies {
     // Firebase-Firestore
     implementation ("com.google.firebase:firebase-bom:31.2.3")
     implementation ("com.google.firebase:firebase-firestore")
-    implementation ("com.google.firebase:firebase-firestore-ktx:23.0.4")
+    implementation ("com.google.firebase:firebase-firestore-ktx:23.0.1")
     implementation ("com.google.firebase:firebase-analytics:17.2.1")
     implementation ("com.google.firebase:firebase-database:19.2.0")
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.3")
 
     implementation(project(":core:network"))
     implementation(project(":domain:model"))

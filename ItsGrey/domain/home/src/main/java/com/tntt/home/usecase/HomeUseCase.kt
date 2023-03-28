@@ -10,17 +10,16 @@ class HomeUseCase @Inject constructor(
     private val bookRepository: BookRepository,
     private val pageRepository: PageRepository,
 ) {
-    fun createBook(userId: String): Book {
-        println("createBook(${userId})")
-
+    suspend fun createBook(userId: String): Book {
         val bookId = bookRepository.createBookInfo(userId)
-
-        println("bookId = ${bookId})")
         val bookInfo = bookRepository.getBookInfo(bookId)
-        println("bookInfo = ${bookInfo})")
-        val firstPage = pageRepository.getFirstPageInfo(bookId)
-        println("firstPage = ${firstPage})")
-        return Book(bookInfo, pageRepository.getThumbnail(firstPage.id))
+
+        if (pageRepository.hasCover(bookId)) {
+            val firstPage = pageRepository.getFirstPageInfo(bookId)
+            return Book(bookInfo, pageRepository.getThumbnail(firstPage.id))
+        }
+        else
+            return Book(bookInfo, null)
     }
 
     fun getBooks(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): List<Book> {
