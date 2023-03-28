@@ -1,4 +1,4 @@
-package com.example.editbook
+package com.tntt.editbook
 
 import org.junit.Test
 
