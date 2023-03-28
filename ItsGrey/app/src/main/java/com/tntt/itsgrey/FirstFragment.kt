@@ -14,7 +14,10 @@ import com.tntt.home.usecase.HomeUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import itsgrey.app.R
 import itsgrey.app.databinding.FragmentFirstBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -48,9 +51,11 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
             println("button click!")
-//            homeUseCase.createBook("1").collect() {
-//
-//            }
+            CoroutineScope(Dispatchers.Main).launch {
+                homeUseCase.createBook("1").collect() { createBook ->
+                    println("createBook = ${createBook}")
+                }
+            }
         }
     }
 

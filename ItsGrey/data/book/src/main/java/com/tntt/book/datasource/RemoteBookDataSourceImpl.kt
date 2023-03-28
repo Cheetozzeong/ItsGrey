@@ -10,6 +10,7 @@ import com.tntt.network.Firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
     val bookCollection by lazy { firestore.collection("book") }
 
     override suspend fun getBookDto(bookId: String): Flow<BookDto> = flow {
-        lateinit var bookDto: BookDto
+        var bookDto = BookDto("1", "1", "1", BookType.EDIT, Date())
         bookCollection.document(bookId).get().addOnCompleteListener { documentSnapshot ->
             val data = documentSnapshot.result?.data
             val id = data?.get("id") as String
@@ -29,7 +30,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
             val bookType = BookType.valueOf(data?.get("bookType") as String)
             val saveDate = (data?.get("saveDate") as Timestamp).toDate()
             bookDto = BookDto(id, userId, title, bookType, saveDate)
-        }
+        }.await()
         emit(bookDto)
  }
 
