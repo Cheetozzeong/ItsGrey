@@ -40,10 +40,19 @@ private enum class TabPage(val title: String) {
     Working("작업중"),
 }
 
+private enum class WindowSize(val item: Int) {
+    COMPACT(2),
+    MEDIUM(4),
+    EXPANDED(5)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(name = "tablet", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
 @Composable
 fun Home(modifier: Modifier = Modifier) {
+
+    val displayMetrics = LocalContext.current.resources.displayMetrics
+    val screenWidth = displayMetrics.widthPixels / displayMetrics.density
 
     val image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.gunbam23)
     // dummy data
@@ -52,6 +61,7 @@ fun Home(modifier: Modifier = Modifier) {
     val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
     val date = formatter.parse(dateString)
 
+    // dummy data
     val publishedBookList =
         listOf(
             Book(
@@ -1028,6 +1038,7 @@ fun Home(modifier: Modifier = Modifier) {
             ),
         )
 
+    // dummy data
     val workingBookList =
         listOf(
             Book(
@@ -1153,13 +1164,15 @@ fun Home(modifier: Modifier = Modifier) {
 
         Scaffold(
             modifier = Modifier,
-            topBar = { IgTopAppBar(
-                modifier = Modifier
-                    .padding(horizontal = 25.dp),
-                titleRes = stringResource(R.string.home_toolbar_name),
-                actions = {
-                    Text(text = user.name)
-                }) }
+            topBar = { IgTopAppBar (
+                    modifier = Modifier
+                        .padding(horizontal = 25.dp),
+                    titleRes = stringResource(R.string.home_toolbar_name),
+                    actions = {
+                        Text(text = user.name)
+                    }
+                )
+            }
         ) { padding ->
             Column(
                 Modifier
@@ -1203,7 +1216,7 @@ fun Home(modifier: Modifier = Modifier) {
                             )
                         }
                 ) {
-                    BookList(modifier, list, tabPage)
+                    BookList(modifier, list, tabPage, screenWidth)
                 }
             }
         }
@@ -1214,11 +1227,14 @@ fun Home(modifier: Modifier = Modifier) {
 private fun BookList(
     modifier: Modifier = Modifier,
     books: List<Book>,
-    tabPage: TabPage
+    tabPage: TabPage,
+    screenWidth : Float
 ) {
+    val windowSize = computeWindowSizeClasses(screenWidth)
+
     IgTheme {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(5),
+            columns = GridCells.Fixed(windowSize.item),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 50.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -1232,7 +1248,7 @@ private fun BookList(
                     bookId = {
                     /*TODO 여기서 argument이용해서 id를 it으로 넘겨주기*/
                     }
-                   )
+                )
             }
         }
     }
@@ -1248,7 +1264,6 @@ private fun BookItem(
     val bookId = book.bookInfo.id
     Column {
             Row {
-                Spacer(modifier = Modifier.width(20.dp))
                 Box(
                     modifier
                         .fillMaxSize()
@@ -1264,14 +1279,14 @@ private fun BookItem(
                         ) {
                             PageForView(modifier = Modifier, thumbnail = book.thumbnail)
                         }
-                        Box () {
+                        Box {
                             Column {
                                 Text(
                                     text = book.bookInfo.title,
                                     style = MaterialTheme.typography.titleLarge,
                                     textAlign = TextAlign.Center)
-                                if (tabPage == TabPage.Published) publishedTimeAgoText(book.bookInfo.saveDate)
-                                else if (tabPage == TabPage.Working) workingTimeAgoText(book.bookInfo.saveDate)
+                                if (tabPage == TabPage.Published) PublishedTimeAgoText(book.bookInfo.saveDate)
+                                else if (tabPage == TabPage.Working) WorkingTimeAgoText(book.bookInfo.saveDate)
                             }
                         }
                     }
@@ -1280,16 +1295,17 @@ private fun BookItem(
         Spacer(modifier = Modifier.height(20.dp))
     }
 }
+
 @Composable
-fun publishedTimeAgoText(date: Date) {
+fun PublishedTimeAgoText(date: Date) {
     val timestamp = date.time
     val formatter = SimpleDateFormat("출판 날짜:yyyy.MM.dd", Locale.getDefault())
-    val date = Date(timestamp)
-    Text(formatter.format(date))
+    val publishedDate = Date(timestamp)
+    Text(formatter.format(publishedDate))
 }
 
 @Composable
-fun workingTimeAgoText(date: Date) {
+fun WorkingTimeAgoText(date: Date) {
     val timestamp = date.time
     val now = Calendar.getInstance().timeInMillis
     val diff = now - timestamp
@@ -1313,6 +1329,22 @@ fun workingTimeAgoText(date: Date) {
     }
 
     val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-    val date = Date(timestamp)
-    Text(formatter.format(date))
+    val workingDate = Date(timestamp)
+    Text(formatter.format(workingDate))
+}
+
+@Composable
+private fun computeWindowSizeClasses(
+    widthDp: Float,
+): WindowSize {
+    var currentWindowSize by remember { mutableStateOf(WindowSize.COMPACT) }
+
+    currentWindowSize = when {
+        widthDp < 600f -> WindowSize.COMPACT
+        widthDp < 840f -> WindowSize.MEDIUM
+        else ->
+            WindowSize.EXPANDED
+    }
+
+    return currentWindowSize
 }
