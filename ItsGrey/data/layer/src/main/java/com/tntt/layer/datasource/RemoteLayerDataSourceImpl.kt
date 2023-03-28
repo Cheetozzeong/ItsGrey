@@ -7,6 +7,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.tntt.layer.model.LayerDto
 import com.tntt.network.Firestore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.*
 import javax.inject.Inject
 
@@ -16,16 +18,16 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
     val layerCollection by lazy { firestore.collection("layer") }
 
-    override fun createLayerDto(layerDto: LayerDto): String {
+    override suspend fun createLayerDto(layerDto: LayerDto): Flow<String> = flow {
         val id = UUID.randomUUID().toString()
         layerDto.id = id
         layerCollection
             .document(id)
             .set(layerDto)
-        return id
+        emit(id)
     }
 
-    override fun getLayerDtoList(imageBoxId: String): List<LayerDto> {
+    override suspend fun getLayerDtoList(imageBoxId: String): Flow<List<LayerDto>> = flow {
         val layerDtoList = mutableListOf<LayerDto>()
         layerCollection
             .whereEqualTo("imageBoxId", imageBoxId)
@@ -40,10 +42,10 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                     layerDtoList.add(LayerDto(id, imageBoxId, order, bitmap))
                 }
             }
-        return layerDtoList
+        emit(layerDtoList)
     }
 
-    override fun updateLayerDtoList(layerDtoList: List<LayerDto>): Boolean {
+    override suspend fun updateLayerDtoList(layerDtoList: List<LayerDto>): Flow<Boolean> = flow {
         var result: Boolean = true
         for (layerDto in layerDtoList) {
             layerCollection
@@ -51,10 +53,10 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                 .set(layerDto)
                 .addOnSuccessListener { result = false }
         }
-        return result
+        emit(result)
     }
 
-    override fun deleteLayerDtoList(imageBoxId: String): Boolean {
+    override suspend fun deleteLayerDtoList(imageBoxId: String): Flow<Boolean> = flow {
         var result: Boolean = true
         layerCollection
             .whereEqualTo("imageBoxId", imageBoxId)
@@ -68,10 +70,10 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                         .addOnFailureListener { result = false }
                 }
             }
-        return result
+        emit(result)
     }
 
-    override fun getSumLayer(imageBoxId: String): Bitmap {
+    override suspend fun getSumLayer(imageBoxId: String): Flow<Bitmap> = flow {
         val bitmapList = mutableListOf<Bitmap>()
         var width = 100
         var height = 100
@@ -97,6 +99,6 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         for (bitmap in bitmapList) {
             canvas.drawBitmap(bitmap, 0f, 0f, null)
         }
-        return sumLayer
+        emit(sumLayer)
     }
 }

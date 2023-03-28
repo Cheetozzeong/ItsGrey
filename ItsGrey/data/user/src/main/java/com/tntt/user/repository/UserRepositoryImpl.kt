@@ -5,29 +5,38 @@ import com.tntt.repo.UserRepository
 import com.tntt.user.datasource.RemoteUserDataSource
 import com.tntt.user.datasource.RemoteUserDataSourceImpl
 import com.tntt.user.model.UserDto
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val remoteUserDataSource: RemoteUserDataSource
 ): UserRepository {
 
-    override fun getUser(id: String): UserInfo {
-        val userDto = remoteUserDataSource.getUser(id)
-        return UserInfo(userDto.id, userDto.name)
+    override suspend fun getUser(id: String): Flow<UserInfo> = flow {
+        remoteUserDataSource.getUser(id).collect() { userDto ->
+            emit(UserInfo(userDto.id, userDto.name))
+        }
     }
 
-    override fun createUser(userInfo: UserInfo): String {
+    override suspend fun createUser(userInfo: UserInfo): Flow<String> = flow {
         val userDto = UserDto(userInfo.id, userInfo.name)
-        return remoteUserDataSource.createUser(userDto)
+        remoteUserDataSource.createUser(userDto).collect() { userId ->
+            emit(userId)
+        }
     }
 
-    override fun updateUser(userInfo: UserInfo): UserInfo {
+    override suspend fun updateUser(userInfo: UserInfo): Flow<UserInfo> = flow {
         val userDto = UserDto(userInfo.id, userInfo.name)
-        val updatedUserDto = remoteUserDataSource.updateUser(userDto)
-        return UserInfo(updatedUserDto.id, updatedUserDto.name)
+        remoteUserDataSource.updateUser(userDto).collect() { updatedUserDto ->
+            emit(UserInfo(updatedUserDto.id, updatedUserDto.name))
+        }
     }
 
-    override fun deleteUser(id: String): Boolean {
-        return remoteUserDataSource.deleteUser(id)
+    override suspend fun deleteUser(id: String): Flow<Boolean> = flow {
+        remoteUserDataSource.deleteUser(id).collect() { result ->
+            emit(result)
+        }
     }
 }

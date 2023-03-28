@@ -59,6 +59,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+
     implementation(project(":core:network"))
     implementation(project(":domain:model"))
     implementation(project(":domain:repo"))

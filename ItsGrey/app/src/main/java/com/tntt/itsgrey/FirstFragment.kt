@@ -14,6 +14,7 @@ import com.tntt.home.usecase.HomeUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import itsgrey.app.R
 import itsgrey.app.databinding.FragmentFirstBinding
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 /**
@@ -47,7 +48,9 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
             println("button click!")
-            println("result = ${homeUseCase.createBook("1")}")
+//            homeUseCase.createBook("1").collect() {
+//
+//            }
         }
     }
 

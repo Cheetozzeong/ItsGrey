@@ -3,6 +3,8 @@ package com.tntt.drawing.datasource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.drawing.model.DrawingDto
 import com.tntt.network.Firestore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
 
@@ -12,16 +14,16 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
 
     val drawingCollection by lazy { firestore.collection("drawing") }
 
-    override fun createDrawingDto(drawingDto: DrawingDto): String {
+    override suspend fun createDrawingDto(drawingDto: DrawingDto): Flow<String> = flow {
         val id = UUID.randomUUID().toString()
         drawingDto.id = id
         drawingCollection
             .document(id)
             .set(drawingDto)
-        return id
+        emit(id)
     }
 
-    override fun getDrawingDto(imageBoxId: String): DrawingDto {
+    override suspend fun getDrawingDto(imageBoxId: String): Flow<DrawingDto> = flow {
 
         lateinit var drawingDto: DrawingDto
 
@@ -39,24 +41,24 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
                 val recentColors = data?.get("recentColors") as List<String>
                 drawingDto = DrawingDto(id, imageBoxId, penSizeList, eraserSizeList, penColor, recentColors)
             }
-        return drawingDto
+        emit(drawingDto)
     }
 
-    override fun updateDrawingDto(drawingDto: DrawingDto): Boolean {
+    override suspend fun updateDrawingDto(drawingDto: DrawingDto): Flow<Boolean> = flow {
         var result: Boolean = true
         drawingCollection
             .document(drawingDto.id)
             .set(drawingDto)
             .addOnFailureListener { result = false }
-        return result
+        emit(result)
     }
 
-    override fun deleteDrawingDto(id: String): Boolean {
+    override suspend fun deleteDrawingDto(id: String): Flow<Boolean> = flow {
         var result: Boolean = true
         drawingCollection
             .document(id)
             .delete()
             .addOnFailureListener { result = false }
-        return result
+        emit(result)
     }
 }

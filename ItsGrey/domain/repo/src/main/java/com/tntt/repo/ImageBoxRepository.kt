@@ -1,10 +1,11 @@
 package com.tntt.repo
 
 import com.tntt.model.ImageBoxInfo
+import kotlinx.coroutines.flow.Flow
 
 interface ImageBoxRepository {
-    fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): String
-    fun getImageBoxInfo(pageId: String): ImageBoxInfo
-    fun updateImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Boolean
-    fun deleteImageBoxInfo(id: String):  Boolean
+    suspend fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<String>
+    suspend fun getImageBoxInfo(pageId: String): Flow<ImageBoxInfo>
+    suspend fun updateImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<Boolean>
+    suspend fun deleteImageBoxInfo(id: String):  Flow<Boolean>
 }

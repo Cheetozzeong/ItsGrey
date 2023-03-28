@@ -5,27 +5,39 @@ import com.tntt.drawing.datasource.RemoteDrawingDataSourceImpl
 import com.tntt.drawing.model.DrawingDto
 import com.tntt.model.DrawingInfo
 import com.tntt.repo.DrawingRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class DrawingRepositoryImpl @Inject constructor(
     private val drawingDataSource: RemoteDrawingDataSource
 ): DrawingRepository {
 
-    override fun createDrawingInfo(imageBoxId: String, drawingInfo: DrawingInfo): String {
-        return drawingDataSource.createDrawingDto(DrawingDto(drawingInfo.id, imageBoxId, drawingInfo.penSizeList, drawingInfo.eraserSizeList, drawingInfo.penColor, drawingInfo.recentColorList))
+    override suspend fun createDrawingInfo(imageBoxId: String, drawingInfo: DrawingInfo): Flow<String> = flow {
+        drawingDataSource
+            .createDrawingDto(DrawingDto(drawingInfo.id, imageBoxId, drawingInfo.penSizeList, drawingInfo.eraserSizeList, drawingInfo.penColor, drawingInfo.recentColorList))
+            .collect() { drawingInfo ->
+                emit(drawingInfo)
+            }
     }
 
-    override fun getDrawingInfo(imageBoxId: String): DrawingInfo {
-        val drawingDto = drawingDataSource.getDrawingDto(imageBoxId)
-        return DrawingInfo(drawingDto.id, drawingDto.penSizeList, drawingDto.eraserSizeList, drawingDto.penColor, drawingDto.recentColors)
+    override suspend fun getDrawingInfo(imageBoxId: String): Flow<DrawingInfo> = flow {
+        drawingDataSource.getDrawingDto(imageBoxId).collect() { drawingDto ->
+            emit(DrawingInfo(drawingDto.id, drawingDto.penSizeList, drawingDto.eraserSizeList, drawingDto.penColor, drawingDto.recentColors))
+        }
     }
 
-    override fun updateDrawingInfo(imageBoxId: String, drawingInfo: DrawingInfo): Boolean {
+    override suspend fun updateDrawingInfo(imageBoxId: String, drawingInfo: DrawingInfo): Flow<Boolean> = flow {
         val drawingDto = DrawingDto(drawingInfo.id, imageBoxId, drawingInfo.penSizeList, drawingInfo.eraserSizeList, drawingInfo.penColor, drawingInfo.recentColorList)
-        return drawingDataSource.updateDrawingDto(drawingDto)
+        drawingDataSource.updateDrawingDto(drawingDto).collect() { result ->
+            emit(result)
+        }
     }
 
-    override fun deleteDrawingInfo(id: String): Boolean {
-        return drawingDataSource.deleteDrawingDto(id)
+    override suspend fun deleteDrawingInfo(id: String): Flow<Boolean> = flow {
+        drawingDataSource.deleteDrawingDto(id).collect() { result ->
+            emit(result)
+        }
     }
 }

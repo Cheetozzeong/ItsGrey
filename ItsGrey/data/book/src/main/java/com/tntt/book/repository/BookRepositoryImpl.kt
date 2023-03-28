@@ -8,45 +8,55 @@ import com.tntt.model.SortType
 import com.tntt.model.BookInfo
 import com.tntt.repo.BookRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
     private val bookDataSource: RemoteBookDataSource
 ) : BookRepository {
 
-    override suspend fun getBookInfo(bookId: String): BookInfo {
-        val bookDto = bookDataSource.getBookDto(bookId)
-        println("getBookInfo(${bookId}) -> bookDto = ${bookDto}")
-        val id = bookDto.id
-        val title = bookDto.title
-        val saveDate = bookDto.saveDate
-        return BookInfo(id, title, saveDate)
+    override suspend fun getBookInfo(bookId: String): Flow<BookInfo> = flow {
+        bookDataSource.getBookDto(bookId).collect() { bookDto ->
+            val id = bookDto.id
+            val title = bookDto.title
+            val saveDate = bookDto.saveDate
+            emit(BookInfo(id, title, saveDate))
+        }
     }
 
-    override fun getBookInfos(
+    override suspend fun getBookInfos(
         userId: String,
         sortType: SortType,
         startIndex: Long,
         bookType: BookType
-    ): List<BookInfo> {
-        val bookDtoList = bookDataSource.getBookDtos(userId, sortType, startIndex, bookType)
-        val bookList = mutableListOf<BookInfo>()
-        for (bookDto in bookDtoList){
-            bookList.add(BookInfo(bookDto.id, bookDto.title, bookDto.saveDate))
+    ): Flow<List<BookInfo>> = flow {
+        bookDataSource.getBookDtos(userId, sortType, startIndex, bookType).collect() { bookDtoList ->
+            val bookList = mutableListOf<BookInfo>()
+            for (bookDto in bookDtoList){
+                bookList.add(BookInfo(bookDto.id, bookDto.title, bookDto.saveDate))
+            }
+            emit(bookList)
         }
-        return bookList
     }
 
-    override fun createBookInfo(userId: String): String {
-        println("createBookInfo(${userId})")
-        return bookDataSource.createBookDto(userId)
+    override suspend fun createBookInfo(userId: String): Flow<String> = flow {
+        bookDataSource.createBookDto(userId).collect() { bookDtoId ->
+            emit(bookDtoId)
+        }
     }
 
-    override fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Boolean {
-        return bookDataSource.updateBookDto(BookDto(bookInfo.id, userId, bookInfo.title, bookType, bookInfo.saveDate))
+    override suspend fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Flow<Boolean> = flow {
+        bookDataSource.updateBookDto(BookDto(bookInfo.id, userId, bookInfo.title, bookType, bookInfo.saveDate)).collect() { result ->
+            emit(result)
+        }
     }
 
-    override fun deleteBookInfo(bookIdList: List<String>): Boolean {
-        return bookDataSource.deleteBook(bookIdList)
+    override suspend fun deleteBookInfo(bookIdList: List<String>): Flow<Boolean> = flow {
+        bookDataSource.deleteBook(bookIdList).collect() { result ->
+            emit(result)
+        }
     }
 }

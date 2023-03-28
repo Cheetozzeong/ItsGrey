@@ -5,6 +5,8 @@ import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
 import com.tntt.textbox.model.TextBoxDto
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
 
@@ -14,16 +16,16 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
 
     val textBoxCollection by lazy { firestore.collection("textBox") }
 
-    override fun createTextBoxDto(textBoxDto: TextBoxDto): String {
+    override suspend fun createTextBoxDto(textBoxDto: TextBoxDto): Flow<String> = flow {
         val id = UUID.randomUUID().toString()
         textBoxDto.id = id
         textBoxCollection
             .document(id)
             .set(textBoxDto)
-        return id
+        emit(id)
     }
 
-    override fun getTextBoxDtoList(pageId: String): List<TextBoxDto> {
+    override suspend fun getTextBoxDtoList(pageId: String): Flow<List<TextBoxDto>> = flow {
         val textBoxDtoList = mutableListOf<TextBoxDto>()
 
         textBoxCollection
@@ -41,10 +43,10 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
                     textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxData))
                 }
             }
-        return textBoxDtoList
+        emit(textBoxDtoList)
     }
 
-    override fun updateTextBoxDtoList(textBoxDtoList: List<TextBoxDto>): Boolean {
+    override suspend fun updateTextBoxDtoList(textBoxDtoList: List<TextBoxDto>): Flow<Boolean> = flow {
         var result: Boolean = true
 
         for (textBoxDto in textBoxDtoList) {
@@ -55,10 +57,10 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
                     result = false
                 }
         }
-        return result
+        emit(result)
     }
 
-    override fun deleteTextBoxDto(id: String): Boolean {
+    override suspend fun deleteTextBoxDto(id: String): Flow<Boolean> = flow {
         var result: Boolean = true
 
         textBoxCollection
@@ -67,6 +69,6 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
-        return result
+        emit(result)
     }
 }

@@ -5,6 +5,8 @@ import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
 
@@ -14,16 +16,16 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
     val imageBoxCollection by lazy { firestore.collection("imageBox") }
 
-    override fun createImageBoxDto(imageBoxDto: ImageBoxDto): String {
+    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<String> = flow {
         val imageBoxId = UUID.randomUUID().toString()
         imageBoxDto.id = imageBoxId
         imageBoxCollection
             .document(imageBoxId)
             .set(imageBoxDto)
-        return imageBoxId
+        emit(imageBoxId)
     }
 
-    override fun getImageBoxDto(pageId: String): ImageBoxDto {
+    override suspend fun getImageBoxDto(pageId: String): Flow<ImageBoxDto> = flow {
         var imageBoxDto: ImageBoxDto = ImageBoxDto("1", "1", BoxData(0.0f, 0.0f, 0.0f, 0.0f))
 
         imageBoxCollection
@@ -38,10 +40,10 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
                 imageBoxDto = ImageBoxDto(id, pageId, boxData)
             }
-        return imageBoxDto
+        emit(imageBoxDto)
     }
 
-    override fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Boolean {
+    override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean> = flow {
         var result: Boolean = true
         imageBoxCollection
             .document(imageBoxDto.id)
@@ -49,10 +51,10 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
-        return result
+        emit(result)
     }
 
-    override fun deleteImageBoxDto(id: String): Boolean {
+    override suspend fun deleteImageBoxDto(id: String): Flow<Boolean> = flow {
         var result: Boolean = true
         imageBoxCollection
             .document(id)
@@ -60,6 +62,6 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
-        return result
+        emit(result)
     }
 }

@@ -10,6 +10,9 @@ import com.tntt.page.datasource.RemotePageDataSource
 import com.tntt.page.model.PageDto
 import com.tntt.repo.PageRepository
 import com.tntt.textbox.datasource.RemoteTextBoxDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class PageRepositoryImpl @Inject constructor(
@@ -19,57 +22,65 @@ class PageRepositoryImpl @Inject constructor(
     private val layerDataSource: RemoteLayerDataSource,
 ): PageRepository {
 
-    override fun createPageInfo(bookId: String, pageInfo: PageInfo): String {
+    override suspend fun createPageInfo(bookId: String, pageInfo: PageInfo): Flow<String> = flow {
         val pageDto = PageDto("", bookId, pageInfo.order)
-        return pageDataSource.createPageDto(pageDto)
+        pageDataSource.createPageDto(pageDto).collect() { pageDtoId ->
+            emit(pageDtoId)
+        }
     }
 
-    override fun getPageInfo(bookId: String, pageOrder: Int): PageInfo {
-        val pageDto = pageDataSource.getPageDto(bookId, pageOrder)
-        return PageInfo(pageDto.id, pageDto.order)
+    override suspend fun getPageInfo(bookId: String, pageOrder: Int): Flow<PageInfo> = flow {
+        pageDataSource.getPageDto(bookId, pageOrder).collect() { pageDto ->
+            emit(PageInfo(pageDto.id, pageDto.order))
+        }
     }
 
-    override fun getFirstPageInfo(bookId: String): PageInfo {
-        println("getFirstPageInfo(${bookId})")
-        val pageDto = pageDataSource.getFirstPageDto(bookId)
-        println("pageDto = ${pageDto})")
-        return getPageInfo(pageDto.id, pageDto.order)
+    override suspend fun getFirstPageInfo(bookId: String): Flow<PageInfo> = flow {
+        pageDataSource.getFirstPageDto(bookId).collect() { pageDto ->
+            emit(PageInfo(pageDto.id, pageDto.order))
+        }
     }
 
-    override fun getPageInfoList(bookId: String): List<PageInfo> {
+    override suspend fun getPageInfoList(bookId: String): Flow<List<PageInfo>> = flow {
         val pageInfoList = mutableListOf<PageInfo>()
 
-        val pageDtoList = pageDataSource.getPageDtoList(bookId)
-        for (pageDto in pageDtoList) {
-            pageInfoList.add(PageInfo(pageDto.id, pageDto.order))
+        pageDataSource.getPageDtoList(bookId).collect() { pageDtoList ->
+            for (pageDto in pageDtoList) {
+                pageInfoList.add(PageInfo(pageDto.id, pageDto.order))
+            }
+            emit(pageInfoList)
         }
-        return pageInfoList
     }
 
-    override fun updatePageInfoList(bookId: String, pageInfoList: List<PageInfo>): Boolean {
+    override suspend fun updatePageInfoList(bookId: String, pageInfoList: List<PageInfo>): Flow<Boolean> = flow {
         val pageDtoList = mutableListOf<PageDto>()
 
         for (pageInfo in pageInfoList) {
             pageDtoList.add(PageDto(pageInfo.id, bookId, pageInfo.order))
         }
-        return pageDataSource.updatePageDto(pageDtoList)
-    }
-
-    override fun getThumbnail(pageId: String): Thumbnail {
-        println("getThumnail(${pageId})")
-        val imageBoxDto = imageBoxDataSource.getImageBoxDto(pageId)
-        val imageBoxInfo = ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData)
-        val textBoxDtoList = textBoxDataSource.getTextBoxDtoList(pageId)
-        val textBoxInfoList = mutableListOf<TextBoxInfo>()
-        for (textBoxDto in textBoxDtoList) {
-            textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
+        pageDataSource.updatePageDto(pageDtoList).collect() { result ->
+            emit(result)
         }
-        val sumLayer = layerDataSource.getSumLayer(imageBoxInfo.id)
-        println("sumLayer = ${sumLayer})")
-        return Thumbnail(imageBoxInfo, sumLayer, textBoxInfoList)
     }
 
-    override fun hasCover(bookId: String): Boolean {
+    override suspend fun getThumbnail(pageId: String): Flow<Thumbnail> = flow {
+        println("getThumnail(${pageId})")
+        imageBoxDataSource.getImageBoxDto(pageId).collect() { imageBoxDto ->
+            val imageBoxInfo = ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData)
+            textBoxDataSource.getTextBoxDtoList(pageId).collect() { textBoxDtoList ->
+                val textBoxInfoList = mutableListOf<TextBoxInfo>()
+                for (textBoxDto in textBoxDtoList) {
+                    textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
+                }
+                layerDataSource.getSumLayer(imageBoxInfo.id).collect() { sumLayer ->
+                    println("sumLayer = ${sumLayer})")
+                    emit(Thumbnail(imageBoxInfo, sumLayer, textBoxInfoList))
+                }
+            }
+        }
+    }
+
+    override suspend fun hasCover(bookId: String): Boolean {
         return pageDataSource.hasCover(bookId)
     }
 }

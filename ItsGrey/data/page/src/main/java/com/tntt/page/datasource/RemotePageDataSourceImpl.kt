@@ -3,6 +3,8 @@ package com.tntt.page.datasource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.network.Firestore
 import com.tntt.page.model.PageDto
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
 
@@ -12,14 +14,14 @@ class RemotePageDataSourceImpl @Inject constructor(
 
     val pageCollection by lazy { firestore.collection("page") }
 
-    override fun createPageDto(pageDto: PageDto): String {
+    override suspend fun createPageDto(pageDto: PageDto): Flow<String> = flow {
         val pageId = UUID.randomUUID().toString()
         pageDto.id = pageId
         pageCollection.document(pageId).set(pageDto)
-        return pageId
+        emit(pageId)
     }
 
-    override fun getPageDto(bookId: String, pageOrder: Int): PageDto {
+    override suspend fun getPageDto(bookId: String, pageOrder: Int): Flow<PageDto> = flow {
         var pageDto: PageDto = PageDto("1", "1", 1)
         println("getPageDto(${bookId}, ${pageOrder})")
         pageCollection
@@ -36,10 +38,10 @@ class RemotePageDataSourceImpl @Inject constructor(
                 pageDto = PageDto(id, bookId, order)
 
             }
-        return pageDto
+        emit(pageDto)
     }
 
-    override fun getFirstPageDto(bookId: String): PageDto {
+    override suspend fun getFirstPageDto(bookId: String): Flow<PageDto> = flow {
         var pageDto: PageDto = PageDto("1", "1", 1)
         pageCollection
             .whereEqualTo("bookId", bookId)
@@ -55,10 +57,10 @@ class RemotePageDataSourceImpl @Inject constructor(
 
                 pageDto = PageDto(id, bookId, order)
             }
-        return pageDto
+        emit(pageDto)
     }
 
-    override fun getPageDtoList(bookId: String): List<PageDto> {
+    override suspend fun getPageDtoList(bookId: String): Flow<List<PageDto>> = flow {
         val pageDtoList = mutableListOf<PageDto>()
 
         pageCollection
@@ -75,10 +77,10 @@ class RemotePageDataSourceImpl @Inject constructor(
                     pageDtoList.add(PageDto(id, bookId, order))
                 }
             }
-        return pageDtoList
+        emit(pageDtoList)
     }
 
-    override fun updatePageDto(pageDtoList: List<PageDto>): Boolean {
+    override suspend fun updatePageDto(pageDtoList: List<PageDto>): Flow<Boolean> = flow {
         var result: Boolean = true
 
         for (pageDto in pageDtoList) {
@@ -87,10 +89,10 @@ class RemotePageDataSourceImpl @Inject constructor(
                 .set(pageDto)
                 .addOnFailureListener { result = false }
         }
-        return result
+        emit(result)
     }
 
-    override fun hasCover(bookId: String): Boolean {
+    override suspend fun hasCover(bookId: String): Boolean {
         var result = false
         pageCollection
             .whereEqualTo("bookId", bookId)

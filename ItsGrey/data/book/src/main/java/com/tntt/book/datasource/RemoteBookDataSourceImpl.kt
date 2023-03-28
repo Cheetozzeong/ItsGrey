@@ -19,39 +19,28 @@ class RemoteBookDataSourceImpl @Inject constructor(
 
     val bookCollection by lazy { firestore.collection("book") }
 
-    override suspend fun getBookDto(bookId: String): BookDto {
-        val bookCollection = firestore.collection("book")
-        val documentSnapshot = bookCollection.document(bookId).get()
-            documentSnapshot.addOnSuccessListener {documentSnapshot ->
-                val data = documentSnapshot.data
-                val id = data?.get("id") as String
-                val userId = data?.get("userId") as String
-                val title = data?.get("title") as String
-                val bookType = BookType.valueOf(data?.get("bookType") as String)
-                val saveDate = (data?.get("saveDate") as Timestamp).toDate()
+    override suspend fun getBookDto(bookId: String): Flow<BookDto> = flow {
+        lateinit var bookDto: BookDto
+        bookCollection.document(bookId).get().addOnCompleteListener { documentSnapshot ->
+            val data = documentSnapshot.result?.data
+            val id = data?.get("id") as String
+            val userId = data?.get("userId") as String
+            val title = data?.get("title") as String
+            val bookType = BookType.valueOf(data?.get("bookType") as String)
+            val saveDate = (data?.get("saveDate") as Timestamp).toDate()
+            bookDto = BookDto(id, userId, title, bookType, saveDate)
         }
+        emit(bookDto)
+ }
 
-        if(documentSnapshot.isComplete) {
-            val id = documentSnapshot.result?.data?.get("id") as String
-            val userId = documentSnapshot.result?.data?.get("userId") as String
-            val title = documentSnapshot.result?.data?.get("title") as String
-            val bookType = BookType.valueOf(documentSnapshot.result?.data?.get("bookType") as String)
-            val saveDate = (documentSnapshot.result?.data?.get("saveDate") as Timestamp).toDate()
-            val bookDto = BookDto(id, userId, title, bookType, saveDate)
-            return bookDto
-        }
-    }
-
-    override fun getBookDtos(
+    override suspend fun getBookDtos(
         userId: String,
         sortType: SortType,
         startIndex: Long,
         bookType: BookType
-    ): List<BookDto> {
+    ): Flow<List<BookDto>> = flow {
         var order = sortType.order
         var by = sortType.by
-
-        val bookCollection = firestore.collection("book")
 
         val bookDtos = mutableListOf<BookDto>()
         val query = bookCollection
@@ -81,40 +70,34 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 bookDtos.add(BookDto(id, userId, title, bookType, saveDate))
             }
         }
-        return bookDtos
     }
 
-    override fun createBookDto(userId: String): String {
-//        val bookCollection = firestore.collection("book")
-        println("createBookDto(${userId})")
+    override suspend fun createBookDto(userId: String): Flow<String> = flow {
         val bookId = UUID.randomUUID().toString()
         val bookDto = BookDto(bookId, userId, "Untitled", BookType.EDIT, Date())
-        println("in createBookDto.. bookDto = ${bookDto}")
         bookCollection
             .document(bookId)
             .set(bookDto)
             .addOnSuccessListener {
-                println("success createBookDto")
                 Log.d("MyTag", "success... in bookCollection.document(${bookId}).set(${bookDto})")
             }
             .addOnFailureListener {
-                e -> Log.d("MyTag", "fail... in bookCollection.document(${bookId}).set(${bookDto})")
-                println("fail createBookDto")
+                    e -> Log.d("MyTag", "fail... in bookCollection.document(${bookId}).set(${bookDto})")
             }
-        return bookId
+        emit(bookId)
     }
 
-    override fun updateBookDto(bookDto: BookDto): Boolean {
+    override suspend fun updateBookDto(bookDto: BookDto): Flow<Boolean> = flow {
         val bookCollection = firestore.collection("book")
         var result = true
         bookCollection
             .document(bookDto.id)
             .set(bookDto)
             .addOnFailureListener { result = false }
-        return result
+        emit(result)
     }
 
-    override fun deleteBook(bookIdList: List<String>): Boolean {
+    override suspend fun deleteBook(bookIdList: List<String>): Flow<Boolean> = flow {
         val bookCollection = firestore.collection("book")
         var result = true
         for(bookId in bookIdList){
@@ -125,6 +108,6 @@ class RemoteBookDataSourceImpl @Inject constructor(
                     result = false
                 }
         }
-        return result
+        emit(result)
     }
 }
