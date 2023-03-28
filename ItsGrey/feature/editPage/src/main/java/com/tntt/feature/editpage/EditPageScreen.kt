@@ -127,7 +127,7 @@ private fun RegulateFontSizeDialog() {
 @Composable
 fun EditBookTopAppBar() {
     IgTopAppBar(
-        titleRes = "",
+        title = "",
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Back",
         onNavigationClick = { /*TODO*/ },
