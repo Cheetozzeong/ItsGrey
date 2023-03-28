@@ -44,7 +44,9 @@ dependencies {
 
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:common"))
     implementation(project(":domain:model"))
+    implementation(project(":domain:editpage"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
@@ -59,6 +61,7 @@ dependencies {
     implementation(Libraries.Compose.MATERIAL.ICONS_EXTENDED)
 
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.5.3")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
     implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
     kapt("androidx.hilt:hilt-compiler:1.0.0-alpha03")
