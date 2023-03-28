@@ -1283,7 +1283,7 @@ private fun BookItem(
 @Composable
 fun publishedTimeAgoText(date: Date) {
     val timestamp = date.time
-    val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+    val formatter = SimpleDateFormat("출판 날짜:yyyy.MM.dd", Locale.getDefault())
     val date = Date(timestamp)
     Text(formatter.format(date))
 }
