@@ -1,10 +1,12 @@
 package com.tntt.page.datasource
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.network.Firestore
 import com.tntt.page.model.PageDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
 
@@ -15,6 +17,7 @@ class RemotePageDataSourceImpl @Inject constructor(
     val pageCollection by lazy { firestore.collection("page") }
 
     override suspend fun createPageDto(pageDto: PageDto): Flow<String> = flow {
+        Log.d("function test", "createPageDto(${pageDto})")
         val pageId = UUID.randomUUID().toString()
         pageDto.id = pageId
         pageCollection.document(pageId).set(pageDto)
@@ -22,6 +25,7 @@ class RemotePageDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getPageDto(bookId: String, pageOrder: Int): Flow<PageDto> = flow {
+        Log.d("function test", "getPageDto(${bookId}, ${pageOrder})")
         var pageDto: PageDto = PageDto("1", "1", 1)
         println("getPageDto(${bookId}, ${pageOrder})")
         pageCollection
@@ -41,26 +45,29 @@ class RemotePageDataSourceImpl @Inject constructor(
         emit(pageDto)
     }
 
-    override suspend fun getFirstPageDto(bookId: String): Flow<PageDto> = flow {
-        var pageDto: PageDto = PageDto("1", "1", 1)
+    override suspend fun getCoverPageDto(bookId: String): Flow<PageDto?> = flow {
+        Log.d("function test", "getFirstPageDto(${bookId})")
+        var pageDto: PageDto? = null
         pageCollection
             .whereEqualTo("bookId", bookId)
-            .orderBy("order")
+            .whereEqualTo("order", 0)
             .limit(1)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw  NullPointerException()
+                if(!querySnapshot.isEmpty) {
+                    val documentSnapshot = querySnapshot.documents.first()
+                    val id = documentSnapshot.id as String
+                    val data = documentSnapshot.data
+                    val order = data?.get("order") as Int
 
-                val id = documentSnapshot.id
-                val data = documentSnapshot.data
-                val order = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
-
-                pageDto = PageDto(id, bookId, order)
-            }
+                    pageDto = PageDto(id, bookId, order)
+                }
+            }.await()
         emit(pageDto)
     }
 
     override suspend fun getPageDtoList(bookId: String): Flow<List<PageDto>> = flow {
+        Log.d("function test", "getPageDtoList(${bookId})")
         val pageDtoList = mutableListOf<PageDto>()
 
         pageCollection
@@ -81,6 +88,7 @@ class RemotePageDataSourceImpl @Inject constructor(
     }
 
     override suspend fun updatePageDto(pageDtoList: List<PageDto>): Flow<Boolean> = flow {
+        Log.d("function test", "updatePageDto(${pageDtoList}")
         var result: Boolean = true
 
         for (pageDto in pageDtoList) {
@@ -93,6 +101,7 @@ class RemotePageDataSourceImpl @Inject constructor(
     }
 
     override suspend fun hasCover(bookId: String): Boolean {
+        Log.d("function test", "hasCover(${bookId})")
         var result = false
         pageCollection
             .whereEqualTo("bookId", bookId)

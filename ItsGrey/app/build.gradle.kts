@@ -73,6 +73,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 
     implementation(project(":domain:home"))
+    implementation(project(":domain:model"))
 }
 
 kapt {

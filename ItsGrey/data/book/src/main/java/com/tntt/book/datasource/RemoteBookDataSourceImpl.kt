@@ -3,13 +3,12 @@ package com.tntt.book.datasource
 import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.tntt.book.model.BookDto
 import com.tntt.model.BookType
 import com.tntt.model.SortType
-import com.tntt.network.Firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
@@ -21,6 +20,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
     val bookCollection by lazy { firestore.collection("book") }
 
     override suspend fun getBookDto(bookId: String): Flow<BookDto> = flow {
+        Log.d("function test", "getBookDto(${bookId})")
         var bookDto = BookDto("1", "1", "1", BookType.EDIT, Date())
         bookCollection.document(bookId).get().addOnCompleteListener { documentSnapshot ->
             val data = documentSnapshot.result?.data
@@ -34,16 +34,12 @@ class RemoteBookDataSourceImpl @Inject constructor(
         emit(bookDto)
  }
 
-    override suspend fun getBookDtos(
-        userId: String,
-        sortType: SortType,
-        startIndex: Long,
-        bookType: BookType
-    ): Flow<List<BookDto>> = flow {
+    override suspend fun getBookDtoList(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<BookDto>> = flow {
+        Log.d("function test", "getBookDtos(${userId}, ${sortType}, ${startIndex}, ${bookType})")
         var order = sortType.order
         var by = sortType.by
 
-        val bookDtos = mutableListOf<BookDto>()
+        val bookDtoList = mutableListOf<BookDto>()
         val query = bookCollection
             .whereEqualTo("userId", userId)
             .whereEqualTo("bookType", bookType)
@@ -54,11 +50,12 @@ class RemoteBookDataSourceImpl @Inject constructor(
             val startAfterDocument = bookCollection
                 .whereEqualTo("userId", userId)
                 .whereEqualTo("bookType", bookType)
-                .orderBy(by, order)
-                .limit(startIndex)
+                .orderBy("title", Query.Direction.ASCENDING)
+                .limit(startIndex + 1)
                 .get()
+                .await()
 
-            query.startAfter(startAfterDocument.result?.documents?.last())
+            query.startAfter(startAfterDocument.documents?.last())
         }
 
         query.get().addOnSuccessListener {documents ->
@@ -66,14 +63,17 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 val id = document.get("id") as String
                 val userId = document.get("userId") as String
                 val title = document.get("title") as String
-                val bookType = document.get("bookType") as BookType
+                val bookType = BookType.valueOf(document.get("bookType") as String)
                 val saveDate = document.getDate("saveDate") as Date
-                bookDtos.add(BookDto(id, userId, title, bookType, saveDate))
+                bookDtoList.add(BookDto(id, userId, title, bookType, saveDate))
             }
-        }
+        }.await()
+        Log.d("function test", "emit(${bookDtoList}")
+        emit(bookDtoList)
     }
 
     override suspend fun createBookDto(userId: String): Flow<String> = flow {
+        Log.d("function test", "createBookDto(${userId})")
         val bookId = UUID.randomUUID().toString()
         val bookDto = BookDto(bookId, userId, "Untitled", BookType.EDIT, Date())
         bookCollection
@@ -89,6 +89,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
     }
 
     override suspend fun updateBookDto(bookDto: BookDto): Flow<Boolean> = flow {
+        Log.d("function test", "updateBookDto(${bookDto})")
         val bookCollection = firestore.collection("book")
         var result = true
         bookCollection
@@ -98,7 +99,8 @@ class RemoteBookDataSourceImpl @Inject constructor(
         emit(result)
     }
 
-    override suspend fun deleteBook(bookIdList: List<String>): Flow<Boolean> = flow {
+    override suspend fun deleteBookDto(bookIdList: List<String>): Flow<Boolean> = flow {
+        Log.d("function test=======================", "deleteBook(${bookIdList})")
         val bookCollection = firestore.collection("book")
         var result = true
         for(bookId in bookIdList){
@@ -107,7 +109,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 .delete()
                 .addOnFailureListener{
                     result = false
-                }
+                }.await()
         }
         emit(result)
     }

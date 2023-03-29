@@ -20,9 +20,12 @@ class ImageBoxRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getImageBoxInfo(pageId: String): Flow<ImageBoxInfo> = flow {
+    override suspend fun getImageBoxInfo(pageId: String): Flow<ImageBoxInfo?> = flow {
         imageBoxDataSource.getImageBoxDto(pageId).collect() { imageBoxDto ->
-            emit(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData))
+            if(imageBoxDto == null)
+                emit(null)
+            else
+                emit(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData))
         }
     }
 

@@ -44,7 +44,7 @@ class DrawingUseCase @Inject constructor(
     }
 
     fun saveImageBox(pageId: String, imageBox: ImageBox): Boolean {
-        return (layerRepository.updateLayerInfoList(imageBox.id, imageBox.layerLIst) &&
+        return (layerRepository.updateLayerInfoList(imageBox.id, imageBox.layerList) &&
         drawingRepository.updateDrawingInfo(imageBox.id, imageBox.drawing) &&
         imageBoxRepository.updateImageBoxInfo(pageId, ImageBoxInfo(imageBox.id, imageBox.boxData)))
     }

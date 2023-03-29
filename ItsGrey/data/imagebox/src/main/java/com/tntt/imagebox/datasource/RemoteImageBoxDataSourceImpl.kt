@@ -25,20 +25,22 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
         emit(imageBoxId)
     }
 
-    override suspend fun getImageBoxDto(pageId: String): Flow<ImageBoxDto> = flow {
-        var imageBoxDto: ImageBoxDto = ImageBoxDto("1", "1", BoxData(0.0f, 0.0f, 0.0f, 0.0f))
+    override suspend fun getImageBoxDto(pageId: String): Flow<ImageBoxDto?> = flow {
+        var imageBoxDto: ImageBoxDto? = null
 
         imageBoxCollection
             .whereEqualTo("pageId", pageId)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw NullPointerException(":data:imagebox - datasource/RemoteImageBoxDataSourceImpl.getImageBoxDto().documentSnapshot")
+                val documentSnapshot = querySnapshot.documents.firstOrNull()
 
-                val data = documentSnapshot.data
-                val id: String = data?.get("id") as String
-                val boxData: BoxData = data?.get("boxData") as BoxData
+                if(documentSnapshot != null) {
+                    val data = documentSnapshot.data
+                    val id: String = data?.get("id") as String
+                    val boxData: BoxData = data?.get("boxData") as BoxData
 
-                imageBoxDto = ImageBoxDto(id, pageId, boxData)
+                    imageBoxDto = ImageBoxDto(id, pageId, boxData)
+                }
             }
         emit(imageBoxDto)
     }
