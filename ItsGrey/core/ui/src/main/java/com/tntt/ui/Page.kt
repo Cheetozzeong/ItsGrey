@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
@@ -64,16 +66,16 @@ fun PageForView(
 @Composable
 fun PageForEdit(
     modifier: Modifier,
-    thumbnail: Thumbnail
+    textBoxList: List<TextBoxInfo>,
+    imageBox: ImageBoxInfo,
 ) {
     val activeBoxId = remember { mutableStateOf("") }
     val inActiveBoxId = remember { mutableStateOf("") }
     var parent by rememberSaveable(stateSaver = RectSaver) { mutableStateOf(Rect(Offset.Zero, Size.Zero)) }
-    val imageBoxInfo = remember { mutableStateOf(thumbnail.imageBox) }
-    val contentBoxInfoList = remember(activeBoxId) { mutableStateOf(thumbnail.textBoxList.toMutableList()) }
 
     Box(
         modifier
+            .fillMaxSize()
             .aspectRatio(2f / 3f)
             .onGloballyPositioned { layoutCoordinates ->
                 parent = layoutCoordinates.boundsInRoot()
@@ -89,11 +91,11 @@ fun PageForEdit(
             activeBoxId = activeBoxId.value,
             inActiveBoxId = inActiveBoxId.value,
             parent = parent,
-            imageBoxInfo = imageBoxInfo.value,
-            imageBitmap = thumbnail.image.asImageBitmap(),
+            imageBoxInfo = imageBox,
+//            imageBitmap = thumbnail.image.asImageBitmap(),
+            imageBitmap = ImageBitmap(100,100, ImageBitmapConfig.Argb8888),
             updateImageBoxInfo = { newImageBoxInfo ->
                 inActiveBoxId.value = ""
-                imageBoxInfo.value = newImageBoxInfo
             },
             onClickDelete = { /*TODO*/ },
             onClick = { id ->
@@ -102,7 +104,7 @@ fun PageForEdit(
             },
             dialogComponent = listOf()
         )
-        contentBoxInfoList.value.forEachIndexed { index, textBoxInfo ->
+        textBoxList.forEachIndexed { index, textBoxInfo ->
             with(textBoxInfo) {
                 TextBoxForEdit(
                     activeBoxId = activeBoxId.value,
@@ -110,7 +112,7 @@ fun PageForEdit(
                     parent = parent,
                     textBoxInfo = this,
                     updateTextBoxInfo = { new ->
-                        contentBoxInfoList.value[index] = new
+//                        textBoxList[index] = new
                     },
                     onClick = { id ->
                         inActiveBoxId.value = activeBoxId.value
@@ -123,115 +125,114 @@ fun PageForEdit(
     }
 }
 
-@Composable
-@Preview
-private fun PreviewPage() {
-
-    IgTheme() {
-        Row (
-            Modifier.fillMaxSize()
-        ){
-            PageForView(
-                modifier = Modifier.weight(1f),
-                thumbnail = Thumbnail(
-                    ImageBoxInfo(
-                        id = "image",
-                        boxData = BoxData(
-                            offsetRatioX = 0.2f,
-                            offsetRatioY = 0.2f,
-                            widthRatio = 0.5f,
-                            heightRatio = 0.3f
-                        )
-                    ),
-                    image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.img),
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            )
-            PageForEdit(
-                modifier = Modifier.weight(1f),
-                thumbnail = Thumbnail(
-                    ImageBoxInfo(
-                        id = "image",
-                        boxData = BoxData(
-                            offsetRatioX = 0.2f,
-                            offsetRatioY = 0.2f,
-                            widthRatio = 0.5f,
-                            heightRatio = 0.3f
-                        )
-                    ),
-                    image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.img),
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            )
-        }
-    }
-
-}
+//@Composable
+//@Preview
+//private fun PreviewPage() {
+//
+//    IgTheme() {
+//        Row (
+//            Modifier.fillMaxSize()
+//        ){
+//            PageForView(
+//                modifier = Modifier.weight(1f),
+//                thumbnail = Thumbnail(
+//                    ImageBoxInfo(
+//                        id = "image",
+//                        boxData = BoxData(
+//                            offsetRatioX = 0.2f,
+//                            offsetRatioY = 0.2f,
+//                            widthRatio = 0.5f,
+//                            heightRatio = 0.3f
+//                        )
+//                    ),
+//                    image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.img),
+//                    arrayListOf(
+//                        TextBoxInfo(
+//                            id = "abc",
+//                            text = "ABC",
+//                            fontSizeRatio = 0.05f,
+//                            boxData = BoxData(
+//                                offsetRatioX = 0.2f,
+//                                offsetRatioY = 0.2f,
+//                                widthRatio = 0.5f,
+//                                heightRatio = 0.3f
+//                            )
+//                        ),
+//                        TextBoxInfo(
+//                            id = "def",
+//                            text = "DEF",
+//                            fontSizeRatio = 0.05f,
+//                            boxData = BoxData(
+//                                offsetRatioX = 0.2f,
+//                                offsetRatioY = 0.4f,
+//                                widthRatio = 0.5f,
+//                                heightRatio = 0.3f
+//                            )
+//                        ),
+//                        TextBoxInfo(
+//                            id = "ghi",
+//                            text = "GHI",
+//                            fontSizeRatio = 0.05f,
+//                            boxData = BoxData(
+//                                offsetRatioX = 0.2f,
+//                                offsetRatioY = 0.6f,
+//                                widthRatio = 0.5f,
+//                                heightRatio = 0.3f
+//                            )
+//                        )
+//                    )
+//                )
+//            )
+//            PageForEdit(
+//                modifier = Modifier.weight(1f),
+//                thumbnail = Thumbnail(
+//                    ImageBoxInfo(
+//                        id = "image",
+//                        boxData = BoxData(
+//                            offsetRatioX = 0.2f,
+//                            offsetRatioY = 0.2f,
+//                            widthRatio = 0.5f,
+//                            heightRatio = 0.3f
+//                        )
+//                    ),
+//                    image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.img),
+//                    arrayListOf(
+//                        TextBoxInfo(
+//                            id = "abc",
+//                            text = "ABC",
+//                            fontSizeRatio = 0.05f,
+//                            boxData = BoxData(
+//                                offsetRatioX = 0.2f,
+//                                offsetRatioY = 0.2f,
+//                                widthRatio = 0.5f,
+//                                heightRatio = 0.3f
+//                            )
+//                        ),
+//                        TextBoxInfo(
+//                            id = "def",
+//                            text = "DEF",
+//                            fontSizeRatio = 0.05f,
+//                            boxData = BoxData(
+//                                offsetRatioX = 0.2f,
+//                                offsetRatioY = 0.4f,
+//                                widthRatio = 0.5f,
+//                                heightRatio = 0.3f
+//                            )
+//                        ),
+//                        TextBoxInfo(
+//                            id = "ghi",
+//                            text = "GHI",
+//                            fontSizeRatio = 0.05f,
+//                            boxData = BoxData(
+//                                offsetRatioX = 0.2f,
+//                                offsetRatioY = 0.6f,
+//                                widthRatio = 0.5f,
+//                                heightRatio = 0.3f
+//                            )
+//                        )
+//                    )
+//                )
+//            )
+//        }
+//    }
+//}

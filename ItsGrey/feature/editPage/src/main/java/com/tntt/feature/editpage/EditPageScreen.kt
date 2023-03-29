@@ -1,80 +1,100 @@
 package com.tntt.feature.editpage
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tntt.designsystem.component.IgIconButton
 import com.tntt.designsystem.component.IgTextButton
 import com.tntt.designsystem.component.IgTopAppBar
 import com.tntt.designsystem.icon.IgIcons
-import com.tntt.designsystem.theme.IgTheme
+import com.tntt.editpage.model.Page
 import com.tntt.model.BoxData
 import com.tntt.model.ImageBoxInfo
 import com.tntt.model.TextBoxInfo
 import com.tntt.model.Thumbnail
 import com.tntt.ui.PageForEdit
+import kotlinx.coroutines.flow.StateFlow
 
+
+@Composable
+internal fun EditPageRoute(
+    viewModel: EditPageViewModel = hiltViewModel(),
+    onBackClick: () -> Unit,
+    onImageClick: (String) -> Unit
+) {
+    val textBoxList by viewModel.textBoxList.collectAsStateWithLifecycle()
+    val imageBox by viewModel.imageBox.collectAsStateWithLifecycle()
+
+    EditPageScreen(
+        textBoxList = textBoxList,
+        imageBox = imageBox,
+        onBackClick = onBackClick,
+        onCreateTextBox = viewModel::createTextBox
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditBookScreen(
-    modifier: Modifier,
-    thumbnail: Thumbnail
+internal fun EditPageScreen(
+    textBoxList: List<TextBoxInfo>,
+    imageBox: ImageBoxInfo,
+    onBackClick: () -> Unit,
+    onCreateTextBox: () -> Unit
 ) {
     Scaffold(
-        topBar = {EditBookTopAppBar()},
+        topBar = {
+            EditBookTopAppBar(
+                onBackClick
+            )
+        },
     ) { paddingValues ->
-
-        val isFontSizeDialogShown = remember { mutableStateOf(false) }
-
-        Column(
-            Modifier
-                .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // ToolBar
-            Row() {
-                CreateImageBoxButton()
-                CreateTextBoxButton()
-                OpenFontSizeDialogButton(
-                    fontSize = 0,
-                    openDialog = { isFontSizeDialogShown.value = true }
+        Column(Modifier.padding(paddingValues)) {
+            Row {
+                CreateTextBoxButton(
+                    onCreateTextBox = onCreateTextBox
                 )
             }
-            // Page
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.secondary),
-                contentAlignment = Alignment.Center
-            ) {
-                PageForEdit(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(20.dp)
-                        .background(MaterialTheme.colorScheme.background),
-                    thumbnail = thumbnail
-                )
-            }
+            EditPageBox(
+                textBoxList = textBoxList,
+                imageBox = imageBox,
+            )
         }
+    }
+}
 
-        if(isFontSizeDialogShown.value) {
-            RegulateFontSizeDialog()
-        }
+@Composable
+fun EditPageBox(
+    modifier: Modifier = Modifier,
+    textBoxList: List<TextBoxInfo>,
+    imageBox: ImageBoxInfo,
+) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.secondary),
+        contentAlignment = Alignment.Center
+    ) {
+        PageForEdit(
+            modifier = Modifier
+                .width(300.dp)
+                .padding(20.dp)
+                .background(MaterialTheme.colorScheme.background),
+            textBoxList = textBoxList,
+            imageBox = imageBox,
+        )
     }
 }
 
@@ -92,9 +112,11 @@ private fun CreateImageBoxButton() {
 }
 
 @Composable
-private fun CreateTextBoxButton() {
+private fun CreateTextBoxButton(
+    onCreateTextBox: () -> Unit
+) {
     IgIconButton(
-        onClick = { /*TODO*/ },
+        onClick = { onCreateTextBox() },
         icon = {
             Icon(
                 imageVector = IgIcons.AddTextBox,
@@ -123,14 +145,15 @@ private fun RegulateFontSizeDialog() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun EditBookTopAppBar() {
+fun EditBookTopAppBar(
+    onBackClick: () -> Unit
+) {
     IgTopAppBar(
         title = "",
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Back",
-        onNavigationClick = { /*TODO*/ },
+        onNavigationClick = { onBackClick() },
         actions = {
             IgIconButton(
                 onClick = { /*TODO*/ },
@@ -165,7 +188,7 @@ private fun PreviewEditPageScreen() {
             )
         ),
         image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.img),
-        listOf(
+        arrayListOf(
             TextBoxInfo(
                 id = "abc",
                 text = "ABC",
@@ -201,12 +224,4 @@ private fun PreviewEditPageScreen() {
             )
         )
     )
-
-    IgTheme() {
-        EditBookScreen(
-            modifier = Modifier,
-            thumbnail = thumbnail
-        )
-    }
-
 }

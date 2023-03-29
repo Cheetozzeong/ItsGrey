@@ -62,7 +62,7 @@ class PageRepositoryImpl @Inject constructor(
             textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
         }
         val sumLayer = layerDataSource.getSumLayer(imageBoxInfo.id)
-        return Thumbnail(imageBoxInfo, sumLayer, textBoxInfoList)
+        return Thumbnail(imageBoxInfo, sumLayer, textBoxInfoList as ArrayList<TextBoxInfo>)
     }
 
     override fun hasCover(bookId: String): Boolean {

@@ -1,8 +1,12 @@
 package com.tntt.editpage.usecase
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.tntt.editpage.model.Page
+import com.tntt.model.BoxData
 import com.tntt.model.ImageBoxInfo
 import com.tntt.model.TextBoxInfo
+import com.tntt.model.Thumbnail
 import com.tntt.repo.ImageBoxRepository
 import com.tntt.repo.LayerRepository
 import com.tntt.repo.PageRepository
