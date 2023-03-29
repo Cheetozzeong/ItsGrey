@@ -2,7 +2,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.android.library")
-    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -60,15 +60,21 @@ dependencies {
     implementation(Libraries.Compose.MATERIAL.ICONS_CORE)
     implementation(Libraries.Compose.MATERIAL.ICONS_EXTENDED)
 
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.5.3")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
-    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
-    kapt("androidx.hilt:hilt-compiler:1.0.0-alpha03")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(Libraries.Test.JUNIT)
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
     androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
     debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
+}
+
+kapt {
+    correctErrorTypes = true
 }

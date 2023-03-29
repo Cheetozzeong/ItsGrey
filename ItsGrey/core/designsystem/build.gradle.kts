@@ -64,8 +64,8 @@ dependencies {
     implementation(Libraries.Compose.MATERIAL.ICONS_CORE)
     implementation(Libraries.Compose.MATERIAL.ICONS_EXTENDED)
 
-    implementation("androidx.activity:activity-compose:1.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation("androidx.activity:activity-compose:1.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation (Libraries.Test.JUNIT)
