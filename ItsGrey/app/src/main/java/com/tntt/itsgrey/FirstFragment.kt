@@ -78,7 +78,11 @@ class FirstFragment : Fragment() {
             val upBoxData = BoxData(0.2f, 0.2f, 0.6f, 0.3f)
             val downBoxData = BoxData(0.2f, 0.55f, 0.6f, 0.3f)
 
-            EditPageUseCaseDeleteTextBox("temp")
+            CoroutineScope(Dispatchers.Main).launch {
+                drawingUseCase.retrofitTest().collect() { result ->
+                    Log.d("function test", "retrofitTest = ${result}")
+                }
+            }
         }
     }
 
@@ -205,6 +209,14 @@ class FirstFragment : Fragment() {
         CoroutineScope(Dispatchers.Main).launch {
             editPageUseCase.deleteTextBox(textBoxId).collect() { result ->
                 Log.d("function test", "deleteTextBox = ${result}")
+            }
+        }
+    }
+
+    fun ViewerUseCaseGetBook(bookId: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewerUsecase.getBook(bookId).collect() { book ->
+                Log.d("function test", "getBook = ${book}")
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.tntt.layer.repository
 
+import android.graphics.Bitmap
 import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
 import com.tntt.layer.datasource.RemoteLayerDataSource
 import com.tntt.layer.model.LayerDto
@@ -18,9 +19,9 @@ class LayerRepositoryImpl @Inject constructor(
     private val imageBoxDataSource: RemoteImageBoxDataSource
 ): LayerRepository {
 
-    override suspend fun createLayerInfo(imageBoxId: String, layerInfo: LayerInfo): Flow<String> = flow {
+    override suspend fun createLayerInfo(imageBoxId: String, layerInfo: LayerInfo): Flow<LayerInfo> = flow {
         layerDataSource.createLayerDto(LayerDto("", imageBoxId, layerInfo.order, layerInfo.bitmap)).collect() { layerDtoId ->
-            emit(layerDtoId)
+            emit(layerInfo)
         }
     }
 
@@ -47,6 +48,16 @@ class LayerRepositoryImpl @Inject constructor(
 
     override suspend fun deleteLayerInfoList(imageBoxId: String): Flow<Boolean> = flow {
         layerDataSource.deleteLayerDtoList(imageBoxId).collect() { result ->
+            emit(result)
+        }
+    }
+
+    override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
+        TODO("이미지 전달 후 밑그림 가져오기")
+    }
+
+    override suspend fun retrofitTest(): Flow<String> = flow {
+        layerDataSource.retrofitTest().collect() { result ->
             emit(result)
         }
     }
