@@ -1,8 +1,8 @@
-package com.tntt.drawing.repository
+package com.tntt.data.drawing.repository
 
-import com.tntt.drawing.datasource.RemoteDrawingDataSource
-import com.tntt.drawing.datasource.RemoteDrawingDataSourceImpl
-import com.tntt.drawing.model.DrawingDto
+import com.tntt.data.drawing.datasource.RemoteDrawingDataSource
+import com.tntt.data.drawing.datasource.RemoteDrawingDataSourceImpl
+import com.tntt.data.drawing.model.DrawingDto
 import com.tntt.model.DrawingInfo
 import com.tntt.repo.DrawingRepository
 import kotlinx.coroutines.flow.Flow

@@ -13,15 +13,15 @@ class HomeUseCase @Inject constructor(
     private val bookRepository: BookRepository,
     private val pageRepository: PageRepository,
 ) {
-    suspend fun createBook(userId: String): Flow<Book> = flow {
-        bookRepository.createBookInfo(userId).collect() { bookId ->
-            bookRepository.getBookInfo(bookId).collect() { bookInfo ->
+    suspend fun createBook(userId: String, bookId: String): Flow<Book> = flow {
+        bookRepository.createBookInfo(userId, bookId).collect() { bookInfo ->
+            bookRepository.getBookInfo(bookInfo.id).collect() { bookInfo ->
                 emit(Book(bookInfo, null))
             }
         }
     }
 
-    fun getBooks(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<Book>> = flow {
+    suspend fun getBooks(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<Book>> = flow {
         Log.d("function test", "getBooks(${userId}, ${sortType}, ${startIndex}, ${bookType})")
         val bookList = mutableListOf<Book>()
         bookRepository.getBookInfoList(userId, sortType, startIndex, bookType).collect() { bookInfoList ->
@@ -41,7 +41,7 @@ class HomeUseCase @Inject constructor(
         }
     }
 
-    fun deleteBook(bookIdList: List<String>): Flow<Boolean> = flow {
+    suspend fun deleteBook(bookIdList: List<String>): Flow<Boolean> = flow {
         Log.d("function test=======================", "deleteBookList(${bookIdList})")
         bookRepository.deleteBookInfo(bookIdList).collect() { result ->
             emit(result)

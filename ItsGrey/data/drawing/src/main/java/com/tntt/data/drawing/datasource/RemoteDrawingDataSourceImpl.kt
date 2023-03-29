@@ -1,7 +1,7 @@
-package com.tntt.drawing.datasource
+package com.tntt.data.drawing.datasource
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.tntt.drawing.model.DrawingDto
+import com.tntt.data.drawing.model.DrawingDto
 import com.tntt.network.Firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

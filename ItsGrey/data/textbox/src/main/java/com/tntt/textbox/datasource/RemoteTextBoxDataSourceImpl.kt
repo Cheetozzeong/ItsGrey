@@ -1,12 +1,15 @@
 package com.tntt.textbox.datasource
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
 import com.tntt.textbox.model.TextBoxDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
 
@@ -16,13 +19,14 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
 
     val textBoxCollection by lazy { firestore.collection("textBox") }
 
-    override suspend fun createTextBoxDto(textBoxDto: TextBoxDto): Flow<String> = flow {
-        val id = UUID.randomUUID().toString()
-        textBoxDto.id = id
+    override suspend fun createTextBoxDto(textBoxDto: TextBoxDto): Flow<TextBoxDto> = flow {
+        Log.d("function test", "createTextBoxDto(${textBoxDto})")
         textBoxCollection
-            .document(id)
+            .document(textBoxDto.id)
             .set(textBoxDto)
-        emit(id)
+            .addOnSuccessListener { Log.d("function test", "success createTextBoxDto(${textBoxDto})") }
+            .await()
+        emit(textBoxDto)
     }
 
     override suspend fun getTextBoxDtoList(pageId: String): Flow<List<TextBoxDto>> = flow {
@@ -38,11 +42,13 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
 
                     val id = data?.get("id") as String
                     val text = data?.get("text") as String
-                    val fontSizeRatio = data?.get("fontSizeRatio") as Float
-                    val boxData = data?.get("boxData") as BoxData
+                    val fontSizeRatio = (data?.get("fontSizeRatio") as Double).toFloat()
+                    val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
+                    val gson = Gson()
+                    val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
                     textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxData))
                 }
-            }
+            }.await()
         emit(textBoxDtoList)
     }
 

@@ -1,12 +1,16 @@
 package com.tntt.imagebox.datasource
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+
 import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
 
@@ -16,13 +20,13 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
     val imageBoxCollection by lazy { firestore.collection("imageBox") }
 
-    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<String> = flow {
-        val imageBoxId = UUID.randomUUID().toString()
-        imageBoxDto.id = imageBoxId
+    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<ImageBoxDto> = flow {
         imageBoxCollection
-            .document(imageBoxId)
+            .document(imageBoxDto.id)
             .set(imageBoxDto)
-        emit(imageBoxId)
+            .addOnSuccessListener { Log.d("function test", "success createImageBoxDto(${imageBoxDto})") }
+            .await()
+        emit(imageBoxDto)
     }
 
     override suspend fun getImageBoxDto(pageId: String): Flow<ImageBoxDto?> = flow {
@@ -37,11 +41,12 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
                 if(documentSnapshot != null) {
                     val data = documentSnapshot.data
                     val id: String = data?.get("id") as String
-                    val boxData: BoxData = data?.get("boxData") as BoxData
-
+                    val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
+                    val gson = Gson()
+                    val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
                     imageBoxDto = ImageBoxDto(id, pageId, boxData)
                 }
-            }
+            }.await()
         emit(imageBoxDto)
     }
 

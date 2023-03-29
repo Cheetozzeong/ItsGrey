@@ -1,4 +1,4 @@
-package com.tntt.drawing.model
+package com.tntt.domain.drawing.model
 
 import com.tntt.model.BoxData
 import com.tntt.model.DrawingInfo

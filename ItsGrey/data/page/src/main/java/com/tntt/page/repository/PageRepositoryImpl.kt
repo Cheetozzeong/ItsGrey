@@ -13,6 +13,7 @@ import com.tntt.page.model.PageDto
 import com.tntt.repo.PageRepository
 import com.tntt.textbox.datasource.RemoteTextBoxDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -23,11 +24,11 @@ class PageRepositoryImpl @Inject constructor(
     private val layerDataSource: RemoteLayerDataSource,
 ): PageRepository {
 
-    override suspend fun createPageInfo(bookId: String, pageInfo: PageInfo): Flow<String> = flow {
+    override suspend fun createPageInfo(bookId: String, pageInfo: PageInfo): Flow<PageInfo> = flow {
         Log.d("function test", "createPageInfo(${bookId}, ${pageInfo})")
-        val pageDto = PageDto("", bookId, pageInfo.order)
-        pageDataSource.createPageDto(pageDto).collect() { pageDtoId ->
-            emit(pageDtoId)
+        val pageDto = PageDto(pageInfo.id, bookId, pageInfo.order)
+        pageDataSource.createPageDto(pageDto).collect() { pageDto ->
+            emit(pageInfo)
         }
     }
 
@@ -52,7 +53,6 @@ class PageRepositoryImpl @Inject constructor(
     override suspend fun getPageInfoList(bookId: String): Flow<List<PageInfo>> = flow {
         Log.d("function test", "getPageInfoList(${bookId})")
         val pageInfoList = mutableListOf<PageInfo>()
-
         pageDataSource.getPageDtoList(bookId).collect() { pageDtoList ->
             for (pageDto in pageDtoList) {
                 pageInfoList.add(PageInfo(pageDto.id, pageDto.order))
@@ -73,16 +73,19 @@ class PageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getThumbnail(pageId: String): Flow<Thumbnail?> = flow {
-        println("getThumnail(${pageId})")
+    override suspend fun getThumbnail(pageId: String): Flow<Thumbnail> = flow {
+        println("getThumbnail(${pageId})")
         imageBoxDataSource.getImageBoxDto(pageId).collect() { imageBoxDto ->
+            Log.d("function test", "imageBoxDataSource.getImageBoxDto(${pageId}) - imageBoxDto = ${imageBoxDto}")
             var imageBoxInfo: ImageBoxInfo? = null
             val textBoxInfoList = mutableListOf<TextBoxInfo>()
             var image: Bitmap? = null
 
             if(imageBoxDto != null) {
                 imageBoxInfo = ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData)
+                Log.d("function test", "imageBoxDto is not null. imageBoxInfo = ${imageBoxInfo}")
                 layerDataSource.getSumLayer(imageBoxInfo.id).collect() { sumLayer ->
+                    Log.d("function test", "layerDataSource.getSumLayer(${imageBoxInfo.id}) - sumLayer = ${sumLayer}")
                     image = sumLayer
                 }
             }
@@ -103,7 +106,9 @@ class PageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun hasCover(bookId: String): Boolean {
-        return pageDataSource.hasCover(bookId)
+    override suspend fun hasCover(bookId: String): Flow<Boolean> = flow {
+        pageDataSource.hasCover(bookId).collect() { result ->
+            emit(result)
+        }
     }
 }

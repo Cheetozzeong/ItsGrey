@@ -72,9 +72,8 @@ class RemoteBookDataSourceImpl @Inject constructor(
         emit(bookDtoList)
     }
 
-    override suspend fun createBookDto(userId: String): Flow<String> = flow {
+    override suspend fun createBookDto(userId: String, bookId: String): Flow<BookDto> = flow {
         Log.d("function test", "createBookDto(${userId})")
-        val bookId = UUID.randomUUID().toString()
         val bookDto = BookDto(bookId, userId, "Untitled", BookType.EDIT, Date())
         bookCollection
             .document(bookId)
@@ -85,7 +84,8 @@ class RemoteBookDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                     e -> Log.d("MyTag", "fail... in bookCollection.document(${bookId}).set(${bookDto})")
             }
-        emit(bookId)
+            .await()
+        emit(bookDto)
     }
 
     override suspend fun updateBookDto(bookDto: BookDto): Flow<Boolean> = flow {
@@ -96,6 +96,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
             .document(bookDto.id)
             .set(bookDto)
             .addOnFailureListener { result = false }
+            .await()
         emit(result)
     }
 

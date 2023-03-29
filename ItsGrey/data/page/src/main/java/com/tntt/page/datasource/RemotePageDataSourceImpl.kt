@@ -16,12 +16,14 @@ class RemotePageDataSourceImpl @Inject constructor(
 
     val pageCollection by lazy { firestore.collection("page") }
 
-    override suspend fun createPageDto(pageDto: PageDto): Flow<String> = flow {
+    override suspend fun createPageDto(pageDto: PageDto): Flow<PageDto> = flow {
         Log.d("function test", "createPageDto(${pageDto})")
-        val pageId = UUID.randomUUID().toString()
-        pageDto.id = pageId
-        pageCollection.document(pageId).set(pageDto)
-        emit(pageId)
+        pageCollection
+            .document(pageDto.id)
+            .set(pageDto)
+            .addOnSuccessListener { Log.d("function test", "success createPageDto(${pageDto})") }
+            .await()
+        emit(pageDto)
     }
 
     override suspend fun getPageDto(bookId: String, pageOrder: Int): Flow<PageDto> = flow {
@@ -41,7 +43,7 @@ class RemotePageDataSourceImpl @Inject constructor(
 
                 pageDto = PageDto(id, bookId, order)
 
-            }
+            }.await()
         emit(pageDto)
     }
 
@@ -69,7 +71,6 @@ class RemotePageDataSourceImpl @Inject constructor(
     override suspend fun getPageDtoList(bookId: String): Flow<List<PageDto>> = flow {
         Log.d("function test", "getPageDtoList(${bookId})")
         val pageDtoList = mutableListOf<PageDto>()
-
         pageCollection
             .whereEqualTo("bookId", bookId)
             .orderBy("order")
@@ -83,7 +84,7 @@ class RemotePageDataSourceImpl @Inject constructor(
 
                     pageDtoList.add(PageDto(id, bookId, order))
                 }
-            }
+            }.await()
         emit(pageDtoList)
     }
 
@@ -96,23 +97,23 @@ class RemotePageDataSourceImpl @Inject constructor(
                 .document(pageDto.id)
                 .set(pageDto)
                 .addOnFailureListener { result = false }
+                .await()
         }
         emit(result)
     }
 
-    override suspend fun hasCover(bookId: String): Boolean {
+    override suspend fun hasCover(bookId: String): Flow<Boolean> = flow {
         Log.d("function test", "hasCover(${bookId})")
         var result = false
         pageCollection
             .whereEqualTo("bookId", bookId)
-            .orderBy("order")
+            .whereEqualTo("order", 0)
             .limit(1)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw NullPointerException()
-                val data = documentSnapshot.data
-                result = (data?.get("order") as Int == 0)
+                if (!querySnapshot.isEmpty) result = true
             }
-        return result
+            .await()
+        emit(result)
     }
 }

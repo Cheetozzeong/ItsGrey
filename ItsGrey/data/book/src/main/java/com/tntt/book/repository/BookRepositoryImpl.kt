@@ -38,10 +38,10 @@ class BookRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createBookInfo(userId: String): Flow<String> = flow {
+    override suspend fun createBookInfo(userId: String, bookId: String): Flow<BookInfo> = flow {
         Log.d("function test", "createBookInfo(${userId})")
-        bookDataSource.createBookDto(userId).collect() { bookDtoId ->
-            emit(bookDtoId)
+        bookDataSource.createBookDto(userId, bookId).collect() { bookDto ->
+            emit(BookInfo(bookId, bookDto.title, bookDto.saveDate))
         }
     }
 

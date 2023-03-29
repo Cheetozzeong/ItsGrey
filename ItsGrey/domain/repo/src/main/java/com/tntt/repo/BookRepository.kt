@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface BookRepository {
     suspend fun getBookInfo(bookId: String): Flow<BookInfo>
     suspend fun getBookInfoList(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<BookInfo>>
-    suspend fun createBookInfo(userId: String): Flow<String>
+    suspend fun createBookInfo(userId: String, bookId: String): Flow<BookInfo>
     suspend fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Flow<Boolean>
     suspend fun deleteBookInfo(bookIdList: List<String>): Flow<Boolean>
 

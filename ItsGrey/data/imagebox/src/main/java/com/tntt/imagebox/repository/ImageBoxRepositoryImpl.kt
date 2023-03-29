@@ -1,5 +1,6 @@
 package com.tntt.imagebox.repository
 
+import android.util.Log
 import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
 import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.ImageBoxInfo
@@ -13,10 +14,11 @@ class ImageBoxRepositoryImpl @Inject constructor(
     private val imageBoxDataSource: RemoteImageBoxDataSource
 ) : ImageBoxRepository {
 
-    override suspend fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<String> = flow {
-        val imageBoxDto = ImageBoxDto("", pageId, imageBoxInfo.boxData)
-        imageBoxDataSource.createImageBoxDto(imageBoxDto).collect() { imageBoxId ->
-            emit(imageBoxId)
+    override suspend fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<ImageBoxInfo> = flow {
+        Log.d("function test", "createImageBoxInfo(${pageId}, ${imageBoxInfo})")
+        val imageBoxDto = ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData)
+        imageBoxDataSource.createImageBoxDto(imageBoxDto).collect() { imageBoxDto ->
+            emit(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData))
         }
     }
 
