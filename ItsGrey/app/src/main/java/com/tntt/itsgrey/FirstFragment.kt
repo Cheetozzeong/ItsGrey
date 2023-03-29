@@ -70,16 +70,14 @@ class FirstFragment : Fragment() {
             bookIdList.add("78895127-aeca-4273-866f-302c31130adc")
             bookIdList.add("6bac0d13-fe34-48f0-982a-8ce5ff21ec4d")
 
-            val bookId = "1f843ade-3c2f-4a7c-a873-58678a057ed0"
-            val pageInfo = PageInfo("pageInfoId3", 2)
+            val bookId = "26e4f471-6380-440e-ac28-8f3dcdfc0e0d"
+            val pageInfo = PageInfo("pageInfoId12", 2)
 
+            val boxData = BoxData(0.2f, 0.2f, 0.6f, 0.6f)
+            val upBoxData = BoxData(0.2f, 0.2f, 0.6f, 0.3f)
+            val downBoxData = BoxData(0.2f, 0.55f, 0.6f, 0.3f)
 
-            CoroutineScope(Dispatchers.Main).launch {
-                editBookUseCase.getBook(bookId).collect() { book ->
-                    Log.d("function test", "EditBookUseCaseGetBook(${bookId}) = ${book}")
-                    EditBookUseCasePublishBook(book, "새로운 주인3")
-                }
-            }
+            EditPageUseCaseCreateTextBox(pageInfo.id, TextBoxInfo("textBox11", "텍스트박스 1", 1.0f, boxData))
         }
     }
 
@@ -158,6 +156,22 @@ class FirstFragment : Fragment() {
         CoroutineScope(Dispatchers.Main).launch {
             editBookUseCase.publishBook(book, userId).collect() { result ->
                 Log.d("function test", "editBookUseCase.publishBook : ${result}")
+            }
+        }
+    }
+
+    fun EditPageUseCaseCreateImageBox(pageId: String, imageBoxInfo: ImageBoxInfo) {
+        CoroutineScope(Dispatchers.Main).launch {
+            editPageUseCase.createImageBox(pageId, imageBoxInfo).collect() { imageBoxInfoResult ->
+                Log.d("function test", "createImageBox = ${imageBoxInfoResult}")
+            }
+        }
+    }
+
+    fun EditPageUseCaseCreateTextBox(pageId: String, textBoxInfo: TextBoxInfo) {
+        CoroutineScope(Dispatchers.Main).launch {
+            editPageUseCase.createTextBox(pageId, textBoxInfo).collect() { textBoxInfoResult ->
+                Log.d("function test", "createTextBox = ${textBoxInfoResult}")
             }
         }
     }
