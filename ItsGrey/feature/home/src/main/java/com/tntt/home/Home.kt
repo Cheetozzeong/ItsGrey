@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import com.tntt.ui.PageForView
 import java.text.SimpleDateFormat
 
@@ -67,7 +68,7 @@ fun Home(modifier: Modifier = Modifier) {
             Book(
                 bookInfo = BookInfo(
                     id = "1",
-                    title = "1번 제목",
+                    title = "이게 말도 안되게 길어지면 어뜨칼건데 대체....",
                     saveDate = date
                 ),
                 Thumbnail(
@@ -1284,6 +1285,8 @@ private fun BookItem(
                                 Text(
                                     text = book.bookInfo.title,
                                     style = MaterialTheme.typography.titleLarge,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                     textAlign = TextAlign.Center)
                                 if (tabPage == TabPage.Published) PublishedTimeAgoText(book.bookInfo.saveDate)
                                 else if (tabPage == TabPage.Working) WorkingTimeAgoText(book.bookInfo.saveDate)
@@ -1299,7 +1302,7 @@ private fun BookItem(
 @Composable
 fun PublishedTimeAgoText(date: Date) {
     val timestamp = date.time
-    val formatter = SimpleDateFormat("출판 날짜:yyyy.MM.dd", Locale.getDefault())
+    val formatter = SimpleDateFormat("출간일:yyyy.MM.dd", Locale.getDefault())
     val publishedDate = Date(timestamp)
     Text(formatter.format(publishedDate))
 }
