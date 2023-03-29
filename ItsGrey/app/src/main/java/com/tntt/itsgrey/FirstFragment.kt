@@ -13,6 +13,7 @@ import com.google.firebase.ktx.Firebase
 import com.tntt.domain.drawing.usecase.DrawingUseCase
 import com.tntt.editbook.model.Book
 import com.tntt.editbook.usecase.EditBookUseCase
+import com.tntt.editpage.model.Page
 import com.tntt.editpage.usecase.EditPageUseCase
 import com.tntt.home.usecase.HomeUseCase
 import com.tntt.model.*
@@ -77,7 +78,7 @@ class FirstFragment : Fragment() {
             val upBoxData = BoxData(0.2f, 0.2f, 0.6f, 0.3f)
             val downBoxData = BoxData(0.2f, 0.55f, 0.6f, 0.3f)
 
-            EditPageUseCaseCreateTextBox(pageInfo.id, TextBoxInfo("textBox11", "텍스트박스 1", 1.0f, boxData))
+            EditPageUseCaseDeleteTextBox("temp")
         }
     }
 
@@ -172,6 +173,38 @@ class FirstFragment : Fragment() {
         CoroutineScope(Dispatchers.Main).launch {
             editPageUseCase.createTextBox(pageId, textBoxInfo).collect() { textBoxInfoResult ->
                 Log.d("function test", "createTextBox = ${textBoxInfoResult}")
+            }
+        }
+    }
+
+    fun EditPageUseCaseGetPage(pageId: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            editPageUseCase.getPage(pageId).collect() { page ->
+                Log.d("function test", "getPage = ${page}")
+            }
+        }
+    }
+
+    fun EditPageUseCaseSavePage(page: Page) {
+        CoroutineScope(Dispatchers.Main).launch {
+            editPageUseCase.savePage(page).collect() { result ->
+                Log.d("function test", "savePage = ${result}")
+            }
+        }
+    }
+
+    fun EditPageUseCaseDeleteImageBox(imageBoxId: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            editPageUseCase.deleteImageBox(imageBoxId).collect() { result ->
+                Log.d("function test", "deleteImageBox = ${result}")
+            }
+        }
+    }
+
+    fun EditPageUseCaseDeleteTextBox(textBoxId: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            editPageUseCase.deleteTextBox(textBoxId).collect() { result ->
+                Log.d("function test", "deleteTextBox = ${result}")
             }
         }
     }

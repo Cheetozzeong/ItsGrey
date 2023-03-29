@@ -31,21 +31,32 @@ class EditPageUseCase @Inject constructor(
         }
     }
 
-//    fun getPage(pageId: String): Flow<Page> = flow {
-//        val imageBoxInfo = imageBoxRepository.getImageBoxInfo(pageId)
-//        val textBoxInfoList = textBoxRepository.getTextBoxInfoList(pageId)
-//        return Page(pageId, pageRepository.getThumbnail(pageId))
-//    }
-//
-//    fun savePage(page: Page): Boolean {
-//        return (imageBoxRepository.updateImageBoxInfo(page.id, page.thumbnail.imageBox) && textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList))
-//    }
-//
-//    fun deleteImageBox(imageBoxId: String): Boolean {
-//        return imageBoxRepository.deleteImageBoxInfo(imageBoxId)
-//    }
-//
-//    fun deleteTextBox(textBoxId: String): Boolean {
-//        return textBoxRepository.deleteTextBoxInfo(textBoxId)
-//    }
+    fun getPage(pageId: String): Flow<Page> = flow {
+        pageRepository.getThumbnail(pageId).collect() { thumbnail ->
+            emit(Page(pageId, thumbnail))
+        }
+    }
+
+    fun savePage(page: Page): Flow<Boolean> = flow {
+            textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList).collect() { updateTextBoxResult ->
+                var result = updateTextBoxResult
+                if(page.thumbnail.imageBox != null)
+                    imageBoxRepository.updateImageBoxInfo(page.id, page.thumbnail.imageBox!!).collect() { updateImageBoxResult ->
+                        result = result && updateImageBoxResult
+                    }
+                emit(result)
+            }
+    }
+
+    fun deleteImageBox(imageBoxId: String): Flow<Boolean> = flow {
+        imageBoxRepository.deleteImageBoxInfo(imageBoxId).collect() { result ->
+            emit(result)
+        }
+    }
+
+    fun deleteTextBox(textBoxId: String): Flow<Boolean> = flow {
+        textBoxRepository.deleteTextBoxInfo(textBoxId).collect() { result ->
+            emit(result)
+        }
+    }
 }
