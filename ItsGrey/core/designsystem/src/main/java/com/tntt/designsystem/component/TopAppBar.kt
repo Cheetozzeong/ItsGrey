@@ -15,13 +15,13 @@ import com.tntt.designsystem.icon.IgIcons
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IgTopAppBar(
-    title: String,
+    titleRes: String,
     actions: @Composable RowScope.() -> Unit,
     modifier: Modifier = Modifier,
     colors: TopAppBarColors = TopAppBarDefaults.smallTopAppBarColors(),
 ) {
     TopAppBar(
-        title = { Text(text = title) },
+        title = { Text(text = titleRes)},
         actions = actions,
         colors = colors,
         modifier = modifier.testTag("igTopAppBar"),
@@ -118,7 +118,7 @@ fun IgCenterTopAppBar(
 @Composable
 private fun PreviewMainViewTopAppBar() {
     IgTopAppBar(
-        title = "title",
+        titleRes = "untitled",
         actions = {
             Text(text = "UnKnown")
         }
