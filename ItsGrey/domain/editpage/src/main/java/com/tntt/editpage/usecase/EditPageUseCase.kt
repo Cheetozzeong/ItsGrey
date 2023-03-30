@@ -1,12 +1,18 @@
 package com.tntt.editpage.usecase
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.tntt.editpage.model.Page
+import com.tntt.model.BoxData
 import com.tntt.model.ImageBoxInfo
 import com.tntt.model.TextBoxInfo
+import com.tntt.model.Thumbnail
 import com.tntt.repo.ImageBoxRepository
 import com.tntt.repo.LayerRepository
 import com.tntt.repo.PageRepository
 import com.tntt.repo.TextBoxRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 
@@ -24,10 +30,10 @@ class EditPageUseCase @Inject constructor(
         return textBoxRepository.createTextBoxInfo(pageId, textBoxInfo)
     }
 
-    fun getPage(pageId: String): Page {
+    fun getPage(pageId: String): Flow<Page> {
         val imageBoxInfo = imageBoxRepository.getImageBoxInfo(pageId)
         val textBoxInfoList = textBoxRepository.getTextBoxInfoList(pageId)
-        return Page(pageId, pageRepository.getThumbnail(pageId))
+        return flow { Page(pageId, pageRepository.getThumbnail(pageId)) }
     }
 
     fun savePage(page: Page): Boolean {

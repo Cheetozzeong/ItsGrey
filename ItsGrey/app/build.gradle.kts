@@ -1,13 +1,10 @@
 import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
-
-    // Hilt
+    kotlin("android")
     kotlin("kapt")
+    id ("com.android.application")
     id("com.google.dagger.hilt.android")
-
     id("com.google.gms.google-services") version "4.3.10"
 }
 
@@ -45,17 +42,22 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.1"
     }
 }
 
 dependencies {
 
+    implementation(project(":feature:editPage"))
+    implementation(project(":domain:home"))
+
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
     implementation(Libraries.AndroidX.MATERIAL)
     implementation(Libraries.AndroidX.CONSTRAINT_LAYOUT)
-    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(Libraries.Test.JUNIT)
@@ -68,11 +70,14 @@ dependencies {
     implementation ("com.google.firebase:firebase-analytics:17.2.1")
     implementation ("com.google.firebase:firebase-database:19.2.0")
 
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
     // Hilt
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 
-    implementation(project(":domain:home"))
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.activity:activity-compose:1.7.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 }
 
 kapt {
