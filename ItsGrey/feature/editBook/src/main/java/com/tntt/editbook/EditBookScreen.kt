@@ -36,11 +36,10 @@ import com.tntt.designsystem.icon.IgIcons
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun EditBookTopAppBar(){
+private fun EditBookTopAppBar() {
     IgTopAppBar(
         title = "BOOK TITLE",
         navigationIcon = IgIcons.NavigateBefore,
-
         navigationIconContentDescription = "Back",
         onNavigationClick = { /*TODO*/ },
         actions = {
@@ -238,6 +237,40 @@ private fun MainSection(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview(name = "vertical")
+@Composable
+private fun VerticalModeScreen(modifier: Modifier = Modifier) {
+    IgTheme {
+        Scaffold(
+            topBar = { EditBookTopAppBar() }
+        ) { padding ->
+            Column(
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(0.75f)
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.secondary)
+                ) {
+                    MainSection()
+                }
+                Box(modifier = Modifier
+                    .weight(0.25f)
+                    .fillMaxWidth()
+                    .background(color = MaterialTheme.colorScheme.secondary)
+                    .border(width = 1.dp, color = MaterialTheme.colorScheme.tertiary)
+                ) {
+                    SideSection()
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(name = "horizontal", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
 @Composable
 fun HorizontalModeScreen(modifier: Modifier = Modifier) {
@@ -272,41 +305,6 @@ fun HorizontalModeScreen(modifier: Modifier = Modifier) {
                         .background(color = MaterialTheme.colorScheme.secondary)
                 ) {
                     MainSection()
-                }
-            }
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(name = "vertical")
-@Composable
-private fun VerticalModeScreen(modifier: Modifier = Modifier) {
-    IgTheme {
-        Scaffold(
-            topBar = { EditBookTopAppBar() }
-        ) { padding ->
-            Column(
-                Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(0.75f)
-                        .fillMaxWidth()
-                        .background(color = MaterialTheme.colorScheme.secondary)
-                ) {
-                    MainSection()
-                }
-                Box(modifier = Modifier
-                    .weight(0.25f)
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colorScheme.secondary)
-                    .border(width = 1.dp, color = MaterialTheme.colorScheme.tertiary)
-                ) {
-                    SideSection()
                 }
             }
         }
