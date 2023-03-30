@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.feature.editpage"
+    namespace = "itsgrey.feature.editpage"
     compileSdk = AppConfig.compileSdk
 
     defaultConfig {
