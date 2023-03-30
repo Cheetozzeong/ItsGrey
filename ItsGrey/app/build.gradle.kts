@@ -79,6 +79,9 @@ dependencies {
     implementation(project(":domain:home"))
     implementation(project(":domain:login"))
     implementation(project(":domain:viewer"))
+
+    implementation("com.github.skydoves:colorpickerview:2.2.4")
+
 }
 
 kapt {

@@ -1,15 +1,15 @@
 package com.tntt.itsgrey
 
+import android.R
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import androidx.fragment.app.Fragment
+import com.skydoves.colorpickerview.ColorPickerDialog
+import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import com.tntt.domain.drawing.usecase.DrawingUseCase
 import com.tntt.editbook.model.Book
 import com.tntt.editbook.usecase.EditBookUseCase
@@ -18,15 +18,13 @@ import com.tntt.editpage.usecase.EditPageUseCase
 import com.tntt.home.usecase.HomeUseCase
 import com.tntt.model.*
 import com.tntt.viewer.usecase.ViewerUseCase
-
 import dagger.hilt.android.AndroidEntryPoint
-import itsgrey.app.R
 import itsgrey.app.databinding.FragmentFirstBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -50,6 +48,13 @@ class FirstFragment : Fragment() {
     lateinit var drawingUseCase: DrawingUseCase
     @Inject
     lateinit var viewerUsecase: ViewerUseCase
+
+    private lateinit var context: Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        this.context = context
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,13 +83,9 @@ class FirstFragment : Fragment() {
             val upBoxData = BoxData(0.2f, 0.2f, 0.6f, 0.3f)
             val downBoxData = BoxData(0.2f, 0.55f, 0.6f, 0.3f)
 
-            CoroutineScope(Dispatchers.Main).launch {
-                drawingUseCase.retrofitTest().collect() { result ->
-                    Log.d("function test", "retrofitTest = ${result}")
-                }
-            }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -220,4 +221,6 @@ class FirstFragment : Fragment() {
             }
         }
     }
+
+
 }

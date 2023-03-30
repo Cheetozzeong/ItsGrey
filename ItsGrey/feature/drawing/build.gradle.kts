@@ -15,6 +15,10 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.1"
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -31,14 +35,43 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:ui"))
+
+    implementation(Libraries.KTX.CORE)
+    implementation(Libraries.AndroidX.APP_COMPAT)
+    implementation(Libraries.AndroidX.MATERIAL)
+
+    // Material Design 3
+    implementation(Libraries.Compose.MATERIAL3.MATERIAL3)
+    implementation(Libraries.Compose.MATERIAL3.WINDOW_SIZE)
+    // Android Studio Preview support
+    implementation(Libraries.Compose.UI.UI)
+    implementation(Libraries.Compose.UI.PREVIEW)
+    implementation(Libraries.Compose.UI.TOOLING)
+    // UI Tests
+    androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
+    debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
+    // the icons but not the material library (e.g. when using Material3 or a
+    // custom design system based on Foundation)
+    implementation(Libraries.Compose.MATERIAL.ICONS_CORE)
+    implementation(Libraries.Compose.MATERIAL.ICONS_EXTENDED)
+
+    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation (Libraries.Test.JUNIT)
+    androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
+
+    implementation ("androidx.startup:startup-runtime:1.0.0")
+
+    implementation ("com.github.skydoves:orchestra-colorpicker:1.0.5")
 }

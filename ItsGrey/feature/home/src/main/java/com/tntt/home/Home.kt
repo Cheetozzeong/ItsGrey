@@ -1278,7 +1278,7 @@ private fun BookItem(
                         Box (
                             Modifier.border(width = 5.dp, MaterialTheme.colorScheme.onPrimary)
                         ) {
-                            PageForView(modifier = Modifier, thumbnail = book.thumbnail)
+                            PageForView(modifier = Modifier, thumbnail = book.thumbnail!!)
                         }
                         Box {
                             Column {

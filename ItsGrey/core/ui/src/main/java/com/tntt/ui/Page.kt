@@ -44,7 +44,7 @@ fun PageForView(
                 parent = layoutCoordinates.boundsInRoot()
             }
     ){
-        ImageBox(parent = parent, imageBoxInfo = imageBoxInfo.value, imageBitmap = thumbnail.image.asImageBitmap())
+        ImageBox(parent = parent, imageBoxInfo = imageBoxInfo.value!!, imageBitmap = thumbnail.image!!.asImageBitmap())
         contentBoxInfoList.map{textBoxInfo->
             with(textBoxInfo){
                 TextBox(
@@ -89,8 +89,8 @@ fun PageForEdit(
             activeBoxId = activeBoxId.value,
             inActiveBoxId = inActiveBoxId.value,
             parent = parent,
-            imageBoxInfo = imageBoxInfo.value,
-            imageBitmap = thumbnail.image.asImageBitmap(),
+            imageBoxInfo = imageBoxInfo.value!!,
+            imageBitmap = thumbnail.image!!.asImageBitmap(),
             updateImageBoxInfo = { newImageBoxInfo ->
                 inActiveBoxId.value = ""
                 imageBoxInfo.value = newImageBoxInfo
