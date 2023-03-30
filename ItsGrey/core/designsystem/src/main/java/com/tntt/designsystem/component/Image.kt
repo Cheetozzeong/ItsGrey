@@ -1,38 +1,18 @@
 package com.tntt.designsystem.component
 
-import android.content.res.Resources
-import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.ImageBitmapConfig
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.tntt.designsystem.theme.IgTheme
 import com.tntt.model.BoxData
-import com.tntt.model.BoxState
 import com.tntt.model.ImageBoxInfo
-import com.tntt.model.TextBoxInfo
-import itsgrey.core.designsystem.R
 
 @Composable
 fun ImageBox(
@@ -62,8 +42,7 @@ fun ImageBox(
 
 @Composable
 fun ImageBoxForEdit(
-    activeBoxId: String,
-    inActiveBoxId: String,
+    isSelected: Boolean,
     parent: Rect,
     imageBoxInfo: ImageBoxInfo,
     imageBitmap: ImageBitmap,
@@ -73,10 +52,9 @@ fun ImageBoxForEdit(
     dialogComponent: List<@Composable () -> Unit>,
 ) {
 
-    val state = remember(activeBoxId) {
-        mutableStateOf(if(activeBoxId == imageBoxInfo.id) BoxState.Active else if (inActiveBoxId == imageBoxInfo.id) BoxState.InActive else BoxState.None)
-    }
-    val position = remember(parent) {
+    val state = remember { mutableStateOf(isSelected) }
+
+    val position = remember(parent, imageBoxInfo) {
         mutableStateOf(
             Offset(
                 imageBoxInfo.boxData.offsetRatioX * parent.width,
@@ -84,7 +62,7 @@ fun ImageBoxForEdit(
             )
         )
     }
-    val size = remember(parent) {
+    val size = remember(parent, imageBoxInfo) {
         mutableStateOf(
             Size(
                 imageBoxInfo.boxData.widthRatio * parent.width,
@@ -93,8 +71,8 @@ fun ImageBoxForEdit(
         )
     }
 
-    if(state.value == BoxState.InActive) {
-        state.value = BoxState.None
+    if(state.value != isSelected) {
+        state.value = isSelected
         updateImageBoxInfo(
             ImageBoxInfo(
                 id = imageBoxInfo.id,
@@ -110,7 +88,7 @@ fun ImageBoxForEdit(
 
 
     Box() {
-        if(state.value == BoxState.Active) {
+        if(isSelected) {
             BoxDialog(
                 dialogComponent = dialogComponent,
                 position = position.value
@@ -118,16 +96,12 @@ fun ImageBoxForEdit(
         }
 
         BoxForEdit(
-            boxState = state.value,
+            isSelected = isSelected,
             inputPosition = position.value,
             inputSize = size.value,
             resizeType = ResizeType.Ratio,
-            updatePosition = { newPosition ->
-                position.value = newPosition
-            },
-            updateSize = { newSize ->
-                size.value = newSize
-            },
+            updatePosition = { newPosition -> position.value = newPosition },
+            updateSize = { newSize -> size.value = newSize },
             onClickDelete = { onClickDelete() },
             innerContent = {
                 Image(
@@ -135,8 +109,8 @@ fun ImageBoxForEdit(
                     contentDescription = "",
                     modifier = Modifier
                         .fillMaxSize()
-                        .pointerInput(state.value) {
-                            if (state.value == BoxState.None) {
+                        .pointerInput(state.value, imageBoxInfo) {
+                            if (!isSelected) {
                                 detectTapGestures {
                                     onClick(imageBoxInfo.id)
                                 }
@@ -145,66 +119,5 @@ fun ImageBoxForEdit(
                 )
             }
         )
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewImage() {
-
-    val imageBoxInfo = remember() {
-        mutableStateOf(
-            ImageBoxInfo(
-                id = "abc",
-                boxData = BoxData(
-                    offsetRatioX = 0.2f,
-                    offsetRatioY = 0.1f,
-                    widthRatio = 0.5f,
-                    heightRatio = 0.3f
-                )
-            )
-        )
-    }
-
-    val bitmap = ImageBitmap.imageResource(R.drawable.icon_add_button_48)
-
-    var parentL by rememberSaveable(stateSaver = RectSaver) {
-        mutableStateOf(
-            Rect(Offset.Zero, Size.Zero)
-        )
-    }
-
-    Column(
-        Modifier
-            .aspectRatio(2f / 3f)
-            .onGloballyPositioned { layoutCoordinates ->
-                parentL = layoutCoordinates.boundsInRoot()
-                Log.d("TEST - left", "${layoutCoordinates.boundsInRoot()}")
-            }
-            .clickable {
-                imageBoxInfo.value = imageBoxInfo.value.copy(
-                    boxData = imageBoxInfo.value.boxData.copy()
-                )
-            }
-    ) {
-        IgTheme {
-//            ImageBox(
-//                imageBoxInfo = imageBoxInfo.value,
-//                imageBitmap = bitmap,
-//                parent = parentL
-//            )
-
-//            ImageBoxForEdit(
-//                parent = parentL,
-//                imageBoxInfo = imageBoxInfo.value,
-//                imageBitmap = bitmap,
-//                updateImageBoxInfo = { newImageBoxInfo -> imageBoxInfo.value = newImageBoxInfo },
-//                onClickDelete = {},
-//                dialogComponent = listOf {
-//                    IgTextButton(onClick = { /*TODO*/ }, text = { Text(text = "abc") })
-//                    IgTextButton(onClick = { /*TODO*/ }, text = { Text(text = "abc") })
-//                }
-//            )
-        }
     }
 }

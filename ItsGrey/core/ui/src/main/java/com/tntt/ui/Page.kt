@@ -1,9 +1,6 @@
 package com.tntt.ui
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -12,17 +9,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import com.tntt.designsystem.component.*
-import com.tntt.designsystem.theme.IgTheme
 import com.tntt.model.*
-import java.lang.reflect.Array.set
 
 @Composable
 fun PageForView(
@@ -67,172 +58,50 @@ fun PageForView(
 fun PageForEdit(
     modifier: Modifier,
     textBoxList: List<TextBoxInfo>,
-    imageBox: ImageBoxInfo,
+    imageBox: List<ImageBoxInfo>,
+    image: ImageBitmap,
+    selectedBoxId: String,
+    updateTextBox: (TextBoxInfo) -> Unit,
+    updateImageBox: (ImageBoxInfo) -> Unit,
+    onBoxSelected: (String) -> Unit,
+    deleteBox: (String) -> Unit,
 ) {
-    val activeBoxId = remember { mutableStateOf("") }
-    val inActiveBoxId = remember { mutableStateOf("") }
     var parent by rememberSaveable(stateSaver = RectSaver) { mutableStateOf(Rect(Offset.Zero, Size.Zero)) }
 
     Box(
         modifier
-            .fillMaxSize()
             .aspectRatio(2f / 3f)
+            .fillMaxHeight()
             .onGloballyPositioned { layoutCoordinates ->
                 parent = layoutCoordinates.boundsInRoot()
             }
-            .pointerInput(activeBoxId, inActiveBoxId) {
-                detectTapGestures {
-                    inActiveBoxId.value = activeBoxId.value
-                    activeBoxId.value = ""
-                }
-            }
     ){
-        ImageBoxForEdit(
-            activeBoxId = activeBoxId.value,
-            inActiveBoxId = inActiveBoxId.value,
-            parent = parent,
-            imageBoxInfo = imageBox,
-//            imageBitmap = thumbnail.image.asImageBitmap(),
-            imageBitmap = ImageBitmap(100,100, ImageBitmapConfig.Argb8888),
-            updateImageBoxInfo = { newImageBoxInfo ->
-                inActiveBoxId.value = ""
-            },
-            onClickDelete = { /*TODO*/ },
-            onClick = { id ->
-                inActiveBoxId.value = activeBoxId.value
-                activeBoxId.value = id
-            },
-            dialogComponent = listOf()
-        )
-        textBoxList.forEachIndexed { index, textBoxInfo ->
+        imageBox.forEach { imageBoxInfo ->
+            with(imageBoxInfo) {
+                ImageBoxForEdit(
+                    isSelected = id == selectedBoxId,
+                    parent = parent,
+                    imageBoxInfo = imageBoxInfo,
+                    imageBitmap = image,
+                    updateImageBoxInfo = { newImageBoxInfo -> updateImageBox(newImageBoxInfo) },
+                    onClick = { id -> onBoxSelected(id) },
+                    onClickDelete = { deleteBox(id) },
+                    dialogComponent = listOf()
+                )
+            }
+        }
+
+        textBoxList.forEach { textBoxInfo ->
             with(textBoxInfo) {
                 TextBoxForEdit(
-                    activeBoxId = activeBoxId.value,
-                    inActiveBoxId = inActiveBoxId.value,
+                    isSelected = id == selectedBoxId,
                     parent = parent,
                     textBoxInfo = this,
-                    updateTextBoxInfo = { new ->
-//                        textBoxList[index] = new
-                    },
-                    onClick = { id ->
-                        inActiveBoxId.value = activeBoxId.value
-                        activeBoxId.value = id
-                    },
-                    onClickDelete = { /*TODO*/ },
+                    updateTextBoxInfo = { new -> updateTextBox(new) },
+                    onClick = { id -> onBoxSelected(id) },
+                    onClickDelete = { deleteBox(id) },
                 )
             }
         }
     }
 }
-
-//@Composable
-//@Preview
-//private fun PreviewPage() {
-//
-//    IgTheme() {
-//        Row (
-//            Modifier.fillMaxSize()
-//        ){
-//            PageForView(
-//                modifier = Modifier.weight(1f),
-//                thumbnail = Thumbnail(
-//                    ImageBoxInfo(
-//                        id = "image",
-//                        boxData = BoxData(
-//                            offsetRatioX = 0.2f,
-//                            offsetRatioY = 0.2f,
-//                            widthRatio = 0.5f,
-//                            heightRatio = 0.3f
-//                        )
-//                    ),
-//                    image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.img),
-//                    arrayListOf(
-//                        TextBoxInfo(
-//                            id = "abc",
-//                            text = "ABC",
-//                            fontSizeRatio = 0.05f,
-//                            boxData = BoxData(
-//                                offsetRatioX = 0.2f,
-//                                offsetRatioY = 0.2f,
-//                                widthRatio = 0.5f,
-//                                heightRatio = 0.3f
-//                            )
-//                        ),
-//                        TextBoxInfo(
-//                            id = "def",
-//                            text = "DEF",
-//                            fontSizeRatio = 0.05f,
-//                            boxData = BoxData(
-//                                offsetRatioX = 0.2f,
-//                                offsetRatioY = 0.4f,
-//                                widthRatio = 0.5f,
-//                                heightRatio = 0.3f
-//                            )
-//                        ),
-//                        TextBoxInfo(
-//                            id = "ghi",
-//                            text = "GHI",
-//                            fontSizeRatio = 0.05f,
-//                            boxData = BoxData(
-//                                offsetRatioX = 0.2f,
-//                                offsetRatioY = 0.6f,
-//                                widthRatio = 0.5f,
-//                                heightRatio = 0.3f
-//                            )
-//                        )
-//                    )
-//                )
-//            )
-//            PageForEdit(
-//                modifier = Modifier.weight(1f),
-//                thumbnail = Thumbnail(
-//                    ImageBoxInfo(
-//                        id = "image",
-//                        boxData = BoxData(
-//                            offsetRatioX = 0.2f,
-//                            offsetRatioY = 0.2f,
-//                            widthRatio = 0.5f,
-//                            heightRatio = 0.3f
-//                        )
-//                    ),
-//                    image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.img),
-//                    arrayListOf(
-//                        TextBoxInfo(
-//                            id = "abc",
-//                            text = "ABC",
-//                            fontSizeRatio = 0.05f,
-//                            boxData = BoxData(
-//                                offsetRatioX = 0.2f,
-//                                offsetRatioY = 0.2f,
-//                                widthRatio = 0.5f,
-//                                heightRatio = 0.3f
-//                            )
-//                        ),
-//                        TextBoxInfo(
-//                            id = "def",
-//                            text = "DEF",
-//                            fontSizeRatio = 0.05f,
-//                            boxData = BoxData(
-//                                offsetRatioX = 0.2f,
-//                                offsetRatioY = 0.4f,
-//                                widthRatio = 0.5f,
-//                                heightRatio = 0.3f
-//                            )
-//                        ),
-//                        TextBoxInfo(
-//                            id = "ghi",
-//                            text = "GHI",
-//                            fontSizeRatio = 0.05f,
-//                            boxData = BoxData(
-//                                offsetRatioX = 0.2f,
-//                                offsetRatioY = 0.6f,
-//                                widthRatio = 0.5f,
-//                                heightRatio = 0.3f
-//                            )
-//                        )
-//                    )
-//                )
-//            )
-//        }
-//    }
-//}
