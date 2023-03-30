@@ -60,7 +60,7 @@ class EditPageViewModel @Inject constructor(
                             )
                         ),
                         image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888),
-                        arrayListOf(
+                        listOf(
                             TextBoxInfo(
                                 id = "abc",
                                 text = "ABC",
