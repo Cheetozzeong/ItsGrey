@@ -1,7 +1,7 @@
-package com.tntt.drawing.di
+package com.tntt.data.drawing.di
 
-import com.tntt.drawing.datasource.RemoteDrawingDataSource
-import com.tntt.drawing.datasource.RemoteDrawingDataSourceImpl
+import com.tntt.data.drawing.datasource.RemoteDrawingDataSource
+import com.tntt.data.drawing.datasource.RemoteDrawingDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

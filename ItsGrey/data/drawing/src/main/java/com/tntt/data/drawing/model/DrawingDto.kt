@@ -1,4 +1,4 @@
-package com.tntt.drawing.model
+package com.tntt.data.drawing.model
 
 data class DrawingDto(
     var id: String,

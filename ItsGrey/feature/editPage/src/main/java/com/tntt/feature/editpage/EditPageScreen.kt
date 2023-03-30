@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -30,14 +29,12 @@ internal fun EditPageRoute(
     onImageToDrawClick: (String) -> Unit
 ) {
     val textBoxList by viewModel.textBoxList.collectAsStateWithLifecycle()
-    val imageBox by viewModel.imageBox.collectAsStateWithLifecycle()
-    val image by viewModel.image.collectAsStateWithLifecycle()
+    val imageBoxList by viewModel.imageBox.collectAsStateWithLifecycle()
     val selectedBoxId by viewModel.selectedBoxId.collectAsStateWithLifecycle()
 
     EditPageScreen(
         textBoxList = textBoxList,
-        imageBox = imageBox,
-        image = image,
+        imageBox = imageBoxList,
         selectedBoxId = selectedBoxId,
         onBackClick = onBackClick,
         onImageToDrawClick = onImageToDrawClick,
@@ -55,7 +52,6 @@ internal fun EditPageRoute(
 internal fun EditPageScreen(
     textBoxList: List<TextBoxInfo>,
     imageBox: List<ImageBoxInfo>,
-    image: ImageBitmap,
     selectedBoxId: String,
     onBackClick: () -> Unit,
     onImageToDrawClick: (String) -> Unit,
@@ -84,7 +80,6 @@ internal fun EditPageScreen(
             EditPageBox(
                 textBoxList = textBoxList,
                 imageBox = imageBox,
-                image = image,
                 onImageToDrawClick = onImageToDrawClick,
                 selectedBoxId = selectedBoxId,
                 updateTextBox = updateTextBox,
@@ -100,7 +95,6 @@ internal fun EditPageScreen(
 fun EditPageBox(
     textBoxList: List<TextBoxInfo>,
     imageBox: List<ImageBoxInfo>,
-    image: ImageBitmap,
     selectedBoxId: String,
     onImageToDrawClick: (String) -> Unit,
     updateTextBox: (TextBoxInfo) -> Unit,
@@ -122,8 +116,7 @@ fun EditPageBox(
                 .padding(20.dp)
                 .background(MaterialTheme.colorScheme.background),
             textBoxList = textBoxList,
-            imageBox = imageBox,
-            image = image,
+            imageBoxList = imageBox,
             onImageToDrawClick = onImageToDrawClick,
             selectedBoxId = selectedBoxId,
             updateTextBox = updateTextBox,

@@ -5,9 +5,9 @@ import java.util.Date
 import java.util.ArrayList
 
 data class BookDto(
-    val id: String,
-    val userId: String,
-    val title: String,
-    val bookType: BookType,
-    val saveDate: Date,
+    var id: String,
+    var userId: String,
+    var title: String,
+    var bookType: BookType,
+    var saveDate: Date,
 )

@@ -1,10 +1,11 @@
 package com.tntt.user.datasource
 
 import com.tntt.user.model.UserDto
+import kotlinx.coroutines.flow.Flow
 
 interface RemoteUserDataSource {
-    fun getUser(id: String): UserDto
-    fun createUser(userDto: UserDto): String
-    fun updateUser(userDto: UserDto): UserDto
-    fun deleteUser(id: String): Boolean
+    suspend fun getUser(id: String): Flow<UserDto>
+    suspend fun createUser(userDto: UserDto): Flow<String>
+    suspend fun updateUser(userDto: UserDto): Flow<UserDto>
+    suspend fun deleteUser(id: String): Flow<Boolean>
 }

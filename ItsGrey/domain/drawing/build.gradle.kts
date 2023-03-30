@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.drawing"
+    namespace = "com.tntt.domain.drawing"
     compileSdk = 33
 
     defaultConfig {

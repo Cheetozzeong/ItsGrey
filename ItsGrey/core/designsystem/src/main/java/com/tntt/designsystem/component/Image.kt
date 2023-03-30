@@ -9,6 +9,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import com.tntt.model.BoxData
@@ -18,7 +19,6 @@ import com.tntt.model.ImageBoxInfo
 fun ImageBox(
     parent: Rect,
     imageBoxInfo: ImageBoxInfo,
-    imageBitmap: ImageBitmap
 ) {
     Box(
         position = Offset(
@@ -31,7 +31,7 @@ fun ImageBox(
         )
     ) {
         Image(
-            bitmap = imageBitmap,
+            bitmap = imageBoxInfo.image.asImageBitmap(),
             contentDescription = "",
             modifier = Modifier
                 .fillMaxSize(),
@@ -45,7 +45,6 @@ fun ImageBoxForEdit(
     isSelected: Boolean,
     parent: Rect,
     imageBoxInfo: ImageBoxInfo,
-    imageBitmap: ImageBitmap,
     updateImageBoxInfo: (ImageBoxInfo) -> Unit,
     onClick: (id: String) -> Unit,
     onClickDelete: () -> Unit,
@@ -81,7 +80,8 @@ fun ImageBoxForEdit(
                     offsetRatioY = position.value.y / parent.height,
                     widthRatio = size.value.width / parent.width,
                     heightRatio = size.value.height / parent.height,
-                )
+                ),
+                image = imageBoxInfo.image
             )
         )
     }
@@ -105,7 +105,7 @@ fun ImageBoxForEdit(
             onClickDelete = { onClickDelete() },
             innerContent = {
                 Image(
-                    bitmap = imageBitmap,
+                    bitmap = imageBoxInfo.image.asImageBitmap(),
                     contentDescription = "",
                     modifier = Modifier
                         .fillMaxSize()

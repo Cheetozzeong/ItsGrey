@@ -59,6 +59,11 @@ dependencies {
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.3")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+
     implementation(project(":core:network"))
     implementation(project(":domain:model"))
     implementation(project(":domain:repo"))

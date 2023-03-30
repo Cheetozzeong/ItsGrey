@@ -1,6 +1,5 @@
 package com.tntt.ui
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -9,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -26,7 +24,7 @@ fun PageForView(
             Rect(Offset.Zero, Size.Zero)
         )
     }
-    val imageBoxInfo = remember{ mutableStateOf(thumbnail.imageBox) }
+    val imageBoxInfo = remember{ mutableStateOf(thumbnail.imageBoxList) }
     val contentBoxInfoList = remember{
         thumbnail.textBoxList.toMutableStateList()
     }
@@ -38,7 +36,13 @@ fun PageForView(
                 parent = layoutCoordinates.boundsInRoot()
             }
     ){
-        ImageBox(parent = parent, imageBoxInfo = imageBoxInfo.value, imageBitmap = thumbnail.image.asImageBitmap())
+
+        imageBoxInfo.value.forEach { imageBox ->
+            ImageBox(
+                parent = parent,
+                imageBoxInfo = imageBox,
+            )
+        }
         contentBoxInfoList.map{textBoxInfo->
             with(textBoxInfo){
                 TextBox(
@@ -59,8 +63,7 @@ fun PageForView(
 fun PageForEdit(
     modifier: Modifier,
     textBoxList: List<TextBoxInfo>,
-    imageBox: List<ImageBoxInfo>,
-    image: ImageBitmap,
+    imageBoxList: List<ImageBoxInfo>,
     selectedBoxId: String,
     onImageToDrawClick: (String) -> Unit,
     updateTextBox: (TextBoxInfo) -> Unit,
@@ -78,13 +81,12 @@ fun PageForEdit(
                 parent = layoutCoordinates.boundsInRoot()
             }
     ){
-        imageBox.forEach { imageBoxInfo ->
+        imageBoxList.forEach { imageBoxInfo ->
             with(imageBoxInfo) {
                 ImageBoxForEdit(
                     isSelected = id == selectedBoxId,
                     parent = parent,
                     imageBoxInfo = imageBoxInfo,
-                    imageBitmap = image,
                     updateImageBoxInfo = { newImageBoxInfo -> updateImageBox(newImageBoxInfo) },
                     onClick = { id -> onBoxSelected(id) },
                     onClickDelete = { deleteBox(id) },

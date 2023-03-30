@@ -1,10 +1,11 @@
 package com.tntt.repo
 
 import com.tntt.model.UserInfo
+import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    fun getUser(id: String): UserInfo
-    fun createUser(userInfo: UserInfo): String
-    fun updateUser(userInfo: UserInfo): UserInfo
-    fun deleteUser(id: String): Boolean
+    suspend fun getUser(id: String): Flow<UserInfo>
+    suspend fun createUser(userInfo: UserInfo): Flow<String>
+    suspend fun updateUser(userInfo: UserInfo): Flow<UserInfo>
+    suspend fun deleteUser(id: String): Flow<Boolean>
 }

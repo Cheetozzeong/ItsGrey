@@ -1,7 +1,7 @@
 package com.tntt.di
 
 import com.tntt.book.repository.BookRepositoryImpl
-import com.tntt.drawing.repository.DrawingRepositoryImpl
+import com.tntt.data.drawing.repository.DrawingRepositoryImpl
 import com.tntt.imagebox.repository.ImageBoxRepositoryImpl
 import com.tntt.layer.repository.LayerRepositoryImpl
 import com.tntt.page.repository.PageRepositoryImpl
