@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "itsgrey.feature.home"
+    namespace = "itsgrey.feature.viewer"
     compileSdk = 33
 
     defaultConfig {
@@ -12,11 +12,9 @@ android {
         targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.1"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -38,14 +36,17 @@ android {
     buildFeatures {
         compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.1"
+    }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
-
-    implementation(project(":core:designsystem"))
-    implementation(project(":domain:home"))
-    implementation(project(":domain:model"))
-    implementation(project(":core:ui"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
@@ -58,6 +59,7 @@ dependencies {
     implementation(Libraries.Compose.UI.UI)
     implementation(Libraries.Compose.UI.PREVIEW)
     implementation(Libraries.Compose.UI.TOOLING)
+    implementation("androidx.navigation:navigation-runtime-ktx:2.5.3")
     // UI Tests
     androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
     debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
@@ -70,8 +72,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation (Libraries.Test.JUNIT)
-    androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
+    androidTestImplementation(Libraries.Test.JUNIT)
+    androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
-    implementation ("androidx.startup:startup-runtime:1.0.0")
+    implementation ("com.google.accompanist:accompanist-pager:0.20.1")
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.20.1")
+
+    implementation(project(":core:designsystem"))
 }
