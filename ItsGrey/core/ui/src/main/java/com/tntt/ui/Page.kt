@@ -2,6 +2,7 @@ package com.tntt.ui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -61,6 +62,7 @@ fun PageForEdit(
     imageBox: List<ImageBoxInfo>,
     image: ImageBitmap,
     selectedBoxId: String,
+    onImageToDrawClick: (String) -> Unit,
     updateTextBox: (TextBoxInfo) -> Unit,
     updateImageBox: (ImageBoxInfo) -> Unit,
     onBoxSelected: (String) -> Unit,
@@ -86,7 +88,12 @@ fun PageForEdit(
                     updateImageBoxInfo = { newImageBoxInfo -> updateImageBox(newImageBoxInfo) },
                     onClick = { id -> onBoxSelected(id) },
                     onClickDelete = { deleteBox(id) },
-                    dialogComponent = listOf()
+                    dialogComponent = listOf {
+                        IgTextButton(
+                            onClick = { onImageToDrawClick(id) },
+                            text = {Text(text = "이미지 변경")}
+                        )
+                    }
                 )
             }
         }

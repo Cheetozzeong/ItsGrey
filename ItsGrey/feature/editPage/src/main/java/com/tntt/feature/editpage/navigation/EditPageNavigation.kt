@@ -39,7 +39,7 @@ fun NavGraphBuilder.editPageScreen(
     ) {
         EditPageRoute(
             onBackClick = onBackClick,
-            onImageClick = onImageClick
+            onImageToDrawClick = onImageClick
         )
     }
 }

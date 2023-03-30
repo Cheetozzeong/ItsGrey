@@ -1,6 +1,5 @@
 package com.tntt.feature.editpage
 
-import android.graphics.Bitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -28,7 +27,7 @@ import com.tntt.ui.PageForEdit
 internal fun EditPageRoute(
     viewModel: EditPageViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onImageClick: (String) -> Unit
+    onImageToDrawClick: (String) -> Unit
 ) {
     val textBoxList by viewModel.textBoxList.collectAsStateWithLifecycle()
     val imageBox by viewModel.imageBox.collectAsStateWithLifecycle()
@@ -41,6 +40,7 @@ internal fun EditPageRoute(
         image = image,
         selectedBoxId = selectedBoxId,
         onBackClick = onBackClick,
+        onImageToDrawClick = onImageToDrawClick,
         onCreateTextBox = viewModel::createTextBox,
         onCreateImageBox = viewModel::createImageBox,
         updateTextBox = viewModel::updateTextBox,
@@ -58,6 +58,7 @@ internal fun EditPageScreen(
     image: ImageBitmap,
     selectedBoxId: String,
     onBackClick: () -> Unit,
+    onImageToDrawClick: (String) -> Unit,
     onCreateTextBox: () -> Unit,
     onCreateImageBox: () -> Unit,
     updateTextBox: (TextBoxInfo) -> Unit,
@@ -84,6 +85,7 @@ internal fun EditPageScreen(
                 textBoxList = textBoxList,
                 imageBox = imageBox,
                 image = image,
+                onImageToDrawClick = onImageToDrawClick,
                 selectedBoxId = selectedBoxId,
                 updateTextBox = updateTextBox,
                 updateImageBox = updateImageBox,
@@ -100,6 +102,7 @@ fun EditPageBox(
     imageBox: List<ImageBoxInfo>,
     image: ImageBitmap,
     selectedBoxId: String,
+    onImageToDrawClick: (String) -> Unit,
     updateTextBox: (TextBoxInfo) -> Unit,
     updateImageBox: (ImageBoxInfo) -> Unit,
     onBoxSelected: (String) -> Unit,
@@ -121,6 +124,7 @@ fun EditPageBox(
             textBoxList = textBoxList,
             imageBox = imageBox,
             image = image,
+            onImageToDrawClick = onImageToDrawClick,
             selectedBoxId = selectedBoxId,
             updateTextBox = updateTextBox,
             updateImageBox = updateImageBox,
