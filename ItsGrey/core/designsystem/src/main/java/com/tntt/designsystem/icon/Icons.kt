@@ -12,6 +12,7 @@ object IgIcons {
     val PreviewOne = Icons.Rounded.AutoStories
     val PreviewTwo = Icons.Rounded.MenuBook
     val Add = Icons.Rounded.Add
+    val Remove = Icons.Rounded.Remove
     val Close = Icons.Rounded.Close
     val Check = Icons.Rounded.Check
     val ArrowForward = Icons.Rounded.ArrowForward
