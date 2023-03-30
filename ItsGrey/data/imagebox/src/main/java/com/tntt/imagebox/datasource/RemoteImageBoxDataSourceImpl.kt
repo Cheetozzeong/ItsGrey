@@ -1,5 +1,6 @@
 package com.tntt.imagebox.datasource
 
+import android.graphics.Bitmap
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
@@ -29,8 +30,8 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
         emit(imageBoxDto)
     }
 
-    override suspend fun getImageBoxDto(pageId: String): Flow<ImageBoxDto?> = flow {
-        var imageBoxDto: ImageBoxDto? = null
+    override suspend fun getImageBoxDtoList(pageId: String): Flow<List<ImageBoxDto>> = flow {
+        var imageBoxDtoList = mutableListOf<ImageBoxDto>()
 
         imageBoxCollection
             .whereEqualTo("pageId", pageId)
@@ -42,12 +43,13 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
                     val data = documentSnapshot.data
                     val id: String = data?.get("id") as String
                     val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
+                    val image = data?.get("image") as Bitmap
                     val gson = Gson()
                     val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
-                    imageBoxDto = ImageBoxDto(id, pageId, boxData)
+                    imageBoxDtoList.add(ImageBoxDto(id, pageId, boxData, image))
                 }
             }.await()
-        emit(imageBoxDto)
+        emit(imageBoxDtoList)
     }
 
     override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean> = flow {

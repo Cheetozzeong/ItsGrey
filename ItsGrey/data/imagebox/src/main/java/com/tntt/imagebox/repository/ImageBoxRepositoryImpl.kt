@@ -6,7 +6,6 @@ import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.ImageBoxInfo
 import com.tntt.repo.ImageBoxRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -16,23 +15,24 @@ class ImageBoxRepositoryImpl @Inject constructor(
 
     override suspend fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<ImageBoxInfo> = flow {
         Log.d("function test", "createImageBoxInfo(${pageId}, ${imageBoxInfo})")
-        val imageBoxDto = ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData)
+        val imageBoxDto = ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData, imageBoxInfo.image)
         imageBoxDataSource.createImageBoxDto(imageBoxDto).collect() { imageBoxDto ->
-            emit(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData))
+            emit(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, imageBoxDto.image))
         }
     }
 
-    override suspend fun getImageBoxInfo(pageId: String): Flow<ImageBoxInfo?> = flow {
-        imageBoxDataSource.getImageBoxDto(pageId).collect() { imageBoxDto ->
-            if(imageBoxDto == null)
-                emit(null)
-            else
-                emit(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData))
+    override suspend fun getImageBoxInfoList(pageId: String): Flow<List<ImageBoxInfo>> = flow {
+        val imageBoxInfoList = mutableListOf<ImageBoxInfo>()
+        imageBoxDataSource.getImageBoxDtoList(pageId).collect() { imageBoxDtoList ->
+            for (imageBoxDto in imageBoxDtoList) {
+                imageBoxInfoList.add(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, imageBoxDto.image))
+            }
+            emit(imageBoxInfoList)
         }
     }
 
     override suspend fun updateImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<Boolean> = flow {
-        imageBoxDataSource.updateImageBoxDto(ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData)).collect() { result ->
+        imageBoxDataSource.updateImageBoxDto(ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData, imageBoxInfo.image)).collect() { result ->
             emit(result)
         }
     }
