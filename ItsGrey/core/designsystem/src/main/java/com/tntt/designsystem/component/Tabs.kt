@@ -30,32 +30,34 @@ fun IgTabMainRow(
     enabled: Boolean = true,
     text: @Composable () -> Unit,
 ) {
-    val color = MaterialTheme.colorScheme.onPrimary
+    val borderColor = MaterialTheme.colorScheme.onPrimary
     val shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+    var tabColor = if(selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+
     Tab(
         selected = selected,
         onClick = onClick,
         modifier = modifier
             .clip(shape)
-            .background(MaterialTheme.colorScheme.primary)
+            .background(tabColor)
             .drawBehind {
                 val borderSize = 4.dp.toPx()
                 if (selected)
                 {
                     drawLine(
-                        color,
+                        borderColor,
                         Offset(borderSize/2, 0f),
                         Offset(borderSize/2, size.height),
                         strokeWidth = borderSize,
                     )
                     drawLine(
-                        color,
+                        borderColor,
                         Offset(0f, borderSize/2),
                         Offset(size.width, borderSize/2),
                         strokeWidth = borderSize
                     )
                     drawLine(
-                        color,
+                        borderColor,
                         Offset(size.width-borderSize/2,0f),
                         Offset(size.width-borderSize/2, size.height),
                         strokeWidth = borderSize
@@ -63,7 +65,7 @@ fun IgTabMainRow(
                 }
                 else {
                     drawLine(
-                        color,
+                        borderColor,
                         Offset(0f, size.height-borderSize/2),
                         Offset(size.width, size.height-borderSize/2),
                         strokeWidth = borderSize
@@ -113,6 +115,7 @@ fun IgTabsMain(
                           selectedTabIndex(selectedTabIndex)},
                 text = { Text(text = title) },
                 modifier = Modifier.weight(1f),
+                enabled = selectedTabIndex != index
             )
         }
     }
@@ -235,7 +238,7 @@ fun IgTabsTemplate() {
 fun TapsMainPreview() {
     val titles = listOf("출간", "작업중", "abc")
     IgTabsMain(titles, selectedTabIndex = {
-        // 여기서 it을 쓰는 형태얍~!
+
     })
 }
 
