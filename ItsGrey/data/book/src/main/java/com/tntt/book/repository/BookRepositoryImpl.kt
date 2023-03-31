@@ -9,6 +9,7 @@ import com.tntt.model.BookInfo
 import com.tntt.repo.BookRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.util.*
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
@@ -38,10 +39,10 @@ class BookRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createBookInfo(userId: String, bookId: String): Flow<BookInfo> = flow {
-        Log.d("function test", "createBookInfo(${userId})")
-        bookDataSource.createBookDto(userId, bookId).collect() { bookDto ->
-            emit(BookInfo(bookId, bookDto.title, bookDto.saveDate))
+    override suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<BookInfo> = flow {
+        val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.EDIT, Date())
+        bookDataSource.createBookDto(userId, bookDto).collect() { resultBookDto ->
+            emit(bookInfo)
         }
     }
 
