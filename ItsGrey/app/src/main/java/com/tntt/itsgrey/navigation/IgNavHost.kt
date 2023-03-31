@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.tntt.feature.editpage.navigation.editPageRoute
 import com.tntt.feature.editpage.navigation.editPageScreen
+import com.tntt.home.navigation.homePageRoute
+import com.tntt.home.navigation.homePageScreen
 
 @Composable
 fun IgNavHost(
@@ -21,6 +23,10 @@ fun IgNavHost(
         editPageScreen(
             onBackClick = {},
             onImageClick = {}
+        )
+        homePageScreen(
+            onThumbnailClick = {},
+            onNewButtonClick = {}
         )
     }
 }
