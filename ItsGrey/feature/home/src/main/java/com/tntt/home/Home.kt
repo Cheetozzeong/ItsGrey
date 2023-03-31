@@ -31,7 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.tntt.designsystem.component.IgIconButton
+import com.tntt.designsystem.component.IgPlusPageButton
 import com.tntt.designsystem.icon.IgIcons
 import com.tntt.ui.PageForView
 import java.text.SimpleDateFormat
@@ -48,9 +50,12 @@ private enum class WindowSize(val item: Int) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(name = "tablet", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
 @Composable
-fun Home(modifier: Modifier = Modifier) {
+internal fun HomePageRoute(
+    modifier: Modifier = Modifier,
+    onNewButtonClick: () -> Unit,
+    onThumbnailClick: (String) -> Unit,
+) {
 
     val displayMetrics = LocalContext.current.resources.displayMetrics
     val screenWidth = displayMetrics.widthPixels / displayMetrics.density
@@ -947,7 +952,13 @@ fun Home(modifier: Modifier = Modifier) {
                             )
                         }
                 ) {
-                    BookList(modifier, list, tabPage, screenWidth)
+                    BookList(
+                        modifier = modifier,
+                        books = list,
+                        tabPage = tabPage,
+                        screenWidth = screenWidth,
+                        onThumbnailClick = onThumbnailClick
+                    )
                 }
             }
         }
@@ -959,7 +970,8 @@ private fun BookList(
     modifier: Modifier = Modifier,
     books: List<Book>,
     tabPage: TabPage,
-    screenWidth: Float
+    screenWidth: Float,
+    onThumbnailClick: (String) -> Unit
 ) {
     val windowSize = computeWindowSizeClasses(screenWidth)
 
@@ -976,40 +988,14 @@ private fun BookList(
                     modifier = Modifier,
                     book = book,
                     tabPage = tabPage,
-                    bookId = {
-                        /*TODO 여기서 argument이용해서 id를 it으로 넘겨주기*/
+                    onThumbnailClick = {
+                        onThumbnailClick
                     }
                 )
             }
             if (tabPage == TabPage.Working) {
                 item {
-                    Column {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(2 / 3f)
-                                .shadow(6.dp)
-                                .background(MaterialTheme.colorScheme.surface)
-                        ) {
-                            IgIconButton(
-                                modifier = Modifier.fillMaxSize(),
-                                onClick = {},
-                                icon = {
-                                    Icon(
-                                        imageVector = IgIcons.Add,
-                                        contentDescription = "iconButton"
-                                    )
-                                }
-                            )
-                        }
-                        Box {
-                            Text(text = "New..",
-                                color = MaterialTheme.colorScheme.onSecondary,
-                                textAlign = TextAlign.Center,
-                                style=MaterialTheme.typography.titleLarge
-                            )
-                        }
-                    }
+                    IgPlusPageButton(onClick = {})
                 }
             }
         }
@@ -1022,7 +1008,7 @@ private fun BookList(
 private fun BookItem(
     modifier: Modifier,
     book: Book,
-    bookId: (String) -> Unit,
+    onThumbnailClick: (String) -> Unit,
     tabPage: TabPage
 ) {
     val bookId = book.bookInfo.id
@@ -1038,8 +1024,7 @@ private fun BookItem(
                             Modifier
                                 .border(width = 5.dp, MaterialTheme.colorScheme.onPrimary)
                                 .clickable(
-                                    /*TODO View로 이동 with id*/
-                                    onClick = { bookId(bookId) }
+                                    onClick = { onThumbnailClick(bookId) } /*TODO 네비 연경*/
                                 )
                         ) {
                             PageForView(modifier = Modifier, thumbnail = book.thumbnail)
