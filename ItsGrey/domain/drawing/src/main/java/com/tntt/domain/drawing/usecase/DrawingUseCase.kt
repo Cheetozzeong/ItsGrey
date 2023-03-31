@@ -50,13 +50,13 @@ class DrawingUseCase @Inject constructor(
     }
 
     suspend fun saveDrawing(pageId: String, imageBox: ImageBox): Flow<Boolean> = flow {
-        layerRepository.updateLayerInfoList(imageBox.id, imageBox.layerList).collect() { layerResult ->
-            drawingRepository.updateDrawingInfo(imageBox.id, imageBox.drawing).collect() { drawingResult ->
-                imageBoxRepository.updateImageBoxInfo(pageId, ImageBoxInfo(imageBox.id, imageBox.boxData)).collect() { imageBoxResult ->
-                    emit(layerResult && drawingResult && imageBoxResult)
-                }
-            }
-        }
+//        layerRepository.updateLayerInfoList(imageBox.id, imageBox.layerList).collect() { layerResult ->
+//            drawingRepository.updateDrawingInfo(imageBox.id, imageBox.drawing).collect() { drawingResult ->
+//                imageBoxRepository.updateImageBoxInfo(pageId, ImageBoxInfo(imageBox.id, imageBox.boxData)).collect() { imageBoxResult ->
+//                    emit(layerResult && drawingResult && imageBoxResult)
+//                }
+//            }
+//        }
     }
 
     suspend fun retrofitTest(): Flow<String> = flow {

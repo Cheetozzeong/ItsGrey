@@ -75,6 +75,16 @@ dependencies {
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
 
+    implementation(project(":domain:model"))
+    implementation(project(":domain:drawing"))
+    implementation(project(":domain:editbook"))
+    implementation(project(":domain:editpage"))
+    implementation(project(":domain:home"))
+    implementation(project(":domain:login"))
+    implementation(project(":domain:viewer"))
+
+    implementation("com.github.skydoves:colorpickerview:2.2.4")
+
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.activity:activity-compose:1.7.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
