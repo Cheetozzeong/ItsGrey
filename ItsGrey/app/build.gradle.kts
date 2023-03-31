@@ -52,6 +52,7 @@ android {
 dependencies {
 
     implementation(project(":feature:editPage"))
+    implementation(project(":feature:home"))
     implementation(project(":domain:home"))
 
     implementation(Libraries.KTX.CORE)
