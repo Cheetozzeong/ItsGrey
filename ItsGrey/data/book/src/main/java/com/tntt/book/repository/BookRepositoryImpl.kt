@@ -16,6 +16,13 @@ class BookRepositoryImpl @Inject constructor(
     private val bookDataSource: RemoteBookDataSource
 ) : BookRepository {
 
+    override suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<BookInfo> = flow {
+        val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.EDIT, Date())
+        bookDataSource.createBookDto(userId, bookDto).collect() { resultBookDto ->
+            emit(BookInfo(resultBookDto.id, resultBookDto.title, resultBookDto.saveDate))
+        }
+    }
+
     override suspend fun getBookInfo(bookId: String): Flow<BookInfo> = flow {
         Log.d("function test", "getBookInfo(${bookId})")
         bookDataSource.getBookDto(bookId).collect() { bookDto ->
@@ -27,22 +34,12 @@ class BookRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getBookInfoList(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<BookInfo>> = flow {
-        Log.d("function test", "getBookInfoList(${userId}, ${sortType}, ${startIndex}, ${bookType})")
         bookDataSource.getBookDtoList(userId, sortType, startIndex, bookType).collect() { bookDtoList ->
-            Log.d("function test", "bookDtoList = ${bookDtoList}")
-            val bookList = mutableListOf<BookInfo>()
+            val bookInfoList = mutableListOf<BookInfo>()
             for (bookDto in bookDtoList){
-                bookList.add(BookInfo(bookDto.id, bookDto.title, bookDto.saveDate))
+                bookInfoList.add(BookInfo(bookDto.id, bookDto.title, bookDto.saveDate))
             }
-            Log.d("function test", "emit(${bookList})")
-            emit(bookList)
-        }
-    }
-
-    override suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<BookInfo> = flow {
-        val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.EDIT, Date())
-        bookDataSource.createBookDto(userId, bookDto).collect() { resultBookDto ->
-            emit(bookInfo)
+            emit(bookInfoList)
         }
     }
 
@@ -54,7 +51,6 @@ class BookRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteBookInfo(bookIdList: List<String>): Flow<Boolean> = flow {
-        Log.d("function test=======================", "deleteBookInfo(${bookIdList})")
         bookDataSource.deleteBookDto(bookIdList).collect() { result ->
             emit(result)
         }
