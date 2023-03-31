@@ -13,6 +13,7 @@ import com.tntt.page.model.PageDto
 import com.tntt.repo.PageRepository
 import com.tntt.textbox.datasource.RemoteTextBoxDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -38,17 +39,6 @@ class PageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCoverPageInfo(bookId: String): Flow<PageInfo?> = flow {
-        pageDataSource.getCoverPageDto(bookId).collect() { pageDto ->
-            if(pageDto == null)
-                emit(null)
-            else {
-                val pageInfo = PageInfo(pageDto.id, pageDto.order)
-                emit(pageInfo)
-            }
-        }
-    }
-
     override suspend fun getPageInfoList(bookId: String): Flow<List<PageInfo>> = flow {
         Log.d("function test", "getPageInfoList(${bookId})")
         val pageInfoList = mutableListOf<PageInfo>()
@@ -57,6 +47,18 @@ class PageRepositoryImpl @Inject constructor(
                 pageInfoList.add(PageInfo(pageDto.id, pageDto.order))
             }
             emit(pageInfoList)
+        }
+    }
+
+    override suspend fun getFirstPageInfo(bookId: String): Flow<PageInfo?> = flow {
+        pageDataSource.getFirstPageDto(bookId).collect() { pageDto ->
+            if(pageDto != null) {
+                val pageInfo: PageInfo = PageInfo(pageDto.id, pageDto.order)
+                emit(pageInfo)
+            }
+            else{
+                emit(null)
+            }
         }
     }
 
@@ -73,39 +75,20 @@ class PageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getThumbnail(pageId: String): Flow<Thumbnail> = flow {
-//        println("getThumbnail(${pageId})")
-//        imageBoxDataSource.getImageBoxDtoList(pageId).collect() { imageBoxDto ->
-//            Log.d("function test", "imageBoxDataSource.getImageBoxDto(${pageId}) - imageBoxDto = ${imageBoxDto}")
-//            var imageBoxInfoList = mutableListOf<ImageBoxInfo>()
-//            val textBoxInfoList = mutableListOf<TextBoxInfo>()
-//
-//            if(imageBoxDto != null) {
-//                imageBoxInfoList.add(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, imageBoxDto.image))
-//                for (imageBoxInfo in imageBoxInfoList) {
-//                    layerDataSource.getSumLayer(imageBoxInfo.id).collect() { sumLayer ->
-//                        Log.d(
-//                            "function test",
-//                            "layerDataSource.getSumLayer(${imageBoxInfo.id}) - sumLayer = ${sumLayer}"
-//                        )
-//                        image = sumLayer
-//                    }
-//                }
-//            }
-//            textBoxDataSource.getTextBoxDtoList(pageId).collect() { textBoxDtoList ->
-//                Log.d("function test", "textBoxDtoList = ${textBoxDtoList}")
-//                for (textBoxDto in textBoxDtoList) {
-//                    textBoxInfoList.add(
-//                        TextBoxInfo(
-//                            textBoxDto.id,
-//                            textBoxDto.text,
-//                            textBoxDto.fontSizeRatio,
-//                            textBoxDto.boxData
-//                        )
-//                    )
-//                }
-//            }
-//            emit(Thumbnail(imageBoxInfoList, textBoxInfoList))
-//        }
+        val imageBoxInfoList = mutableListOf<ImageBoxInfo>()
+        val textBoxInfoList = mutableListOf<TextBoxInfo>()
+
+        imageBoxDataSource.getImageBoxDtoList(pageId).collect() { imageBoxDtoList ->
+            for (imageBoxDto in imageBoxDtoList) {
+                imageBoxInfoList.add(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, imageBoxDto.image))
+            }
+            textBoxDataSource.getTextBoxDtoList(pageId).collect() { textBoxDtoList ->
+                for (textBoxDto in textBoxDtoList) {
+                    textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
+                }
+            }
+            emit(Thumbnail(imageBoxInfoList, textBoxInfoList))
+        }
     }
 
     override suspend fun hasCover(bookId: String): Flow<Boolean> = flow {

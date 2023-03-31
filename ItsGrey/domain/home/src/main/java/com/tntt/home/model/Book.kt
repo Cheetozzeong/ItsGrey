@@ -5,5 +5,5 @@ import com.tntt.model.Thumbnail
 
 data class Book(
     val bookInfo: BookInfo,
-    val thumbnail: Thumbnail?,
+    val thumbnail: Thumbnail,
 )
