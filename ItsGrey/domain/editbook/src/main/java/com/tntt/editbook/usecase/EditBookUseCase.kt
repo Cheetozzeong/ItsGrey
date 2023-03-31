@@ -21,24 +21,22 @@ class EditBookUseCase @Inject constructor(
     private val textBoxRepository: TextBoxRepository,
 ){
 
-    suspend fun createPage(bookId: String, pageInfo: PageInfo, imageBoxInfo: ImageBoxInfo?, textBoxInfo: TextBoxInfo?): Flow<Page> = flow {
-        Log.d("function test", "createPage(${bookId}, ${pageInfo}, ${imageBoxInfo}, ${textBoxInfo})")
-        pageRepository.createPageInfo(bookId, pageInfo).collect() { pageInfo ->
-            val image: Bitmap? = null
+    suspend fun createPage(bookId: String, page: Page): Flow<Page> = flow {
+        pageRepository.createPageInfo(bookId, page.pageInfo).collect() { pageInfo ->
+            val imageBoxInfoList = mutableListOf<ImageBoxInfo>()
             val textBoxInfoList = mutableListOf<TextBoxInfo>()
-            if(imageBoxInfo != null) {
-                Log.d("function test", "imageBoxInfo is not null")
+            for (imageBoxInfo in page.thumbnail.imageBoxList){
                 imageBoxRepository.createImageBoxInfo(pageInfo.id, imageBoxInfo).collect() { imageBoxInfo ->
-                    Log.d("function test", "imageBoxRepository.createImageBoxInfo = ${imageBoxInfo}")
+
                 }
             }
-            if(textBoxInfo != null) {
-                Log.d("function test", "textBoxInfo is not null")
-                textBoxRepository.createTextBoxInfo(pageInfo.id, textBoxInfo).collect() { textBoxInfoResult ->
-                    textBoxInfoList.add(textBoxInfoResult)
+            for (textBoxInfo in page.thumbnail.textBoxList) {
+                textBoxRepository.createTextBoxInfo(pageInfo.id, textBoxInfo).collect() { textBoxInfo ->
+
                 }
             }
-            emit(Page(pageInfo, Thumbnail(imageBoxInfo, image, textBoxInfoList)))
+            emit(page)
+        }
 
             /*
             백엔드에서 템플릿 처리할 경우 사용할 코드
@@ -54,51 +52,51 @@ class EditBookUseCase @Inject constructor(
     }
 
     suspend fun getBook(bookId: String): Flow<Book> = flow {
-        bookRepository.getBookInfo(bookId).collect() { bookInfo ->
-            pageRepository.getPageInfoList(bookId).collect() { pageInfoList ->
-                Log.d("function test", "pageRepository.getPageInfoList : ${pageInfoList}")
-                val pages = mutableListOf<Page>()
-                for (pageInfo in pageInfoList) {
-                    pageRepository.getThumbnail(pageInfo.id).collect() { thumbnail ->
-                        Log.d("function test", "pageInfo : ${pageInfo}, thumbnail : ${thumbnail}")
-                        pages.add(Page(pageInfo, thumbnail))
-                    }
-                }
-                emit(Book(bookInfo, pages))
-            }
-        }
+//        bookRepository.getBookInfo(bookId).collect() { bookInfo ->
+//            pageRepository.getPageInfoList(bookId).collect() { pageInfoList ->
+//                Log.d("function test", "pageRepository.getPageInfoList : ${pageInfoList}")
+//                val pages = mutableListOf<Page>()
+//                for (pageInfo in pageInfoList) {
+//                    pageRepository.getThumbnail(pageInfo.id).collect() { thumbnail ->
+//                        Log.d("function test", "pageInfo : ${pageInfo}, thumbnail : ${thumbnail}")
+//                        pages.add(Page(pageInfo, thumbnail))
+//                    }
+//                }
+//                emit(Book(bookInfo, pages))
+//            }
+//        }
     }
 
     suspend fun savePages(bookId: String, pages: List<Page>): Flow<Boolean> = flow {
-        val pageInfoList = mutableListOf<PageInfo>()
-        for (page in pages) {
-            pageInfoList.add(page.pageInfo)
-        }
-        pageRepository.updatePageInfoList(bookId, pageInfoList).collect() { result ->
-            emit(result)
-        }
+//        val pageInfoList = mutableListOf<PageInfo>()
+//        for (page in pages) {
+//            pageInfoList.add(page.pageInfo)
+//        }
+//        pageRepository.updatePageInfoList(bookId, pageInfoList).collect() { result ->
+//            emit(result)
+//        }
     }
 
     suspend fun saveBook(book: Book, userId: String, bookType: BookType = BookType.EDIT): Flow<Boolean> = flow {
-        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
-            bookRepository.updateBookInfo(book.bookInfo, userId, bookType).collect() { updateBookInfoResult ->
-                emit(savePagesResult && updateBookInfoResult)
-            }
-        }
+//        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
+//            bookRepository.updateBookInfo(book.bookInfo, userId, bookType).collect() { updateBookInfoResult ->
+//                emit(savePagesResult && updateBookInfoResult)
+//            }
+//        }
 
     }
 
     suspend fun publishBook(book: Book, userId: String): Flow<Boolean> = flow {
-        pageRepository.hasCover(book.bookInfo.id).collect() { hasCover ->
-            if (hasCover) {
-                saveBook(book, userId, BookType.PUBLISHED).collect() { result ->
-                    Log.d("function test", "book has cover..")
-                    emit(result)
-                }
-            }
-            else{
-                Log.d("function test", "book has no cover..")
-            }
-        }
-    }
+//        pageRepository.hasCover(book.bookInfo.id).collect() { hasCover ->
+//            if (hasCover) {
+//                saveBook(book, userId, BookType.PUBLISHED).collect() { result ->
+//                    Log.d("function test", "book has cover..")
+//                    emit(result)
+//                }
+//            }
+//            else{
+//                Log.d("function test", "book has no cover..")
+//            }
+//        }
+//    }
 }
