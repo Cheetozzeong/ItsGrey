@@ -4,8 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
-import itsgrey.core.designsystem.R
 
 object IgIcons {
 
@@ -14,11 +12,14 @@ object IgIcons {
     val PreviewOne = Icons.Rounded.AutoStories
     val PreviewTwo = Icons.Rounded.MenuBook
     val Add = Icons.Rounded.Add
+    val Remove = Icons.Rounded.Remove
     val Close = Icons.Rounded.Close
     val Check = Icons.Rounded.Check
     val ArrowForward = Icons.Rounded.ArrowForward
     val Undo = Icons.Rounded.Undo
     val Redo = Icons.Rounded.Redo
+    val AddImageBox = Icons.Rounded.Image
+    val AddTextBox = Icons.Rounded.TextFields
 
 //    val Add = R.drawable.icon_add_button_48
 //    val GoBack = R.drawable.icon_back_button_48

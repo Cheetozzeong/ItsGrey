@@ -5,4 +5,11 @@ data class TextBoxInfo(
     val text: String,
     val fontSizeRatio: Float,
     val boxData: BoxData,
-)
+) {
+    constructor() : this(
+        id = "",
+        text = "",
+        fontSizeRatio = 0f,
+        boxData = BoxData(0f, 0f , 0f, 0f)
+    )
+}

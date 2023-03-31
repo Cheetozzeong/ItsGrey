@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tntt.editbook"
+    namespace = "itsgrey.feature.editbook"
     compileSdk = 33
 
     defaultConfig {

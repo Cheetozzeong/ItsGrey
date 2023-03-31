@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,9 +24,10 @@ fun IgIconButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Unspecified,
-            contentColor = Color.Black
+            contentColor = MaterialTheme.colorScheme.onPrimary
         ),
         contentPadding = contentPadding,
         content = content,

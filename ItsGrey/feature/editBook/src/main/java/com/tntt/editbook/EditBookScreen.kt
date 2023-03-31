@@ -32,6 +32,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.tntt.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTopAppBar
 import com.tntt.designsystem.icon.IgIcons
+import itsgrey.feature.editbook.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

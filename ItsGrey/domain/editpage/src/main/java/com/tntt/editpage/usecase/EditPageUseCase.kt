@@ -1,8 +1,12 @@
 package com.tntt.editpage.usecase
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.tntt.editpage.model.Page
+import com.tntt.model.BoxData
 import com.tntt.model.ImageBoxInfo
 import com.tntt.model.TextBoxInfo
+import com.tntt.model.Thumbnail
 import com.tntt.repo.ImageBoxRepository
 import com.tntt.repo.LayerRepository
 import com.tntt.repo.PageRepository
@@ -40,10 +44,13 @@ class EditPageUseCase @Inject constructor(
     fun savePage(page: Page): Flow<Boolean> = flow {
             textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList).collect() { updateTextBoxResult ->
                 var result = updateTextBoxResult
-                if(page.thumbnail.imageBox != null)
-                    imageBoxRepository.updateImageBoxInfo(page.id, page.thumbnail.imageBox!!).collect() { updateImageBoxResult ->
-                        result = result && updateImageBoxResult
-                    }
+                val imageBoxList = page.thumbnail.imageBoxList
+                for (imageBoxInfo in imageBoxList) {
+                    imageBoxRepository.updateImageBoxInfo(page.id, imageBoxInfo)
+                        .collect() { updateImageBoxResult ->
+                            result = result && updateImageBoxResult
+                        }
+                }
                 emit(result)
             }
     }
