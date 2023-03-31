@@ -59,7 +59,7 @@ class RemotePageDataSourceImpl @Inject constructor(
                     val documentSnapshot = querySnapshot.documents.first()
                     val id = documentSnapshot.id as String
                     val data = documentSnapshot.data
-                    val order = data?.get("order") as Int
+                    val order = (data?.get("order") as Long).toInt()
 
                     pageDto = PageDto(id, bookId, order)
                 }

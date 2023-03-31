@@ -70,7 +70,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 val userId = document.get("userId") as String
                 val title = document.get("title") as String
                 val bookType = BookType.valueOf(document.get("bookType") as String)
-                val saveDate = (document.getDate("saveDate") as Timestamp).toDate()
+                val saveDate = (document.get("saveDate") as Timestamp).toDate()
                 bookDtoList.add(BookDto(id, userId, title, bookType, saveDate))
             }
         }.await()
