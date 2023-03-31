@@ -1,5 +1,6 @@
 package com.tntt.home
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -87,16 +88,17 @@ internal fun HomePageScreen(
                     saveDate = date
                 ),
                 Thumbnail(
-                    ImageBoxInfo(
+                    listOf(ImageBoxInfo(
                         id = "image",
                         boxData = BoxData(
                             offsetRatioX = 0.0f,
                             offsetRatioY = 0.0f,
                             widthRatio = 1.0f,
                             heightRatio = 1.0f
-                        )
+                        ),
+                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+                    )
                     ),
-                    image = image,
                     listOf(
                         TextBoxInfo(
                             id = "abc1",
@@ -136,183 +138,22 @@ internal fun HomePageScreen(
             ),
             Book(
                 bookInfo = BookInfo(
-                    id = "2",
-                    title = "1번 제목",
-                    saveDate = Date()
+                    id = "1",
+                    title = "이게 말도 안되게 길어지면 어뜨칼건데 대체....",
+                    saveDate = date
                 ),
                 Thumbnail(
-                    ImageBoxInfo(
-                        id = "image2",
+                    listOf(ImageBoxInfo(
+                        id = "image",
                         boxData = BoxData(
                             offsetRatioX = 0.0f,
                             offsetRatioY = 0.0f,
                             widthRatio = 1.0f,
                             heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc2",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
                         ),
-                        TextBoxInfo(
-                            id = "def",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi2",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
+                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
                     )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "3",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image3",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
                     ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc3",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def3",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi3",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "4",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image4",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def4",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi4",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "5",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image1",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
                     listOf(
                         TextBoxInfo(
                             id = "abc1",
@@ -338,438 +179,6 @@ internal fun HomePageScreen(
                         ),
                         TextBoxInfo(
                             id = "ghi1",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "6",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image2",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc2",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi2",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "7",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image3",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc3",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def3",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi3",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "8",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image4",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def4",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi4",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "9",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image1",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc1",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def1",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi1",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "10",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image2",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc2",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi2",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "11",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image3",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc3",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def3",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi3",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "12",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image4",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def4",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi4",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "13",
-                    title = "1번 제목",
-                    saveDate = Date()
-                ),
-                Thumbnail(
-                    ImageBoxInfo(
-                        id = "image5",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        )
-                    ),
-                    image = image,
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def5",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi5",
                             text = "GHI",
                             fontSizeRatio = 0.05f,
                             boxData = BoxData(
@@ -790,23 +199,24 @@ internal fun HomePageScreen(
             Book(
                 bookInfo = BookInfo(
                     id = "1",
-                    title = "2번 제목",
-                    saveDate = Date()
+                    title = "이게 말도 안되게 길어지면 어뜨칼건데 대체....",
+                    saveDate = date
                 ),
                 Thumbnail(
-                    ImageBoxInfo(
+                    listOf(ImageBoxInfo(
                         id = "image",
                         boxData = BoxData(
                             offsetRatioX = 0.0f,
                             offsetRatioY = 0.0f,
                             widthRatio = 1.0f,
                             heightRatio = 1.0f
-                        )
+                        ),
+                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+                    )
                     ),
-                    image = image,
                     listOf(
                         TextBoxInfo(
-                            id = "abc",
+                            id = "abc1",
                             text = "ABC",
                             fontSizeRatio = 0.05f,
                             boxData = BoxData(
@@ -817,7 +227,7 @@ internal fun HomePageScreen(
                             )
                         ),
                         TextBoxInfo(
-                            id = "def",
+                            id = "def1",
                             text = "DEF",
                             fontSizeRatio = 0.05f,
                             boxData = BoxData(
@@ -828,7 +238,7 @@ internal fun HomePageScreen(
                             )
                         ),
                         TextBoxInfo(
-                            id = "ghi",
+                            id = "ghi1",
                             text = "GHI",
                             fontSizeRatio = 0.05f,
                             boxData = BoxData(
@@ -843,24 +253,25 @@ internal fun HomePageScreen(
             ),
             Book(
                 bookInfo = BookInfo(
-                    id = "2",
-                    title = "345345번 제목",
-                    saveDate = Date()
+                    id = "1",
+                    title = "이게 말도 안되게 길어지면 어뜨칼건데 대체....",
+                    saveDate = date
                 ),
                 Thumbnail(
-                    ImageBoxInfo(
+                    listOf(ImageBoxInfo(
                         id = "image",
                         boxData = BoxData(
                             offsetRatioX = 0.0f,
                             offsetRatioY = 0.0f,
                             widthRatio = 1.0f,
                             heightRatio = 1.0f
-                        )
+                        ),
+                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+                    )
                     ),
-                    image = image,
                     listOf(
                         TextBoxInfo(
-                            id = "abc",
+                            id = "abc1",
                             text = "ABC",
                             fontSizeRatio = 0.05f,
                             boxData = BoxData(
@@ -871,7 +282,7 @@ internal fun HomePageScreen(
                             )
                         ),
                         TextBoxInfo(
-                            id = "def",
+                            id = "def1",
                             text = "DEF",
                             fontSizeRatio = 0.05f,
                             boxData = BoxData(
@@ -882,7 +293,7 @@ internal fun HomePageScreen(
                             )
                         ),
                         TextBoxInfo(
-                            id = "ghi",
+                            id = "ghi1",
                             text = "GHI",
                             fontSizeRatio = 0.05f,
                             boxData = BoxData(
@@ -894,7 +305,7 @@ internal fun HomePageScreen(
                         )
                     )
                 )
-            ),
+            )
         )
 
     // dummy data
@@ -913,7 +324,7 @@ internal fun HomePageScreen(
             topBar = { IgTopAppBar (
                     modifier = Modifier
                         .padding(horizontal = 25.dp),
-                    titleRes = stringResource(R.string.home_toolbar_name),
+                    title = stringResource(R.string.home_toolbar_name),
                     actions = {
                         Text(text = user.name)
                     }
@@ -1039,7 +450,7 @@ private fun BookItem(
                                     onClick = { onThumbnailClick(bookId) } /*TODO 네비 연경*/
                                 )
                         ) {
-                            PageForView(modifier = Modifier, thumbnail = book.thumbnail)
+                            PageForView(modifier = Modifier, thumbnail = book.thumbnail!!)
                         }
                         Box {
                             Column {

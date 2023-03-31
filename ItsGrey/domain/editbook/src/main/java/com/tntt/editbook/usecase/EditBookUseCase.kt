@@ -1,46 +1,102 @@
 package com.tntt.editbook.usecase
 
+import android.graphics.Bitmap
+import android.util.Log
 import com.tntt.editbook.model.Book
 import com.tntt.editbook.model.Page
-import com.tntt.model.BookType
-import com.tntt.model.PageInfo
+import com.tntt.model.*
 import com.tntt.repo.BookRepository
+import com.tntt.repo.ImageBoxRepository
 import com.tntt.repo.PageRepository
+import com.tntt.repo.TextBoxRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class EditBookUseCase @Inject constructor(
     private val bookRepository: BookRepository,
     private val pageRepository: PageRepository,
+    private val imageBoxRepository: ImageBoxRepository,
+    private val textBoxRepository: TextBoxRepository,
 ){
 
-    fun createPage() {
-        TODO("템플릿 받아서 페이지 만들기")
-    }
+    suspend fun createPage(bookId: String, page: Page): Flow<Page> = flow {
+        pageRepository.createPageInfo(bookId, page.pageInfo).collect() { pageInfo ->
+            val imageBoxInfoList = mutableListOf<ImageBoxInfo>()
+            val textBoxInfoList = mutableListOf<TextBoxInfo>()
+            for (imageBoxInfo in page.thumbnail.imageBoxList){
+                imageBoxRepository.createImageBoxInfo(pageInfo.id, imageBoxInfo).collect() { imageBoxInfo ->
 
-    fun getBook(bookId: String): Book {
-        val bookInfo = bookRepository.getBookInfo(bookId)
-        val pageInfoList = pageRepository.getPageInfoList(bookId)
-        val pages = mutableListOf<Page>()
-        for (pageInfo in pageInfoList) {
-            pages.add(Page(pageInfo, pageRepository.getThumbnail(pageInfo.id)))
+                }
+            }
+            for (textBoxInfo in page.thumbnail.textBoxList) {
+                textBoxRepository.createTextBoxInfo(pageInfo.id, textBoxInfo).collect() { textBoxInfo ->
+
+                }
+            }
+            emit(page)
         }
-        return Book(bookInfo, pages)
-    }
 
-    fun savePages(bookId: String, pages: List<Page>): Boolean {
-        val pageInfoList = mutableListOf<PageInfo>()
-        for (page in pages) {
-            pageInfoList.add(page.pageInfo)
+            /*
+            백엔드에서 템플릿 처리할 경우 사용할 코드
+            if(pageTemplate == PageTemplate.IMAGE || pageTemplate == PageTemplate.BOTH)
+                imageBoxRepository.createImageBoxInfo(pageInfo.id, pageTemplate.imageBoxInfo!!)
+            if(pageTemplate == PageTemplate.TEXT || pageTemplate == PageTemplate.BOTH) {
+                textBoxRepository.createTextBoxInfo(pageInfo.id, pageTemplate.textBoxInfo!!).collect() { textBoxInfo ->
+                    textBoxInfoList.add(textBoxInfo)
+                }
+            }
+            emit(Page(pageInfo, Thumbnail(pageTemplate.imageBoxInfo, image, textBoxInfoList)))*/
         }
-        return pageRepository.updatePageInfoList(bookId, pageInfoList)
     }
 
-    fun saveBook(book: Book, userId: String, bookType: BookType = BookType.EDIT): Boolean {
-        return (savePages(book.bookInfo.id, book.pages) && bookRepository.updateBookInfo(book.bookInfo, userId, bookType))
+    suspend fun getBook(bookId: String): Flow<Book> = flow {
+//        bookRepository.getBookInfo(bookId).collect() { bookInfo ->
+//            pageRepository.getPageInfoList(bookId).collect() { pageInfoList ->
+//                Log.d("function test", "pageRepository.getPageInfoList : ${pageInfoList}")
+//                val pages = mutableListOf<Page>()
+//                for (pageInfo in pageInfoList) {
+//                    pageRepository.getThumbnail(pageInfo.id).collect() { thumbnail ->
+//                        Log.d("function test", "pageInfo : ${pageInfo}, thumbnail : ${thumbnail}")
+//                        pages.add(Page(pageInfo, thumbnail))
+//                    }
+//                }
+//                emit(Book(bookInfo, pages))
+//            }
+//        }
     }
 
-    fun publishBook(book: Book, userId: String): Boolean {
-        if (!pageRepository.hasCover(book.bookInfo.id))   return false
-        return saveBook(book, userId, BookType.PUBLISHED)
+    suspend fun savePages(bookId: String, pages: List<Page>): Flow<Boolean> = flow {
+//        val pageInfoList = mutableListOf<PageInfo>()
+//        for (page in pages) {
+//            pageInfoList.add(page.pageInfo)
+//        }
+//        pageRepository.updatePageInfoList(bookId, pageInfoList).collect() { result ->
+//            emit(result)
+//        }
     }
+
+    suspend fun saveBook(book: Book, userId: String, bookType: BookType = BookType.EDIT): Flow<Boolean> = flow {
+//        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
+//            bookRepository.updateBookInfo(book.bookInfo, userId, bookType).collect() { updateBookInfoResult ->
+//                emit(savePagesResult && updateBookInfoResult)
+//            }
+//        }
+
+    }
+
+    suspend fun publishBook(book: Book, userId: String): Flow<Boolean> = flow {
+//        pageRepository.hasCover(book.bookInfo.id).collect() { hasCover ->
+//            if (hasCover) {
+//                saveBook(book, userId, BookType.PUBLISHED).collect() { result ->
+//                    Log.d("function test", "book has cover..")
+//                    emit(result)
+//                }
+//            }
+//            else{
+//                Log.d("function test", "book has no cover..")
+//            }
+//        }
+//    }
 }

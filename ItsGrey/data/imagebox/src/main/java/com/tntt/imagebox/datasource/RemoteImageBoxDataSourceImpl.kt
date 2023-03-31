@@ -1,10 +1,17 @@
 package com.tntt.imagebox.datasource
 
+import android.graphics.Bitmap
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+
 import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.BoxData
 import com.tntt.model.BoxState
 import com.tntt.network.Firestore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
 
@@ -14,34 +21,38 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
     val imageBoxCollection by lazy { firestore.collection("imageBox") }
 
-    override fun createImageBoxDto(imageBoxDto: ImageBoxDto): String {
-        val imageBoxId = UUID.randomUUID().toString()
-        imageBoxDto.id = imageBoxId
+    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<ImageBoxDto> = flow {
         imageBoxCollection
-            .document(imageBoxId)
+            .document(imageBoxDto.id)
             .set(imageBoxDto)
-        return imageBoxId
+            .addOnSuccessListener { Log.d("function test", "success createImageBoxDto(${imageBoxDto})") }
+            .await()
+        emit(imageBoxDto)
     }
 
-    override fun getImageBoxDto(pageId: String): ImageBoxDto {
-        lateinit var imageBoxDto: ImageBoxDto
+    override suspend fun getImageBoxDtoList(pageId: String): Flow<List<ImageBoxDto>> = flow {
+        var imageBoxDtoList = mutableListOf<ImageBoxDto>()
 
         imageBoxCollection
             .whereEqualTo("pageId", pageId)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw NullPointerException(":data:imagebox - datasource/RemoteImageBoxDataSourceImpl.getImageBoxDto().documentSnapshot")
+                val documentSnapshot = querySnapshot.documents.firstOrNull()
 
-                val data = documentSnapshot.data
-                val id: String = data?.get("id") as String
-                val boxData: BoxData = data?.get("boxData") as BoxData
-
-                imageBoxDto = ImageBoxDto(id, pageId, boxData)
-            }
-        return imageBoxDto
+                if(documentSnapshot != null) {
+                    val data = documentSnapshot.data
+                    val id: String = data?.get("id") as String
+                    val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
+                    val image = data?.get("image") as Bitmap
+                    val gson = Gson()
+                    val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
+                    imageBoxDtoList.add(ImageBoxDto(id, pageId, boxData, image))
+                }
+            }.await()
+        emit(imageBoxDtoList)
     }
 
-    override fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Boolean {
+    override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean> = flow {
         var result: Boolean = true
         imageBoxCollection
             .document(imageBoxDto.id)
@@ -49,10 +60,10 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
-        return result
+        emit(result)
     }
 
-    override fun deleteImageBoxDto(id: String): Boolean {
+    override suspend fun deleteImageBoxDto(id: String): Flow<Boolean> = flow {
         var result: Boolean = true
         imageBoxCollection
             .document(id)
@@ -60,6 +71,6 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
-        return result
+        emit(result)
     }
 }

@@ -7,47 +7,52 @@ import com.tntt.model.BookType
 import com.tntt.model.SortType
 import com.tntt.model.BookInfo
 import com.tntt.repo.BookRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.util.*
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
     private val bookDataSource: RemoteBookDataSource
 ) : BookRepository {
-    init{
-        Log.d("뭐 hilt test", "레포")
-    }
 
-    override fun getBookInfo(bookId: String): BookInfo {
-        val bookDto = bookDataSource.getBookDto(bookId)
-
-        val id = bookDto.id
-        val title = bookDto.title
-        val saveDate = bookDto.saveDate
-        return BookInfo(id, title, saveDate)
-    }
-
-    override fun getBookInfos(
-        userId: String,
-        sortType: SortType,
-        startIndex: Long,
-        bookType: BookType
-    ): List<BookInfo> {
-        val bookDtoList = bookDataSource.getBookDtos(userId, sortType, startIndex, bookType)
-        val bookList = mutableListOf<BookInfo>()
-        for (bookDto in bookDtoList){
-            bookList.add(BookInfo(bookDto.id, bookDto.title, bookDto.saveDate))
+    override suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<BookInfo> = flow {
+        val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.EDIT, Date())
+        bookDataSource.createBookDto(userId, bookDto).collect() { resultBookDto ->
+            emit(BookInfo(resultBookDto.id, resultBookDto.title, resultBookDto.saveDate))
         }
-        return bookList
     }
 
-    override fun createBookInfo(userId: String): String {
-        return bookDataSource.createBookDto(userId)
+    override suspend fun getBookInfo(bookId: String): Flow<BookInfo> = flow {
+        Log.d("function test", "getBookInfo(${bookId})")
+        bookDataSource.getBookDto(bookId).collect() { bookDto ->
+            val id = bookDto.id
+            val title = bookDto.title
+            val saveDate = bookDto.saveDate
+            emit(BookInfo(id, title, saveDate))
+        }
     }
 
-    override fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Boolean {
-        return bookDataSource.updateBookDto(BookDto(bookInfo.id, userId, bookInfo.title, bookType, bookInfo.saveDate))
+    override suspend fun getBookInfoList(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<BookInfo>> = flow {
+        bookDataSource.getBookDtoList(userId, sortType, startIndex, bookType).collect() { bookDtoList ->
+            val bookInfoList = mutableListOf<BookInfo>()
+            for (bookDto in bookDtoList){
+                bookInfoList.add(BookInfo(bookDto.id, bookDto.title, bookDto.saveDate))
+            }
+            emit(bookInfoList)
+        }
     }
 
-    override fun deleteBookInfo(bookIdList: List<String>): Boolean {
-        return bookDataSource.deleteBook(bookIdList)
+    override suspend fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Flow<Boolean> = flow {
+        Log.d("function test=======================", "updateBookInfo(${bookInfo}, ${userId}, ${bookType})")
+        bookDataSource.updateBookDto(BookDto(bookInfo.id, userId, bookInfo.title, bookType, bookInfo.saveDate)).collect() { result ->
+            emit(result)
+        }
+    }
+
+    override suspend fun deleteBookInfo(bookIdList: List<String>): Flow<Boolean> = flow {
+        bookDataSource.deleteBookDto(bookIdList).collect() { result ->
+            emit(result)
+        }
     }
 }

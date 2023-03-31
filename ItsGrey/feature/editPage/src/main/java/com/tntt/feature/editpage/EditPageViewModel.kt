@@ -1,6 +1,7 @@
 package com.tntt.feature.editpage
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.lifecycle.SavedStateHandle
@@ -38,9 +39,6 @@ class EditPageViewModel @Inject constructor(
     private val _imageBox = MutableStateFlow(listOf(ImageBoxInfo()))
     val imageBox: StateFlow<List<ImageBoxInfo>> = _imageBox
 
-    private val _image = MutableStateFlow(ImageBitmap(10, 10, ImageBitmapConfig.Argb8888))
-    val image: StateFlow<ImageBitmap> = _image
-
     private val _selectedBoxId = MutableStateFlow("")
     val selectedBoxId: StateFlow<String> = _selectedBoxId
 
@@ -50,16 +48,18 @@ class EditPageViewModel @Inject constructor(
                 Page(
                     id = "fakePageId",
                     thumbnail = Thumbnail(
-                        ImageBoxInfo(
-                            id = "image",
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
+                        listOf(
+                            ImageBoxInfo(
+                                id = "image",
+                                boxData = BoxData(
+                                    offsetRatioX = 0.2f,
+                                    offsetRatioY = 0.2f,
+                                    widthRatio = 0.5f,
+                                    heightRatio = 0.3f
+                                ),
+                                image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
                             )
                         ),
-                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888),
                         listOf(
                             TextBoxInfo(
                                 id = "abc",
@@ -100,7 +100,7 @@ class EditPageViewModel @Inject constructor(
             )
             page.collect {
                 _textBoxList.value = it.thumbnail.textBoxList
-                _imageBox.value = listOf(it.thumbnail.imageBox)
+                _imageBox.value = it.thumbnail.imageBoxList
             }
         }
     }
@@ -117,14 +117,11 @@ class EditPageViewModel @Inject constructor(
     }
 
     fun createImageBox() {
-        val newBox = ImageBoxInfo(
-            id = UUID.randomUUID().toString(),
-            boxData = BoxData(0.2f, 0.2f , 0.5f, 0.33f)
-        )
-        _imageBox.value = listOf(
-            newBox
-        )
-        _image.value = ImageBitmap(30, 30)
+        val newBox = ImageBoxInfo()
+        newBox.image.eraseColor(Color.WHITE)
+
+        _imageBox.value = listOf(newBox)
+
         _selectedBoxId.value = newBox.id
     }
 

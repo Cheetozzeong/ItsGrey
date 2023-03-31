@@ -1,14 +1,12 @@
 package com.tntt.repo
 
-import com.tntt.model.BookInfo
-import com.tntt.model.BookType
-import com.tntt.model.SortType
+import com.tntt.model.*
+import kotlinx.coroutines.flow.Flow
 
 interface BookRepository {
-    fun getBookInfo(bookId: String): BookInfo
-    fun getBookInfos(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): List<BookInfo>
-    fun createBookInfo(userId: String): String
-    fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Boolean
-    fun deleteBookInfo(bookIdList: List<String>): Boolean
-
+    suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<BookInfo>
+    suspend fun getBookInfo(bookId: String): Flow<BookInfo>
+    suspend fun getBookInfoList(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<BookInfo>>
+    suspend fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Flow<Boolean>
+    suspend fun deleteBookInfo(bookIdList: List<String>): Flow<Boolean>
 }
