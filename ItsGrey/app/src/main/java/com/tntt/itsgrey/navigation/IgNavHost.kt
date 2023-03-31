@@ -13,7 +13,7 @@ import com.tntt.home.navigation.homePageScreen
 fun IgNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = editPageRoute
+    startDestination: String = homePageRoute
 ) {
     NavHost(
         navController = navController,

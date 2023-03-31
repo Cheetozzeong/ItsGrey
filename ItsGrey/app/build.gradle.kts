@@ -53,7 +53,6 @@ dependencies {
 
     implementation(project(":feature:editPage"))
     implementation(project(":feature:home"))
-    implementation(project(":domain:home"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)

@@ -43,7 +43,7 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
                     val data = documentSnapshot.data
                     val id: String = data?.get("id") as String
                     val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
-                    val image = data?.get("image") as Bitmap
+                    val image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
                     val gson = Gson()
                     val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
                     imageBoxDtoList.add(ImageBoxDto(id, pageId, boxData, image))

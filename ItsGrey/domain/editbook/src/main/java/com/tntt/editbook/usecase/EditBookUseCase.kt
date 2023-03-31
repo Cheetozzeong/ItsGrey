@@ -77,7 +77,7 @@ class EditBookUseCase @Inject constructor(
 //        }
     }
 
-    suspend fun saveBook(book: Book, userId: String, bookType: BookType = BookType.EDIT): Flow<Boolean> = flow {
+    suspend fun saveBook(book: Book, userId: String, bookType: BookType = BookType.WORKING): Flow<Boolean> = flow {
 //        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
 //            bookRepository.updateBookInfo(book.bookInfo, userId, bookType).collect() { updateBookInfoResult ->
 //                emit(savePagesResult && updateBookInfoResult)

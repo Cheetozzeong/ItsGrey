@@ -17,7 +17,7 @@ class BookRepositoryImpl @Inject constructor(
 ) : BookRepository {
 
     override suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<BookInfo> = flow {
-        val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.EDIT, Date())
+        val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.WORKING, Date())
         bookDataSource.createBookDto(userId, bookDto).collect() { resultBookDto ->
             emit(BookInfo(resultBookDto.id, resultBookDto.title, resultBookDto.saveDate))
         }
