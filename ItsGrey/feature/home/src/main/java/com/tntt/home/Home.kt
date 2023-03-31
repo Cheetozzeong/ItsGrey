@@ -49,9 +49,19 @@ private enum class WindowSize(val item: Int) {
     EXPANDED(5)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomePageRoute(
+    onNewButtonClick: () -> Unit,
+    onThumbnailClick: (String) -> Unit, ){
+    HomePageScreen(
+        onNewButtonClick = { onNewButtonClick },
+        onThumbnailClick = {onThumbnailClick}
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun HomePageScreen(
     modifier: Modifier = Modifier,
     onNewButtonClick: () -> Unit,
     onThumbnailClick: (String) -> Unit,
@@ -957,7 +967,8 @@ internal fun HomePageRoute(
                         books = list,
                         tabPage = tabPage,
                         screenWidth = screenWidth,
-                        onThumbnailClick = onThumbnailClick
+                        onThumbnailClick = onThumbnailClick,
+                        onNewButtonClick = onNewButtonClick
                     )
                 }
             }
@@ -971,7 +982,8 @@ private fun BookList(
     books: List<Book>,
     tabPage: TabPage,
     screenWidth: Float,
-    onThumbnailClick: (String) -> Unit
+    onThumbnailClick: (String) -> Unit,
+    onNewButtonClick: () -> Unit
 ) {
     val windowSize = computeWindowSizeClasses(screenWidth)
 
@@ -995,7 +1007,7 @@ private fun BookList(
             }
             if (tabPage == TabPage.Working) {
                 item {
-                    IgPlusPageButton(onClick = {})
+                    IgPlusPageButton(onClick = {onNewButtonClick})
                 }
             }
         }
