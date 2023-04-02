@@ -35,8 +35,8 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
 
                 val data = documentSnapshot.data
                 val id = data?.get("id") as String
-                val penSizeList = data?.get("penSizeList") as List<Int>
-                val eraserSizeList = data?.get("eraserSizeList") as List<Int>
+                val penSizeList = data?.get("penSizeList") as List<Long>
+                val eraserSizeList = data?.get("eraserSizeList") as List<Long>
                 val penColor = data?.get("penColor") as String
                 val recentColors = data?.get("recentColors") as List<String>
                 drawingDto = DrawingDto(id, imageBoxId, penSizeList, eraserSizeList, penColor, recentColors)

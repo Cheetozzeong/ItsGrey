@@ -32,7 +32,7 @@ class PageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPageInfo(bookId: String, pageOrder: Int): Flow<PageInfo> = flow {
+    override suspend fun getPageInfo(bookId: String, pageOrder: Long): Flow<PageInfo> = flow {
         Log.d("function test", "getPageInfo(${bookId}, ${pageOrder})")
         pageDataSource.getPageDto(bookId, pageOrder).collect() { pageDto ->
             emit(PageInfo(pageDto.id, pageDto.order))

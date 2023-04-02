@@ -40,8 +40,8 @@ class DrawingUseCase @Inject constructor(
     }
 
     suspend fun createDrawing(imageBoxId: String): Flow<DrawingInfo> = flow {
-        val penSizeList = listOf<Int>(8, 12, 16)
-        val eraseSizeList = listOf<Int>(8, 12, 16)
+        val penSizeList = listOf<Long>(8, 12, 16)
+        val eraseSizeList = listOf<Long>(8, 12, 16)
         val penColor = "#000000"
         val recentColorList = mutableListOf<String>()
         val drawingInfo = DrawingInfo("", penSizeList, eraseSizeList, penColor, recentColorList)

@@ -39,8 +39,9 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                 for (document in documentSnapshot) {
                     val data = document.data
                     val id = data?.get("id") as String
-                    val order = data?.get("order") as Int
-                    val bitmap = data?.get("bitmap") as Bitmap
+                    val order = data?.get("order") as Long
+//                    val bitmap = data?.get("bitmap") as Bitmap
+                    val bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
                     layerDtoList.add(LayerDto(id, imageBoxId, order, bitmap))
                 }
             }.await()
@@ -78,8 +79,8 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
     override suspend fun getSumLayer(imageBoxId: String): Flow<Bitmap> = flow {
         val bitmapList = mutableListOf<Bitmap>()
-        var width = 100
-        var height = 100
+        var width = 10
+        var height = 10
 
         layerCollection
             .whereEqualTo("imageBoxId", imageBoxId)
@@ -88,10 +89,11 @@ class RemoteLayerDataSourceImpl @Inject constructor(
             .addOnSuccessListener { querySnapshot ->
                 val documentSnapshot = querySnapshot.documents
                 for (document in documentSnapshot) {
-                    val bitmap = document.data?.get("bitmap") as Bitmap
+//                    val bitmap = document.data?.get("bitmap") as Bitmap
+                    val bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
                     bitmapList.add(bitmap)
-                    width = bitmap.width
-                    height = bitmap.height
+//                    width = bitmap.width
+//                    height = bitmap.height
                 }
             }.await()
 
@@ -110,7 +112,7 @@ class RemoteLayerDataSourceImpl @Inject constructor(
     }
 
     override suspend fun retrofitTest(): Flow<String> = flow {
-        val apiService = RetrofitNetwork.getApiService("https://146.56.113.80:8000")
+        val apiService = RetrofitNetwork.getApiService("https://www.traceoflight.dev")
         val response = apiService.getData()
         if(response.isSuccessful) {
             val data = response.body()
