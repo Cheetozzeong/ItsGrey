@@ -1,13 +1,11 @@
 package com.tntt.feature.editpage.navigation
 
 import android.net.Uri
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.navArgument
 import com.tntt.core.common.decoder.StringDecoder
 import com.tntt.feature.editpage.EditPageRoute
 
@@ -18,7 +16,7 @@ internal class EditPageArgs(val pageId: String) {
             this(stringDecoder.decodeString(checkNotNull(savedStateHandle[pageIdArg])))
 }
 
-private const val editPageGraphRoutePattern = "editPage_graph"
+const val editPageGraphRoutePattern = "editPage_graph"
 const val editPageRoute = "editPage_route"
 
 fun NavController.navigateToEditPage(pageId: String) {
@@ -28,18 +26,25 @@ fun NavController.navigateToEditPage(pageId: String) {
 
 fun NavGraphBuilder.editPageScreen(
     onBackClick: () -> Unit,
-    onImageClick: (String) -> Unit,
+    onImageClick: (String, Uri?) -> Unit,
+    nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
-    composable(
+    navigation(
+        route = editPageGraphRoutePattern,
+        startDestination = editPageRoute
+    ) {
+        composable(
 //        route = "$editPageRoute/{$pageIdArg}",
 //        arguments = listOf(
 //            navArgument(pageIdArg) {type = NavType.StringType}
 //        )
-        route = editPageRoute
-    ) {
-        EditPageRoute(
-            onBackClick = onBackClick,
-            onImageToDrawClick = onImageClick
-        )
+            route = editPageRoute
+        ) {
+            EditPageRoute(
+                onBackClick = onBackClick,
+                onImageToDrawClick = onImageClick
+            )
+        }
+        nestedGraphs()
     }
 }

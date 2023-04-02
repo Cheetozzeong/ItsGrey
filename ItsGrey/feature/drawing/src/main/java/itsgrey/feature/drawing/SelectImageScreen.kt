@@ -1,33 +1,22 @@
 package itsgrey.feature.drawing
 
-import android.graphics.Bitmap
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 
 @Composable
-fun SelectImageScreen() {
+fun Sample(id: String, uri: Uri?) {
 
-}
-
-@Composable
-fun PickImageFromGallery() {
-
-    var imageUri by remember{ mutableStateOf<Uri?>(null) }
-    val context = LocalContext.current
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUri = uri
-    }
-
-}
-
-@Composable
-fun launchGallery(onImageSelected: (Uri?) -> Unit) {
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        onImageSelected(uri)
+    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+        Text(text = id)
+        Text(text = uri.toString())
     }
 }
+

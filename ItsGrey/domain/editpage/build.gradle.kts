@@ -49,4 +49,5 @@ dependencies {
     implementation(project(":di"))
 
     implementation ("javax.inject:javax.inject:1")
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
 }

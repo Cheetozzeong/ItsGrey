@@ -7,8 +7,6 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.tntt.itsgrey.navigation.IgNavHost
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
-import itsgrey.feature.drawing.GalleryImageList
 
 
 @AndroidEntryPoint
@@ -20,9 +18,8 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-//            val navController = rememberNavController()
-//            IgNavHost(navController)
-            GalleryImageList()
+            val navController = rememberNavController()
+            IgNavHost(navController)
         }
     }
 }

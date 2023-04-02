@@ -4,14 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.tntt.feature.editpage.navigation.editPageRoute
+import com.tntt.feature.editpage.navigation.editPageGraphRoutePattern
 import com.tntt.feature.editpage.navigation.editPageScreen
+import itsgrey.feature.drawing.navigation.*
 
 @Composable
 fun IgNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = editPageRoute
+    startDestination: String = editPageGraphRoutePattern
 ) {
     NavHost(
         navController = navController,
@@ -20,7 +21,14 @@ fun IgNavHost(
     ) {
         editPageScreen(
             onBackClick = {},
-            onImageClick = {}
+            onImageClick = { id, uri ->
+                navController.toDrawing(id, uri)
+            },
+            nestedGraphs = {
+                drawingScreen(
+                    onBackClick = {}
+                )
+            }
         )
     }
 }

@@ -3,6 +3,7 @@ plugins {
     kotlin("kapt")
     id("com.android.library")
     id("com.google.dagger.hilt.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -76,11 +77,12 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation (Libraries.Test.JUNIT)
-    androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
+    androidTestImplementation(Libraries.Test.JUNIT)
+    androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
     implementation("androidx.startup:startup-runtime:1.0.0")
 
     implementation("com.github.skydoves:orchestra-colorpicker:1.0.5")
     implementation("io.coil-kt:coil-compose:1.4.0")
+
 }
