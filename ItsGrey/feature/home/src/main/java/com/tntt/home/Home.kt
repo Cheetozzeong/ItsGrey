@@ -1,7 +1,5 @@
 package com.tntt.home
 
-import android.annotation.SuppressLint
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,7 +32,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.tntt.designsystem.component.IgPlusPageButton
 import com.tntt.ui.PageForView
 import java.text.SimpleDateFormat
-import javax.inject.Inject
 
 private enum class TabPage(val title: String) {
     Published("출판"),
