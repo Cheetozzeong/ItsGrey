@@ -79,7 +79,7 @@ internal fun HomePageScreen(
     val user = User(name = "fakeUser",id = "1")
 
     val publishedBookList by viewModel.publishedBookList.collectAsState()
-    val workingBookList by viewModel.publishedBookList.collectAsState()
+    val workingBookList by viewModel.workingBookList.collectAsState()
 
 
     var tabPage by remember { mutableStateOf(TabPage.Published) }
@@ -218,7 +218,7 @@ private fun BookItem(
                             Modifier
                                 .border(width = 5.dp, MaterialTheme.colorScheme.onPrimary)
                                 .clickable(
-                                    onClick = { onThumbnailClick(bookId) } /*TODO 네비 연경*/
+                                    onClick = { onThumbnailClick(bookId) } /*TODO 네비 연*/
                                 )
                         ) {
                             PageForView(modifier = Modifier, thumbnail = book.thumbnail!!)
@@ -258,8 +258,11 @@ fun WorkingTimeAgoText(date: Date) {
     val diff = now - timestamp
 
     val seconds = diff / 1000
-    if (seconds < 60) {
+    if (seconds in 1..59) {
         Text("${seconds}초 전")
+        return
+    } else if (seconds < 0) {
+        Text("미래로는 갈 수 업어용")
         return
     }
 

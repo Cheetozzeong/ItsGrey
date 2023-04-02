@@ -33,6 +33,13 @@ class HomePageViewModel @Inject constructor(
     init {
         getPublishedBookList(
             userId = "1",
+            //TODO firebase에서 받아오기
+            sortType = SortType.SAVE_DATE,
+            startIndex = 0L
+        )
+        getWorkingBookList(
+            userId = "1",
+            //TODO firebase에서 받아오기
             sortType = SortType.SAVE_DATE,
             startIndex = 0L
         )
@@ -68,8 +75,7 @@ class HomePageViewModel @Inject constructor(
                 startIndex,
                 BookType.PUBLISHED
             ).collect() {
-                    publishedBookList -> Log.d("test for live","booklist=${publishedBookList}")
-                _publishedBookList.value = publishedBookList }
+                    publishedBookList -> _publishedBookList.value = publishedBookList }
         }
     }
 
