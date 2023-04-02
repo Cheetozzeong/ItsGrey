@@ -1,3 +1,3 @@
-package com.tntt.editbook.Navigation
+package com.tntt.editbook.navigation
 
 // viewer navigation
