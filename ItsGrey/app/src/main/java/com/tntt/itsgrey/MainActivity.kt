@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import com.tntt.designsystem.theme.IgTheme
 import com.tntt.home.usecase.HomeUseCase
 import com.tntt.itsgrey.navigation.IgNavHost
 import com.tntt.model.BookType
@@ -35,8 +36,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
-            val navController = rememberNavController()
-            IgNavHost(navController)
+            IgTheme {
+                val navController = rememberNavController()
+                IgNavHost(navController)
+            }
         }
     }
 }

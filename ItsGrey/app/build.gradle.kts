@@ -53,6 +53,7 @@ dependencies {
 
     implementation(project(":feature:editPage"))
     implementation(project(":feature:drawing"))
+    implementation(project(":core:designsystem"))
     implementation(project(":domain:home"))
 
     implementation(Libraries.KTX.CORE)
