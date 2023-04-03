@@ -15,7 +15,7 @@ class TextBoxRepositoryImpl @Inject constructor(
 
     override suspend fun createTextBoxInfo(pageId: String, textBoxInfo: TextBoxInfo): Flow<TextBoxInfo> = flow {
         textBoxDataSource.createTextBoxDto(TextBoxDto(textBoxInfo.id, pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxData)).collect() { textBoxDto ->
-            emit(textBoxInfo)
+            emit(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
         }
     }
 

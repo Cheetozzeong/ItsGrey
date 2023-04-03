@@ -110,7 +110,7 @@ class RemoteLayerDataSourceImpl @Inject constructor(
     }
 
     override suspend fun retrofitTest(): Flow<String> = flow {
-        val apiService = RetrofitNetwork.getApiService("http://146.56.113.80:8000")
+        val apiService = RetrofitNetwork.getApiService("https://146.56.113.80:8000")
         val response = apiService.getData()
         if(response.isSuccessful) {
             val data = response.body()

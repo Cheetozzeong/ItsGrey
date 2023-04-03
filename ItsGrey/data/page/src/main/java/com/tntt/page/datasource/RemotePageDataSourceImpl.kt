@@ -47,12 +47,11 @@ class RemotePageDataSourceImpl @Inject constructor(
         emit(pageDto)
     }
 
-    override suspend fun getCoverPageDto(bookId: String): Flow<PageDto?> = flow {
-        Log.d("function test", "getFirstPageDto(${bookId})")
+    override suspend fun getFirstPageDto(bookId: String): Flow<PageDto?> = flow {
         var pageDto: PageDto? = null
         pageCollection
             .whereEqualTo("bookId", bookId)
-            .whereEqualTo("order", 0)
+            .orderBy("order")
             .limit(1)
             .get()
             .addOnSuccessListener { querySnapshot ->
@@ -60,7 +59,7 @@ class RemotePageDataSourceImpl @Inject constructor(
                     val documentSnapshot = querySnapshot.documents.first()
                     val id = documentSnapshot.id as String
                     val data = documentSnapshot.data
-                    val order = data?.get("order") as Int
+                    val order = (data?.get("order") as Long).toInt()
 
                     pageDto = PageDto(id, bookId, order)
                 }
