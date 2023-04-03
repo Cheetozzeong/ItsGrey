@@ -5,7 +5,7 @@ plugins {
     kotlin("kapt")
     id ("com.android.application")
     id("com.google.dagger.hilt.android")
-    id("com.google.gms.google-services") version "4.3.10"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -59,19 +59,27 @@ dependencies {
     implementation(Libraries.AndroidX.APP_COMPAT)
     implementation(Libraries.AndroidX.MATERIAL)
     implementation(Libraries.AndroidX.CONSTRAINT_LAYOUT)
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(Libraries.Test.JUNIT)
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
     // Firebase-Firestore
-    implementation ("com.google.firebase:firebase-bom:31.2.3")
+    implementation ("com.google.firebase:firebase-bom:31.4.0")
     implementation ("com.google.firebase:firebase-firestore")
-    implementation ("com.google.firebase:firebase-firestore-ktx:23.0.4")
-    implementation ("com.google.firebase:firebase-analytics:17.2.1")
-    implementation ("com.google.firebase:firebase-database:19.2.0")
+    implementation ("com.google.firebase:firebase-firestore-ktx:24.4.5")
+    implementation ("com.google.firebase:firebase-analytics:21.2.1")
+    implementation ("com.google.firebase:firebase-database:20.1.0")
+    implementation ("com.google.firebase:firebase-auth:21.2.0")
+    implementation ("com.google.android.gms:play-services-auth:20.4.1")
 
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+
     // Hilt
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
     kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")

@@ -3,6 +3,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
     }
 }
 dependencyResolutionManagement {
@@ -35,11 +36,12 @@ include ':data:page'
 /* data */
 include ':data:book'
 include ':data:user'
-/* feature */
-include ':feature:home'
 include ':data:drawing'
 include ':data:layer'
+/* di */
 include ':di'
+/* feature */
+include ':feature:home'
 include ':feature:editBook'
 include ':feature:editPage'
 include ':feature:viewer'
