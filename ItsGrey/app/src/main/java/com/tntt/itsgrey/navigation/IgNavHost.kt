@@ -24,11 +24,9 @@ fun IgNavHost(
             onImageClick = { id, uri ->
                 navController.toDrawing(id, uri)
             },
-            nestedGraphs = {
-                drawingScreen(
-                    onBackClick = {}
-                )
-            }
+        )
+        drawingScreen(
+            onBackClick = {}
         )
     }
 }

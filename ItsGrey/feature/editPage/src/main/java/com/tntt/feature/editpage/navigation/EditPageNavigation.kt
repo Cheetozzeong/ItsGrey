@@ -27,7 +27,6 @@ fun NavController.navigateToEditPage(pageId: String) {
 fun NavGraphBuilder.editPageScreen(
     onBackClick: () -> Unit,
     onImageClick: (String, Uri?) -> Unit,
-    nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
     navigation(
         route = editPageGraphRoutePattern,
@@ -45,6 +44,5 @@ fun NavGraphBuilder.editPageScreen(
                 onImageToDrawClick = onImageClick
             )
         }
-        nestedGraphs()
     }
 }
