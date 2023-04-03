@@ -1,6 +1,9 @@
 plugins {
+    kotlin("android")
+    kotlin("kapt")
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -56,6 +59,7 @@ dependencies {
     implementation(Libraries.Compose.UI.UI)
     implementation(Libraries.Compose.UI.PREVIEW)
     implementation(Libraries.Compose.UI.TOOLING)
+    implementation(project(mapOf("path" to ":core:common")))
     // UI Tests
     androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
     debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
@@ -64,14 +68,21 @@ dependencies {
     implementation(Libraries.Compose.MATERIAL.ICONS_CORE)
     implementation(Libraries.Compose.MATERIAL.ICONS_EXTENDED)
 
-    implementation("androidx.activity:activity-compose:1.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+
+    implementation("com.google.dagger:hilt-android:${Versions.HILT}")
+    kapt("com.google.dagger:hilt-android-compiler:${Versions.HILT}")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation (Libraries.Test.JUNIT)
-    androidTestImplementation (Libraries.AndroidTest.ESPRESSO_CORE)
+    androidTestImplementation(Libraries.Test.JUNIT)
+    androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
 
-    implementation ("androidx.startup:startup-runtime:1.0.0")
+    implementation("androidx.startup:startup-runtime:1.0.0")
 
-    implementation ("com.github.skydoves:orchestra-colorpicker:1.0.5")
+    implementation("com.github.skydoves:orchestra-colorpicker:1.0.5")
+    implementation("io.coil-kt:coil-compose:1.4.0")
+
 }

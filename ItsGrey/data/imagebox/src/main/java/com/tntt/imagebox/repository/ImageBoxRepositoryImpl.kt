@@ -14,7 +14,6 @@ class ImageBoxRepositoryImpl @Inject constructor(
 ) : ImageBoxRepository {
 
     override suspend fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<ImageBoxInfo> = flow {
-        Log.d("function test", "createImageBoxInfo(${pageId}, ${imageBoxInfo})")
         val imageBoxDto = ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData, imageBoxInfo.image)
         imageBoxDataSource.createImageBoxDto(imageBoxDto).collect() { imageBoxDto ->
             emit(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, imageBoxDto.image))

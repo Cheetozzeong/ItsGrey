@@ -65,11 +65,11 @@ fun PageForEdit(
     textBoxList: List<TextBoxInfo>,
     imageBoxList: List<ImageBoxInfo>,
     selectedBoxId: String,
-    onImageToDrawClick: (String) -> Unit,
     updateTextBox: (TextBoxInfo) -> Unit,
     updateImageBox: (ImageBoxInfo) -> Unit,
     onBoxSelected: (String) -> Unit,
     deleteBox: (String) -> Unit,
+    imageBoxDialogComponent: List<@Composable () -> Unit>
 ) {
     var parent by rememberSaveable(stateSaver = RectSaver) { mutableStateOf(Rect(Offset.Zero, Size.Zero)) }
 
@@ -90,12 +90,7 @@ fun PageForEdit(
                     updateImageBoxInfo = { newImageBoxInfo -> updateImageBox(newImageBoxInfo) },
                     onClick = { id -> onBoxSelected(id) },
                     onClickDelete = { deleteBox(id) },
-                    dialogComponent = listOf {
-                        IgTextButton(
-                            onClick = { onImageToDrawClick(id) },
-                            text = {Text(text = "이미지 변경")}
-                        )
-                    }
+                    dialogComponent = imageBoxDialogComponent
                 )
             }
         }
