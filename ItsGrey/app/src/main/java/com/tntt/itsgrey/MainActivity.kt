@@ -1,5 +1,8 @@
 package com.tntt.itsgrey
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +22,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -32,18 +37,14 @@ class MainActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        Log.d("================================","start")
-        lifecycleScope.launch(Dispatchers.IO) {
-            Log.d("function test", "packageName = ${packageName}")
-            val uri: Uri = Uri.parse("android.resource://${packageName}/${R.drawable.ironman}")
-            Log.d("fucntion test", "uri = ${uri}")
-            drawingUseCase.saveImage(uri).collect() { result ->
-                Log.d("function test", "activity storageTest uri = ${result}")
-            }
+        lifecycleScope.launch(Dispatchers.Main) {
+            val bitmap = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.ironman)
 
-//            drawingUseCase.getSketch(uri).collect() { bitmap ->
-//                Log.d("function test", "success!")
-//            }
+            drawingUseCase.getSketch(bitmap).collect() { bitmap ->
+                drawingUseCase.saveImage(bitmap).collect() { result ->
+                    Log.d("function test", "result = ${result}")
+                }
+            }
         }
 
         setContent {

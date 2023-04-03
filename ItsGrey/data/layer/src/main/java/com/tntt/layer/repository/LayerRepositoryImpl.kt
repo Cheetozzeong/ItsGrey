@@ -2,6 +2,7 @@ package com.tntt.layer.repository
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
 import com.tntt.layer.datasource.RemoteLayerDataSource
 import com.tntt.layer.model.LayerDto
@@ -9,6 +10,8 @@ import com.tntt.model.LayerInfo
 import com.tntt.repo.LayerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.io.File
+import java.io.InputStream
 import javax.inject.Inject
 
 class LayerRepositoryImpl @Inject constructor(
@@ -49,14 +52,14 @@ class LayerRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSketchBitmap(uri: Uri): Flow<Bitmap> = flow {
-        layerDataSource.getSketchBitmap(uri).collect() { bitmap ->
+    override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
+        layerDataSource.getSketchBitmap(bitmap).collect() { bitmap ->
             emit(bitmap)
         }
     }
 
-    override suspend fun saveImage(uri: Uri): Flow<Uri?> = flow {
-        layerDataSource.saveImage(uri).collect() { result ->
+    override suspend fun saveImage(bitmap: Bitmap): Flow<Uri?> = flow {
+        layerDataSource.saveImage(bitmap).collect() { result ->
             emit(result)
         }
     }

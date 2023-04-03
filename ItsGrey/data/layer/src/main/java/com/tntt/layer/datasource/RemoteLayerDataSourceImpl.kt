@@ -16,7 +16,9 @@ import kotlinx.coroutines.tasks.await
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.InputStream
 import java.util.*
 import javax.inject.Inject
 
@@ -111,23 +113,37 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         emit(sumLayer)
     }
 
-    override suspend fun getSketchBitmap(uri: Uri): Flow<Bitmap> = flow {
-        val imageFile = File(uri.path)
-        val apiService = RetrofitNetwork.getApiService()
-        val requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile)
-        val response = apiService.getSketch(MultipartBody.Part.createFormData("image", imageFile.name, requestFile))
+    override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
+        Log.d("function test", "getSketchBitmap(${bitmap})")
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        val byteArray = stream.toByteArray()
 
-        val inputStream = response.byteStream()
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        emit(bitmap)
+        val apiService = RetrofitNetwork.getApiService()
+        val requestBody = RequestBody.create(MediaType.parse("image/jpeg"), byteArray)
+        val part = MultipartBody.Part.createFormData("file", "my_image.jpg", requestBody)
+        val response = apiService.getSketch(part)
+        Log.d("function test", "response = ${response}")
+
+        val bmpByteArray = response.bytes()
+        val options =BitmapFactory.Options().apply {
+            // 이미지 크기 조정 등의 옵션
+        }
+
+        val resultBitmap = BitmapFactory.decodeByteArray(bmpByteArray, 0, bmpByteArray.size, options)
+
+        emit(resultBitmap)
     }
 
-    override suspend fun saveImage(uri: Uri): Flow<Uri?> = flow {
-        Log.d("function test", "datasourceImpl storageTest uri = ${uri.toString()}")
+    override suspend fun saveImage(bitmap: Bitmap): Flow<Uri?> = flow {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        val byteArray = stream.toByteArray()
 
+        val fileName = UUID.randomUUID().toString() + ".jpg"
         val storageRef = storage.reference
-        val imageRef = storageRef.child("/images/${UUID.randomUUID().toString()}.jpg")
-        val uploadTask = imageRef.putFile(uri)
+        val imageRef = storageRef.child("/images/${fileName}")
+        val uploadTask = imageRef.putBytes(byteArray)
 
         var downloadUri: Uri? = null
 
