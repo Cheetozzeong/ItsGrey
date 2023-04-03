@@ -1,22 +1,28 @@
 package com.tntt.layer.datasource
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
 import com.tntt.layer.model.LayerDto
-import com.tntt.network.Firestore
 import com.tntt.network.retrofit.RetrofitNetwork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
 class RemoteLayerDataSourceImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage,
 ) : RemoteLayerDataSource {
 
     val layerCollection by lazy { firestore.collection("layer") }
@@ -105,17 +111,49 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         emit(sumLayer)
     }
 
-    override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
-        TODO("Not yet implemented")
+    override suspend fun getSketchBitmap(uri: Uri): Flow<Bitmap> = flow {
+        val imageFile = File(uri.path)
+        val apiService = RetrofitNetwork.getApiService()
+        val requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile)
+        val response = apiService.getSketch(MultipartBody.Part.createFormData("image", imageFile.name, requestFile))
+
+        val inputStream = response.byteStream()
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        emit(bitmap)
     }
 
-    override suspend fun retrofitTest(): Flow<String> = flow {
-        val apiService = RetrofitNetwork.getApiService("http://146.56.113.80:8000")
-        val response = apiService.getData()
-        if(response.isSuccessful) {
-            val data = response.body()
-            Log.d("function test", "retrofitTest -> data = ${data}")
-        }
+    override suspend fun saveImage(uri: Uri): Flow<Uri?> = flow {
+        Log.d("function test", "datasourceImpl storageTest uri = ${uri.toString()}")
+
+        val storageRef = storage.reference
+        val imageRef = storageRef.child("/images/${UUID.randomUUID().toString()}.jpg")
+        val uploadTask = imageRef.putFile(uri)
+
+        var downloadUri: Uri? = null
+
+        val urlTask = uploadTask.continueWithTask { task ->
+            if(!task.isSuccessful)  {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            imageRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if(task.isSuccessful) {
+                downloadUri = task.result
+            }
+        }.await()
+
+        Log.d("fuction test", "downloadUri = ${downloadUri}")
+        emit(downloadUri)
 
     }
+
+    override suspend fun getImage(uri: Uri): Flow<Bitmap> = flow {
+        var bitmap: Bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+        val storageRef = storage.getReference()
+        emit(bitmap)
+    }
+
+
 }

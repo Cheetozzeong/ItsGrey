@@ -1,17 +1,14 @@
 package com.tntt.layer.repository
 
 import android.graphics.Bitmap
+import android.net.Uri
 import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
 import com.tntt.layer.datasource.RemoteLayerDataSource
 import com.tntt.layer.model.LayerDto
 import com.tntt.model.LayerInfo
 import com.tntt.repo.LayerRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class LayerRepositoryImpl @Inject constructor(
@@ -52,28 +49,19 @@ class LayerRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
-        TODO("이미지 전달 후 밑그림 가져오기")
+    override suspend fun getSketchBitmap(uri: Uri): Flow<Bitmap> = flow {
+        layerDataSource.getSketchBitmap(uri).collect() { bitmap ->
+            emit(bitmap)
+        }
     }
 
-    override suspend fun retrofitTest(): Flow<String> = flow {
-        layerDataSource.retrofitTest().collect() { result ->
+    override suspend fun saveImage(uri: Uri): Flow<Uri?> = flow {
+        layerDataSource.saveImage(uri).collect() { result ->
             emit(result)
         }
     }
 
-
-    // 서버 통신 테스트 메서드
-//    suspend fun createRoughSketch() {
-//        val apiService = RetrofitNetwork.getApiService("http://146.56.113.80:8000/")
-//        GlobalScope.launch(Dispatchers.IO) {
-//            val response = apiService.getData()
-//            withContext(Dispatchers.Main) {
-//                if (response.isSuccessful) {
-//                    val data = response.body()
-//                    print(data)
-//                }
-//            }
-//        }
-//    }
+    override suspend fun getImage(uri: Uri): Flow<Bitmap> {
+        TODO("Not yet implemented")
+    }
 }

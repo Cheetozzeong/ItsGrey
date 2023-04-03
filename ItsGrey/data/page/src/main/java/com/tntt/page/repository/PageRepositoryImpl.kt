@@ -96,4 +96,10 @@ class PageRepositoryImpl @Inject constructor(
             emit(result)
         }
     }
+
+    override suspend fun deletePageInfoList(pageIdList: List<String>): Flow<Boolean> = flow {
+        pageDataSource.deletePageDtoList(pageIdList).collect() { result ->
+            emit(result)
+        }
+    }
 }
