@@ -2,8 +2,10 @@ package com.tntt.designsystem.icon
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import itsgrey.core.designsystem.R
 
 object IgIcons {
 
@@ -20,15 +22,9 @@ object IgIcons {
     val Redo = Icons.Rounded.Redo
     val AddImageBox = Icons.Rounded.Image
     val AddTextBox = Icons.Rounded.TextFields
+    val Brush = Icons.Filled.Brush
+    val Eraser = R.drawable.icon_eraser_48
 
-//    val Add = R.drawable.icon_add_button_48
-//    val GoBack = R.drawable.icon_back_button_48
-//    val Close = R.drawable.icon_close_button_48
-//    val Next = R.drawable.icon_next_button_48
-//    val Preview = R.drawable.icon_preview_button_48
-//    val Template = R.drawable.icon_template_button
-//    val Redo = R.drawable.icon_redo_button_48
-//    val Undo = R.drawable.icon_undo_button_48
 }
 
 /**
