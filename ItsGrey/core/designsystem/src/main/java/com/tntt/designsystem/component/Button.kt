@@ -1,10 +1,13 @@
 package com.tntt.designsystem.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tntt.designsystem.icon.IgIcons
@@ -48,6 +51,38 @@ fun IgTextButton(
     }
 }
 
+@Composable
+fun IgPlusPageButton(
+    onClick: () -> Unit,
+){
+    Column {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(2 / 3f)
+                .shadow(6.dp)
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
+            IgIconButton(
+                modifier = Modifier.fillMaxSize(),
+                onClick = onClick,
+                icon = {
+                    Icon(
+                        imageVector = IgIcons.Add,
+                        contentDescription = "iconButton"
+                    )
+                }
+            )
+        }
+        Box {
+            Text(text = "New..",
+                color = MaterialTheme.colorScheme.onSecondary,
+                textAlign = TextAlign.Center,
+                style=MaterialTheme.typography.titleLarge
+            )
+        }
+    }
+}
 @Composable
 private fun IgTextButtonContent(
     text: @Composable () -> Unit,

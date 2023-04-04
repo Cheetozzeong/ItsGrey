@@ -73,6 +73,8 @@ dependencies {
     androidTestImplementation(Libraries.AndroidTest.ESPRESSO_CORE)
     androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
     debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
+
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
 }
 
 kapt {

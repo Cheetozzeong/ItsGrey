@@ -39,8 +39,8 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                 for (document in documentSnapshot) {
                     val data = document.data
                     val id = data?.get("id") as String
-                    val order = data?.get("order") as Int
-                    val bitmap = data?.get("bitmap") as Bitmap
+                    val order = (data?.get("order") as Long).toInt()
+                    val bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
                     layerDtoList.add(LayerDto(id, imageBoxId, order, bitmap))
                 }
             }.await()
