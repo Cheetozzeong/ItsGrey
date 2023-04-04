@@ -44,8 +44,8 @@ class HomeUseCase @Inject constructor(
         }
     }
 
-    suspend fun deleteBook(bookIdList: List<String>): Flow<Boolean> = flow {
-        bookRepository.deleteBookInfo(bookIdList).collect() { result ->
+    suspend fun deleteBookList(bookIdList: List<String>): Flow<Boolean> = flow {
+        bookRepository.deleteBookInfoList(bookIdList).collect() { result ->
             emit(result)
         }
     }

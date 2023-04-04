@@ -17,7 +17,7 @@ class BookRepositoryImpl @Inject constructor(
 ) : BookRepository {
 
     override suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<String> = flow {
-        val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.EDIT, Date())
+        val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.WORKING, Date())
         bookDataSource.createBookDto(userId, bookDto).collect() { bookId ->
             emit(bookId)
         }
@@ -44,13 +44,12 @@ class BookRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateBookInfo(bookInfo: BookInfo, userId: String, bookType: BookType): Flow<Boolean> = flow {
-        Log.d("function test=======================", "updateBookInfo(${bookInfo}, ${userId}, ${bookType})")
         bookDataSource.updateBookDto(BookDto(bookInfo.id, userId, bookInfo.title, bookType, bookInfo.saveDate)).collect() { result ->
             emit(result)
         }
     }
 
-    override suspend fun deleteBookInfo(bookIdList: List<String>): Flow<Boolean> = flow {
+    override suspend fun deleteBookInfoList(bookIdList: List<String>): Flow<Boolean> = flow {
         bookDataSource.deleteBookDto(bookIdList).collect() { result ->
             emit(result)
         }

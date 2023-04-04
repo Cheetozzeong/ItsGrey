@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.tntt.domain.drawing.usecase.DrawingUseCase
 import com.tntt.itsgrey.navigation.IgNavHost
 import com.tntt.model.LayerInfo
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,10 +28,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    @Inject
-    lateinit var drawingUseCase: DrawingUseCase
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

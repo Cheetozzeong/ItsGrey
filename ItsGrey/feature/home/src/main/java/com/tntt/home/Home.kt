@@ -1,7 +1,5 @@
 package com.tntt.home
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,10 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tntt.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTabsMain
@@ -32,8 +28,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import com.tntt.designsystem.component.IgIconButton
-import com.tntt.designsystem.icon.IgIcons
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.tntt.designsystem.component.IgPlusPageButton
 import com.tntt.ui.PageForView
 import java.text.SimpleDateFormat
 
@@ -48,253 +44,40 @@ private enum class WindowSize(val item: Int) {
     EXPANDED(5)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(name = "tablet", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
 @Composable
-fun Home(modifier: Modifier = Modifier) {
+internal fun HomePageRoute(
+    onNewButtonClick: () -> Unit,
+    onThumbnailClick: (String) -> Unit,
+    viewModel: HomePageViewModel = hiltViewModel(),
+){
+    HomePageScreen(
+        onNewButtonClick = {onNewButtonClick},
+        onThumbnailClick = {onThumbnailClick},
+        viewModel = viewModel
+    )
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun HomePageScreen(
+    modifier: Modifier = Modifier,
+    onNewButtonClick: () -> Unit,
+    onThumbnailClick: (String) -> Unit,
+    viewModel: HomePageViewModel
+) {
 
     val displayMetrics = LocalContext.current.resources.displayMetrics
     val screenWidth = displayMetrics.widthPixels / displayMetrics.density
-
-    val image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.gunbam23)
-    // dummy data
 
     val dateString = "2023-03-26T11:30:00+0900"
     val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
     val date = formatter.parse(dateString)
 
     // dummy data
-    val publishedBookList =
-        listOf(
-            Book(
-                bookInfo = BookInfo(
-                    id = "1",
-                    title = "이게 말도 안되게 길어지면 어뜨칼건데 대체....",
-                    saveDate = date
-                ),
-                Thumbnail(
-                    listOf(ImageBoxInfo(
-                        id = "image",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        ),
-                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-                    )
-                    ),
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc1",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def1",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi1",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "1",
-                    title = "이게 말도 안되게 길어지면 어뜨칼건데 대체....",
-                    saveDate = date
-                ),
-                Thumbnail(
-                    listOf(ImageBoxInfo(
-                        id = "image",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        ),
-                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-                    )
-                    ),
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc1",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def1",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi1",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-        )
+    val user = User(name = "fakeUser",id = "1")
 
-    // dummy data
-    val workingBookList =
-        listOf(
-            Book(
-                bookInfo = BookInfo(
-                    id = "1",
-                    title = "이게 말도 안되게 길어지면 어뜨칼건데 대체....",
-                    saveDate = date
-                ),
-                Thumbnail(
-                    listOf(ImageBoxInfo(
-                        id = "image",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        ),
-                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-                    )
-                    ),
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc1",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def1",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi1",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            ),
-            Book(
-                bookInfo = BookInfo(
-                    id = "1",
-                    title = "이게 말도 안되게 길어지면 어뜨칼건데 대체....",
-                    saveDate = date
-                ),
-                Thumbnail(
-                    listOf(ImageBoxInfo(
-                        id = "image",
-                        boxData = BoxData(
-                            offsetRatioX = 0.0f,
-                            offsetRatioY = 0.0f,
-                            widthRatio = 1.0f,
-                            heightRatio = 1.0f
-                        ),
-                        image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-                    )
-                    ),
-                    listOf(
-                        TextBoxInfo(
-                            id = "abc1",
-                            text = "ABC",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.2f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "def1",
-                            text = "DEF",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.4f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        ),
-                        TextBoxInfo(
-                            id = "ghi1",
-                            text = "GHI",
-                            fontSizeRatio = 0.05f,
-                            boxData = BoxData(
-                                offsetRatioX = 0.2f,
-                                offsetRatioY = 0.6f,
-                                widthRatio = 0.5f,
-                                heightRatio = 0.3f
-                            )
-                        )
-                    )
-                )
-            )
-        )
+    val publishedBookList by viewModel.publishedBookList.collectAsState()
+    val workingBookList by viewModel.workingBookList.collectAsState()
 
-    // dummy data
-    val user = User(name = "fakeUser",id = "id")
 
     var tabPage by remember { mutableStateOf(TabPage.Published) }
 
@@ -358,7 +141,14 @@ fun Home(modifier: Modifier = Modifier) {
                             )
                         }
                 ) {
-                    BookList(modifier, list, tabPage, screenWidth)
+                    BookList(
+                        modifier = modifier,
+                        books = list,
+                        tabPage = tabPage,
+                        screenWidth = screenWidth,
+                        onThumbnailClick = onThumbnailClick,
+                        onNewButtonClick = onNewButtonClick
+                    )
                 }
             }
         }
@@ -370,7 +160,9 @@ private fun BookList(
     modifier: Modifier = Modifier,
     books: List<Book>,
     tabPage: TabPage,
-    screenWidth: Float
+    screenWidth: Float,
+    onThumbnailClick: (String) -> Unit,
+    onNewButtonClick: () -> Unit
 ) {
     val windowSize = computeWindowSizeClasses(screenWidth)
 
@@ -387,40 +179,14 @@ private fun BookList(
                     modifier = Modifier,
                     book = book,
                     tabPage = tabPage,
-                    bookId = {
-                        /*TODO 여기서 argument이용해서 id를 it으로 넘겨주기*/
+                    onThumbnailClick = {
+                        onThumbnailClick
                     }
                 )
             }
             if (tabPage == TabPage.Working) {
                 item {
-                    Column {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(2 / 3f)
-                                .shadow(6.dp)
-                                .background(MaterialTheme.colorScheme.surface)
-                        ) {
-                            IgIconButton(
-                                modifier = Modifier.fillMaxSize(),
-                                onClick = {},
-                                icon = {
-                                    Icon(
-                                        imageVector = IgIcons.Add,
-                                        contentDescription = "iconButton"
-                                    )
-                                }
-                            )
-                        }
-                        Box {
-                            Text(text = "New..",
-                                color = MaterialTheme.colorScheme.onSecondary,
-                                textAlign = TextAlign.Center,
-                                style=MaterialTheme.typography.titleLarge
-                            )
-                        }
-                    }
+                    IgPlusPageButton(onClick = {onNewButtonClick})
                 }
             }
         }
@@ -433,7 +199,7 @@ private fun BookList(
 private fun BookItem(
     modifier: Modifier,
     book: Book,
-    bookId: (String) -> Unit,
+    onThumbnailClick: (String) -> Unit,
     tabPage: TabPage
 ) {
     val bookId = book.bookInfo.id
@@ -449,8 +215,7 @@ private fun BookItem(
                             Modifier
                                 .border(width = 5.dp, MaterialTheme.colorScheme.onPrimary)
                                 .clickable(
-                                    /*TODO View로 이동 with id*/
-                                    onClick = { bookId(bookId) }
+                                    onClick = { onThumbnailClick(bookId) } /*TODO 네비 연*/
                                 )
                         ) {
                             PageForView(modifier = Modifier, thumbnail = book.thumbnail!!)
@@ -490,8 +255,11 @@ fun WorkingTimeAgoText(date: Date) {
     val diff = now - timestamp
 
     val seconds = diff / 1000
-    if (seconds < 60) {
+    if (seconds in 1..59) {
         Text("${seconds}초 전")
+        return
+    } else if (seconds < 0) {
+        Text("미래로는 갈 수 업어용")
         return
     }
 
