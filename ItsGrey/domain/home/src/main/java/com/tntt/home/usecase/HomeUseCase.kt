@@ -14,6 +14,7 @@ class HomeUseCase @Inject constructor(
     private val pageRepository: PageRepository,
 ) {
     suspend fun createBook(userId: String, bookInfo: BookInfo): Flow<Book> = flow {
+        Log.d("why!!!","usecase")
         bookRepository.createBookInfo(userId, bookInfo).collect() { resultBookInfo ->
             val imageBoxInfoList = mutableListOf<ImageBoxInfo>()
             val textBoxInfoList = mutableListOf<TextBoxInfo>()

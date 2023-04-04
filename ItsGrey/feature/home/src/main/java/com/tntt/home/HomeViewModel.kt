@@ -18,7 +18,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,11 +54,17 @@ class HomePageViewModel @Inject constructor(
 //    savedStateHandle: SavedStateHandle,
 //    stringDecoder: StringDecoder,
 
-    fun createBook(userId: String, bookInfo: BookInfo) {
+    fun createBook() {
         viewModelScope.launch {
+            Log.d("why!!!","createBook")
             homeUseCase.createBook(
                 userId,
-                bookInfo)
+                bookInfo = BookInfo(
+                    id = UUID.randomUUID().toString(),
+                    title = "새로운 책",
+                    saveDate = Date()
+                )
+            ).collect()
         }
     }
 
