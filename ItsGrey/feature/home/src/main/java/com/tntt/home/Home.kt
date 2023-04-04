@@ -49,7 +49,6 @@ private enum class WindowSize(val item: Int) {
 
 @Composable
 internal fun HomePageRoute(
-    onNewButtonClick: () -> Unit,
     onThumbnailClick: (String) -> Unit,
     viewModel: HomePageViewModel = hiltViewModel(),
 ){
@@ -91,10 +90,9 @@ internal fun HomePageScreen(
                     .padding(horizontal = 25.dp),
                 title = stringResource(R.string.home_toolbar_name),
                 actions = {
-                    Text(text = user.name)
+                    Text(text = "${user.name}님의 서재")
                 }
-            )
-            }
+            ) }
         ) { padding ->
             Column(
                 Modifier
@@ -185,8 +183,7 @@ private fun BookList(
                 item {
                     IgPlusPageButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { onNewButtonClick()
-                            Log.d("why!!!","누름누름")},
+                        onClick = { onNewButtonClick() },
                         text = "New...")
                 }
             }

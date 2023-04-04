@@ -20,7 +20,6 @@ fun NavController.navigateToHomePage(pageId: String) {
 }
 
 fun NavGraphBuilder.homePageScreen(
-    onNewButtonClick: () -> Unit,
     onThumbnailClick: (String) -> Unit,
     currentUserEmail: String,
     currentUserName: String,
@@ -37,7 +36,6 @@ fun NavGraphBuilder.homePageScreen(
             putString(userNameArg, currentUserName)
         }
         HomePageRoute(
-            onNewButtonClick = onNewButtonClick,
             onThumbnailClick = onThumbnailClick
         )
     }

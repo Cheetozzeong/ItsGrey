@@ -36,7 +36,6 @@ fun IgNavHost(
             onThumbnailClick = {
 //                navController.navigateToBook(stirng)
                                },
-            onNewButtonClick = {},
             currentUserEmail = currentUserEmail,
             currentUserName = currentUserName
         )
