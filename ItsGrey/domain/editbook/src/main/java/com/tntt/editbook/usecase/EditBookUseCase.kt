@@ -74,4 +74,10 @@ class EditBookUseCase @Inject constructor(
             }
         }
     }
+
+    suspend fun deletePage(pageIdList: List<String>): Flow<Boolean> = flow {
+        pageRepository.deletePageInfoList(pageIdList).collect() { result ->
+            emit(result)
+        }
+    }
 }

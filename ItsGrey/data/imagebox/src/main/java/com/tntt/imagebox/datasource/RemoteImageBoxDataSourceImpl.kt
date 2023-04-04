@@ -7,12 +7,9 @@ import com.google.gson.Gson
 
 import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.BoxData
-import com.tntt.model.BoxState
-import com.tntt.network.Firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import java.util.UUID
 import javax.inject.Inject
 
 class RemoteImageBoxDataSourceImpl @Inject constructor(

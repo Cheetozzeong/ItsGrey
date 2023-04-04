@@ -1,8 +1,11 @@
 package com.tntt.layer.datasource
 
 import android.graphics.Bitmap
+import android.net.Uri
 import com.tntt.layer.model.LayerDto
 import kotlinx.coroutines.flow.Flow
+import java.io.File
+import java.io.InputStream
 
 interface RemoteLayerDataSource {
     suspend fun createLayerDto(layerDto: LayerDto): Flow<LayerDto>
@@ -11,5 +14,6 @@ interface RemoteLayerDataSource {
     suspend fun deleteLayerDtoList(imageBoxId: String): Flow<Boolean>
     suspend fun getSumLayer(imageBoxId: String): Flow<Bitmap>
     suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap>
-    suspend fun retrofitTest(): Flow<String>
+    suspend fun saveImage(bitmap: Bitmap): Flow<Uri?>
+    suspend fun getImage(uri: Uri): Flow<Bitmap>
 }
