@@ -1,12 +1,14 @@
 package itsgrey.feature.drawing
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import android.graphics.Bitmap
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.layout.LazyLayout
+import androidx.compose.foundation.lazy.layout.LazyLayoutItemProvider
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,10 +29,10 @@ import com.tntt.designsystem.component.IgIconButton
 import com.tntt.designsystem.component.IgTextButton
 import com.tntt.designsystem.component.IgTopAppBar
 import com.tntt.designsystem.icon.IgIcons
-import com.tntt.model.DrawingInfo
 import com.tntt.model.LayerInfo
 import io.getstream.sketchbook.Sketchbook
 import io.getstream.sketchbook.SketchbookController
+import io.getstream.sketchbook.rememberSketchbookController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,13 +42,15 @@ fun DrawingRoute(
 
     val layerList by viewModel.layerList.collectAsStateWithLifecycle()
     val drawingInfo by viewModel.drawingInfo.collectAsStateWithLifecycle()
-    val ratioX by viewModel.ratioX.collectAsStateWithLifecycle()
-    val ratioY by viewModel.ratioY.collectAsStateWithLifecycle()
+    val aspectRatio by viewModel.aspectRatio.collectAsStateWithLifecycle()
 
     val selectedTool by viewModel.selectedTool.collectAsStateWithLifecycle()
+    val selectedLayerOrder by viewModel.selectedLayer.collectAsStateWithLifecycle()
 
-    val sketchControllerMap by viewModel.sketchController.collectAsStateWithLifecycle()
-    val selectedLayerId by viewModel.selectedLayer.collectAsStateWithLifecycle()
+    val colorPaintController = rememberSketchbookController()
+    LaunchedEffect(Unit) {
+        colorPaintController.setImageBitmap(layerList[1].bitmap.asImageBitmap())
+    }
 
     Scaffold(
         modifier = Modifier
@@ -55,13 +59,10 @@ fun DrawingRoute(
                     detectTapGestures { viewModel.selectTool(DrawingToolLabel.None) }
                 }
             },
-        topBar = { DrawingTopAppBar() },
+        topBar = { DrawingTopAppBar(colorPaintController) },
     ) { paddingValues ->
 
         var colorPickerPosition by remember { mutableStateOf(Offset.Zero) }
-        val curSketchController by remember(selectedLayerId) {
-            mutableStateOf(sketchControllerMap[selectedLayerId] ?: SketchbookController())
-        }
 
         Row(
             Modifier
@@ -79,8 +80,7 @@ fun DrawingRoute(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth(),
-                    sketchController = curSketchController,
-                    selectedTool = selectedTool,
+                    sketchController = colorPaintController,
                     onSelectTool = viewModel::selectTool,
                     onGloballyPositioned = { colorPickerPosition = it.boundsInRoot().topRight }
                 )
@@ -96,7 +96,9 @@ fun DrawingRoute(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth(),
-                    layerList = layerList
+                    aspectRatio = aspectRatio,
+                    layerList = layerList,
+                    selectedLayerOrder = selectedLayerOrder
                 )
             }
 
@@ -107,22 +109,21 @@ fun DrawingRoute(
             ) {
                 SketchScreen(
                     modifier = Modifier
-                        .aspectRatio(ratioX / ratioY)
+                        .aspectRatio(aspectRatio)
                         .align(Alignment.Center)
                     ,
                     layerList = layerList,
-                    controllerMap = sketchControllerMap
+                    colorPaintController = colorPaintController,
+                    onDrawPath = viewModel::updateBitmap
                 )
             }
         }
 
         if(selectedTool == DrawingToolLabel.ColorPicker) {
             ColorPicker(
-                currentColor = curSketchController.currentPaintColor.value,
+                currentColor =  colorPaintController.currentPaintColor.value,
                 offset = colorPickerPosition,
-                setSelectedColor = {
-                    curSketchController.setPaintColor(Color(it))
-                }
+                setSelectedColor = { colorPaintController.setPaintColor(Color(it)) }
             )
         }
     }
@@ -130,7 +131,7 @@ fun DrawingRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DrawingTopAppBar() {
+private fun DrawingTopAppBar(sketchController: SketchbookController) {
 
     IgTopAppBar(
         modifier = Modifier,
@@ -138,8 +139,8 @@ private fun DrawingTopAppBar() {
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "뒤로가기",
         actions = {
-            UndoButton()
-            RedoButton()
+            UndoButton {sketchController.undo()}
+            RedoButton {sketchController.redo()}
             SaveButton()
         }
     )
@@ -149,7 +150,6 @@ private fun DrawingTopAppBar() {
 private fun SideToolBar(
     modifier: Modifier,
     sketchController: SketchbookController,
-    selectedTool: DrawingToolLabel,
     onSelectTool: (DrawingToolLabel) -> Unit,
     onGloballyPositioned: (LayoutCoordinates) -> Unit
 ) {
@@ -159,13 +159,27 @@ private fun SideToolBar(
             .padding(vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BrushButton(
-            isSelected = selectedTool == DrawingToolLabel.Brush,
-            onClick = { onSelectTool(it) }
+        IgIconButton(
+            modifier = Modifier,
+            onClick = { sketchController.setEraseMode(false) },
+            icon = {
+                Icon(
+                    imageVector = IgIcons.Brush,
+                    contentDescription = "brushButton",
+                    tint = toggleTint(!sketchController.isEraseMode.value)
+                )
+            }
         )
-        EraserButton(
-            isSelected = selectedTool == DrawingToolLabel.Eraser,
-            onClick = { onSelectTool(it) }
+
+        IgIconButton(
+            onClick = { sketchController.toggleEraseMode() },
+            icon = {
+                Icon(
+                    painter = painterResource(id = IgIcons.Eraser),
+                    contentDescription = "EraserButton",
+                    tint = toggleTint(sketchController.isEraseMode.value)
+                )
+            }
         )
         
         Spacer(modifier = Modifier.padding(10.dp))
@@ -182,32 +196,39 @@ private fun SideToolBar(
 private fun SketchScreen(
     modifier: Modifier,
     layerList: List<LayerInfo>,
-    controllerMap: HashMap<String, SketchbookController>
+    colorPaintController: SketchbookController,
+    onDrawPath: (Bitmap) -> Unit
 ) {
-    layerList.forEach { layerInfo ->
-        Sketchbook(
-            modifier = modifier
-                .fillMaxSize()
-            ,
-            controller = controllerMap[layerInfo.id]!!,
-        )
+    Canvas(modifier = modifier.fillMaxSize()) {
+        drawImage(layerList[0].bitmap.asImageBitmap())
     }
+    Sketchbook(
+        modifier = modifier.fillMaxSize(),
+        controller = colorPaintController,
+        onPathListener = {
+            onDrawPath(colorPaintController.getSketchbookBitmap().asAndroidBitmap())
+        }
+    )
 }
 
 @Composable
 private fun LayerSection(
     modifier: Modifier,
-    layerList: List<LayerInfo>
+    aspectRatio: Float,
+    layerList: List<LayerInfo>,
+    selectedLayerOrder: Int
 ) {
     LazyColumn(
-        modifier = modifier
+        modifier = modifier,
     ) {
-        items(items = layerList) { layerInfo ->
+        items(items = layerList, key = {item: LayerInfo -> item.id}) { layerInfo ->
             Box(
                 modifier = Modifier
-                    .width(80.dp)
-                    .height(80.dp)
-                    .padding(8.dp)
+                    .aspectRatio(aspectRatio)
+                    .border(
+                        width = 2.dp,
+                        color = toggleTint(isSelected = layerInfo.order == selectedLayerOrder)
+                    ),
             ) {
                 Image(
                     bitmap = layerInfo.bitmap.asImageBitmap(),
@@ -219,9 +240,9 @@ private fun LayerSection(
 }
 
 @Composable
-private fun UndoButton() {
+private fun UndoButton(onClick: () -> Unit) {
     IgIconButton(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         icon = {
             Icon(
                 imageVector = IgIcons.Undo,
@@ -232,9 +253,9 @@ private fun UndoButton() {
 }
 
 @Composable
-private fun RedoButton() {
+private fun RedoButton(onClick: () -> Unit) {
     IgIconButton(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         icon = {
             Icon(
                 imageVector = IgIcons.Redo,
@@ -255,16 +276,16 @@ private fun SaveButton() {
 @Composable
 private fun BrushButton(
     isSelected: Boolean,
-    onClick: (DrawingToolLabel) -> Unit,
+    onClick: () -> Unit,
 ) {
     IgIconButton(
         modifier = Modifier,
-        onClick = { onClick(DrawingToolLabel.Brush) },
+        onClick = { onClick() },
         icon = {
             Icon(
                 imageVector = IgIcons.Brush,
                 contentDescription = "brushButton",
-                tint = toggleTine(isSelected)
+                tint = toggleTint(isSelected)
             )
         }
     )
@@ -281,7 +302,7 @@ private fun EraserButton(
             Icon(
                 painter = painterResource(id = IgIcons.Eraser),
                 contentDescription = "EraserButton",
-                tint = toggleTine(isSelected)
+                tint = toggleTint(isSelected)
             )
         }
     )
@@ -311,4 +332,4 @@ private fun ColorPickerButton(
 }
 
 @Composable
-private fun toggleTine(isSelected: Boolean) = if(isSelected) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSecondary
+private fun toggleTint(isSelected: Boolean) = if(isSelected) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSecondary

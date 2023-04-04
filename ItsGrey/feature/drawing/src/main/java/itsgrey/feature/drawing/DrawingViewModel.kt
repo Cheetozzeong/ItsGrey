@@ -14,6 +14,7 @@ import itsgrey.feature.drawing.navigation.imageBoxIdArgs
 import itsgrey.feature.drawing.navigation.imageUriArgs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.forEach
 import javax.inject.Inject
 
@@ -29,20 +30,16 @@ class DrawingViewModel @Inject constructor(
     private val _layerList: MutableStateFlow<List<LayerInfo>> = MutableStateFlow(emptyList())
     val layerList: StateFlow<List<LayerInfo>> = _layerList
 
-    private val _sketchController: MutableStateFlow<HashMap<String, SketchbookController>> = MutableStateFlow(HashMap())
-    val sketchController: StateFlow<HashMap<String, SketchbookController>> = _sketchController
-
     private val _drawingInfo: MutableStateFlow<DrawingInfo> = MutableStateFlow(DrawingInfo())
     val drawingInfo: StateFlow<DrawingInfo> = _drawingInfo
 
     private val _selectedTool: MutableStateFlow<DrawingToolLabel> = MutableStateFlow(DrawingToolLabel.Brush)
     val selectedTool: StateFlow<DrawingToolLabel> = _selectedTool
 
-    private val _selectedLayer: MutableStateFlow<String> = MutableStateFlow("")
-    val selectedLayer: StateFlow<String> = _selectedLayer
+    private val _selectedLayer: MutableStateFlow<Int> = MutableStateFlow(0)
+    val selectedLayer: StateFlow<Int> = _selectedLayer
 
-    val ratioX: MutableStateFlow<Float> = MutableStateFlow(1f)
-    val ratioY: MutableStateFlow<Float> = MutableStateFlow(1f)
+    val aspectRatio: MutableStateFlow<Float> = MutableStateFlow(1f)
 
     init {
 
@@ -71,25 +68,16 @@ class DrawingViewModel @Inject constructor(
                 bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
             )
         )
-
-        _selectedLayer.value = "first"
-
-        layerList.value.forEach {
-            val sketchCont = SketchbookController()
-            sketchCont.setImageBitmap(it.bitmap.asImageBitmap())
-            _sketchController.value[it.id] = sketchCont
-        }
-
-
+        aspectRatio.value = 2f / 3f
+        _selectedLayer.value = 1
     }
 
     fun selectTool(selectedTool: DrawingToolLabel) {
         _selectedTool.value = selectedTool
     }
 
-    fun setPenColor(hexCode: String) {
-        _sketchController.value[_selectedLayer.value]?.setPaintColor(
-            Color(android.graphics.Color.parseColor("#$hexCode"))
-        )
+    fun updateBitmap(bitmap: Bitmap) {
+        _layerList.value[selectedLayer.value].bitmap = bitmap
     }
+
 }

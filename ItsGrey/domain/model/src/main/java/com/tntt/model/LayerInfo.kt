@@ -5,5 +5,5 @@ import android.graphics.Bitmap
 data class LayerInfo(
     val id: String,
     val order: Int,
-    val bitmap: Bitmap,
+    var bitmap: Bitmap,
 )
