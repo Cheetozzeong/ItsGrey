@@ -17,9 +17,8 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.InputStream
-import java.util.*
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 
 class RemoteLayerDataSourceImpl @Inject constructor(
@@ -29,27 +28,30 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
     val layerCollection by lazy { firestore.collection("layer") }
 
-    override suspend fun createLayerDto(layerDto: LayerDto): Flow<LayerDto> = flow {
-        layerCollection
-            .document(layerDto.id)
-            .set(layerDto)
-            .await()
-        emit(layerDto)
+    override suspend fun createLayerDtoList(layerDtoList: List<LayerDto>): Flow<List<LayerDto>> = flow {
+        for (layerDto in layerDtoList) {
+            layerCollection
+                .document(layerDto.id)
+                .set(layerDto)
+                .await()
+        }
+        emit(layerDtoList)
     }
 
     override suspend fun getLayerDtoList(imageBoxId: String): Flow<List<LayerDto>> = flow {
         val layerDtoList = mutableListOf<LayerDto>()
         layerCollection
             .whereEqualTo("imageBoxId", imageBoxId)
+            .orderBy("order")
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val documentSnapshot = querySnapshot.documents
                 for (document in documentSnapshot) {
                     val data = document.data
                     val id = data?.get("id") as String
-                    val order = (data?.get("order") as Long).toInt()
-                    val bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-                    layerDtoList.add(LayerDto(id, imageBoxId, order, bitmap))
+                    val order = data?.get("order") as Int
+                    val url = data?.get("url") as String
+                    layerDtoList.add(LayerDto(id, imageBoxId, order, url))
                 }
             }.await()
         emit(layerDtoList)
@@ -123,7 +125,6 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         val requestBody = RequestBody.create(MediaType.parse("image/jpeg"), byteArray)
         val part = MultipartBody.Part.createFormData("file", "my_image.jpg", requestBody)
         val response = apiService.getSketch(part)
-        Log.d("function test", "response = ${response}")
 
         val bmpByteArray = response.bytes()
         val options =BitmapFactory.Options().apply {
@@ -131,23 +132,28 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         }
 
         val resultBitmap = BitmapFactory.decodeByteArray(bmpByteArray, 0, bmpByteArray.size, options)
-
+        val pixels = IntArray(resultBitmap.width * resultBitmap.height)
+        bitmap.getPixels(pixels, 0, resultBitmap.width, 0, 0, resultBitmap.width, resultBitmap.height)
+        for (i in pixels.indices) {
+            if(pixels[i] == Color.WHITE){
+                pixels[i] = Color.TRANSPARENT
+            }
+        }
         emit(resultBitmap)
     }
 
-    override suspend fun saveImage(bitmap: Bitmap): Flow<Uri?> = flow {
+    override suspend fun saveImage(bitmap: Bitmap, url: String): Flow<Uri?> = flow {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
         val byteArray = stream.toByteArray()
 
-        val fileName = UUID.randomUUID().toString() + ".jpg"
         val storageRef = storage.reference
-        val imageRef = storageRef.child("/images/${fileName}")
+        val imageRef = storageRef.child("/images/${url}")
         val uploadTask = imageRef.putBytes(byteArray)
 
-        var downloadUri: Uri? = null
+        var url: Uri? = null
 
-        val urlTask = uploadTask.continueWithTask { task ->
+        uploadTask.continueWithTask { task ->
             if(!task.isSuccessful)  {
                 task.exception?.let {
                     throw it
@@ -156,18 +162,20 @@ class RemoteLayerDataSourceImpl @Inject constructor(
             imageRef.downloadUrl
         }.addOnCompleteListener { task ->
             if(task.isSuccessful) {
-                downloadUri = task.result
+                url = task.result
             }
         }.await()
 
-        Log.d("fuction test", "downloadUri = ${downloadUri}")
-        emit(downloadUri)
-
+        emit(url)
     }
 
-    override suspend fun getImage(uri: Uri): Flow<Bitmap> = flow {
-        var bitmap: Bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-        val storageRef = storage.getReference()
+    override suspend fun getImage(url: String): Flow<Bitmap> = flow {
+        val connection = URL(url).openConnection() as HttpURLConnection
+        connection.doInput = true
+        connection.connect()
+
+        val inputStream = connection.inputStream
+        val bitmap = BitmapFactory.decodeStream(inputStream)
         emit(bitmap)
     }
 

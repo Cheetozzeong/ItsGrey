@@ -12,8 +12,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.tntt.itsgrey.navigation.IgNavHost
-import com.tntt.model.BookType
-import com.tntt.model.SortType
+import com.tntt.model.LayerInfo
 import dagger.hilt.android.AndroidEntryPoint
 import itsgrey.app.R
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +32,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val bitmap =
+                BitmapFactory.decodeResource(applicationContext.resources, R.drawable.ironman)
+            val layerList = mutableListOf<LayerInfo>()
+//            drawingUseCase.createLayerList("imageboxid1", bitmap).collect() { layerList ->
+//                Log.d("fucntion test", "layerList = ${layerList}")
+//            }
+        }
+
         setContent {
             val navController = rememberNavController()
             IgNavHost(navController)

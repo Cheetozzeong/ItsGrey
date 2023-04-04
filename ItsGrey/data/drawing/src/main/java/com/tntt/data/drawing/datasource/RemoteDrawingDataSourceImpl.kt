@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.data.drawing.model.DrawingDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
 
@@ -52,12 +53,20 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
         emit(result)
     }
 
-    override suspend fun deleteDrawingDto(id: String): Flow<Boolean> = flow {
+    override suspend fun deleteDrawingDto(imageBoxId: String): Flow<Boolean> = flow {
         var result: Boolean = true
         drawingCollection
-            .document(id)
-            .delete()
-            .addOnFailureListener { result = false }
+            .whereEqualTo("imageBoxId", imageBoxId)
+            .get()
+            .addOnSuccessListener {  querySnapshot ->
+                val documentSnapshot = querySnapshot.documents
+                for (document in documentSnapshot) {
+                    drawingCollection
+                        .document(document.id)
+                        .delete()
+                        .addOnFailureListener { result = false }
+                }
+            }.await()
         emit(result)
     }
 }
