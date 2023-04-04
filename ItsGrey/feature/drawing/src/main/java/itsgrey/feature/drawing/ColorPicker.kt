@@ -1,37 +1,50 @@
 package itsgrey.feature.drawing
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.skydoves.orchestra.colorpicker.AlphaSlideBar
 import com.skydoves.orchestra.colorpicker.BrightnessSlideBar
 import com.skydoves.orchestra.colorpicker.ColorPicker
+import kotlin.math.roundToInt
 
 @Composable
 fun ColorPicker(
-    setSelectedColor: (String) -> Unit
+    currentColor: Color,
+    setSelectedColor: (Int) -> Unit,
+    offset: Offset
 ) {
-    Box(modifier = Modifier
+    Surface(modifier = Modifier
+        .offset {
+            IntOffset(
+                offset.x.roundToInt() + 60,
+                offset.y.roundToInt()
+            )
+        }
         .width(200.dp)
         .height(300.dp)
-        .border(3.dp, Color.White, RoundedCornerShape(10))) {
+        .clip(RoundedCornerShape(10))
+    ) {
         ColorPicker(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
-                .padding(top = 10.dp),
+                .padding(20.dp),
             onColorListener = { envelope, _ ->
-                setSelectedColor(envelope.hexCode)
+
+                setSelectedColor(envelope.color)
             },
-            initialColor = Color.Black,
+            initialColor = currentColor,
             children = { colorPickerView ->
                 Column(
-                    modifier = Modifier.padding(top = 32.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Box(
                         modifier = Modifier.padding(vertical = 6.dp)
