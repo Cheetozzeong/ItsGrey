@@ -16,9 +16,8 @@ class DrawingRepositoryImpl @Inject constructor(
 
     override suspend fun createDrawingInfo(imageBoxId: String, drawingInfo: DrawingInfo): Flow<String> = flow {
         drawingDataSource
-            .createDrawingDto(DrawingDto(drawingInfo.id, imageBoxId, drawingInfo.penSizeList, drawingInfo.eraserSizeList, drawingInfo.penColor, drawingInfo.recentColorList))
-            .collect() { drawingInfo ->
-                emit(drawingInfo)
+            .createDrawingDto(DrawingDto(drawingInfo.id, imageBoxId, drawingInfo.penSizeList, drawingInfo.eraserSizeList, drawingInfo.penColor, drawingInfo.recentColorList)).collect() { drawingId ->
+                emit(drawingId)
             }
     }
 

@@ -1,6 +1,9 @@
 package com.tntt.layer.repository
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.util.Log
 import com.tntt.layer.datasource.RemoteLayerDataSource
@@ -10,6 +13,7 @@ import com.tntt.repo.LayerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.io.InputStream
 import javax.inject.Inject
@@ -77,5 +81,15 @@ class LayerRepositoryImpl @Inject constructor(
         layerDataSource.getImage(uri).collect() { bitmap ->
             emit(bitmap)
         }
+    }
+
+    override suspend fun getSumLayerBitmap(layerInfoList: List<LayerInfo>): Flow<Bitmap> = flow {
+        val sumLayer = Bitmap.createBitmap(layerInfoList[0].bitmap.width, layerInfoList[0].bitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(sumLayer)
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        for (layerInfo in layerInfoList) {
+            canvas.drawBitmap(layerInfo.bitmap, 0f, 0f, null)
+        }
+        emit(sumLayer)
     }
 }

@@ -86,34 +86,7 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         emit(result)
     }
 
-    override suspend fun getSumLayer(imageBoxId: String): Flow<Bitmap> = flow {
-        val bitmapList = mutableListOf<Bitmap>()
-        var width = 100
-        var height = 100
 
-        layerCollection
-            .whereEqualTo("imageBoxId", imageBoxId)
-            .orderBy("order")
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents
-                for (document in documentSnapshot) {
-                    val bitmap = document.data?.get("bitmap") as Bitmap
-                    bitmapList.add(bitmap)
-                    width = bitmap.width
-                    height = bitmap.height
-                }
-            }.await()
-
-        val sumLayer = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        sumLayer.eraseColor(Color.WHITE)
-
-        val canvas = Canvas(sumLayer)
-        for (bitmap in bitmapList) {
-            canvas.drawBitmap(bitmap, 0f, 0f, null)
-        }
-        emit(sumLayer)
-    }
 
     override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
         Log.d("function test", "getSketchBitmap(${bitmap})")

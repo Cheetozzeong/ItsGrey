@@ -99,8 +99,8 @@ class PageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deletePageInfoList(pageIdList: List<String>): Flow<Boolean> = flow {
-        pageDataSource.deletePageDtoList(pageIdList).collect() { result ->
+    override suspend fun deletePageInfo(pageId: String): Flow<Boolean> = flow {
+        pageDataSource.deletePageDto(pageId).collect() { result ->
             emit(result)
         }
     }

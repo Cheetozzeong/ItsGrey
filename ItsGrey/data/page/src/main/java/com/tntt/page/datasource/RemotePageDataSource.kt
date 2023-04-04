@@ -10,5 +10,5 @@ interface RemotePageDataSource {
     suspend fun getPageDtoList(bookId: String): Flow<List<PageDto>>
     suspend fun updatePageDto(pageDtoList: List<PageDto>): Flow<Boolean>
     suspend fun hasCover(bookId: String): Flow<Boolean>
-    suspend fun deletePageDtoList(pageIdList: List<String>): Flow<Boolean>
+    suspend fun deletePageDto(pageId: String): Flow<Boolean>
 }

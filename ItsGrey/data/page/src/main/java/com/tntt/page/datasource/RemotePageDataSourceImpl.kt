@@ -114,14 +114,13 @@ class RemotePageDataSourceImpl @Inject constructor(
         emit(result)
     }
 
-    override suspend fun deletePageDtoList(pageIdList: List<String>): Flow<Boolean> = flow {
+    override suspend fun deletePageDto(pageId: String): Flow<Boolean> = flow {
         var result = false
-        for (pageId in pageIdList) {
-            pageCollection
-                .document(pageId)
-                .delete()
-                .addOnSuccessListener { result = true }
-        }
+        pageCollection
+            .document(pageId)
+            .delete()
+            .addOnSuccessListener { result = true }
+            .await()
         emit(result)
     }
 }
