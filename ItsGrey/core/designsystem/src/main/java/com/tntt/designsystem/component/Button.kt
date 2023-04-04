@@ -54,12 +54,12 @@ fun IgTextButton(
 @Composable
 fun IgPlusPageButton(
     onClick: () -> Unit,
-    text: String
+    text: String,
+    modifier: Modifier
 ){
     Column {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = modifier
                 .aspectRatio(2 / 3f)
                 .shadow(6.dp)
                 .background(MaterialTheme.colorScheme.surface)

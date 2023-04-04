@@ -193,7 +193,10 @@ private fun BookList(
             }
             if (tabPage == TabPage.Working) {
                 item {
-                    IgPlusPageButton(onClick = {onNewButtonClick}, text = "New...")
+                    IgPlusPageButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {onNewButtonClick},
+                        text = "New...")
                 }
             }
         }
