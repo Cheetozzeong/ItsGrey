@@ -1,19 +1,27 @@
-<p align="center"><img src="./static/logo.png" alt="It's Grey" width="400" height="400"></p>
-<h1 align="center">It's Grey</h1>
-<hr />
-<h3 align="center">
-	머신 러닝 기반의 스케치를 제공하는 드로잉 애플리케이션
-</h3>
 <div align="center">
+	<img src="./static/logo.png" alt="It's Grey" width="400" height="400">
+	<h1 align="center">
+		It's Grey
+	</h1>
+</div>
+<div align="center">
+	<strong>
+		머신 러닝 기반의 스케치를 제공하는 드로잉 애플리케이션
+	</strong>
+    <br />
 	<sub>"원하는 사진으로 나만의 책을 엮어보세요"</sub>
 </div>
 
-<h3 align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.tntt.itsgrey">
-    <img src="./static/google_play_logo.png" alt="It's Grey" width="120" height="23">
+
+<div align="center">
+	<h3 align="center">
+		<a href="https://play.google.com/store/apps/details?id=com.tntt.itsgrey">
+			<img src="./static/google_play_logo.png" alt="It's Grey" width="120" height="23">
 	에서 다운로드
-  </a>
-</h3>
+		</a>
+    </h3>
+</div>
+
 
 ## 프로젝트 소개
 
@@ -38,7 +46,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper a
 
 ## 프로젝트 구조도
 
-![project_structure_diagram](C:\Users\SSAFY\Desktop\readme\static\project_structure_diagram.png)
+![project_structure_diagram](./static/project_structure_diagram.png)
 
 
 
@@ -56,8 +64,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper a
 </div>
 
 
-
-
 ### Development
 
 <div>
@@ -72,8 +78,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper a
 </div>
 
 
-
-
 ### Communication
 
 <div>
@@ -82,7 +86,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper a
     <img src="https://img.shields.io/badge/Notion-FFFFFF?style=flat&logo=Notion&logoColor=000000">
 	<img src="https://img.shields.io/badge/Jira-FFFFFF?style=flat&logo=Jira&logoColor=0052CC">
 </div>
-
 
 
 ## 주요 기능
@@ -104,6 +107,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper a
 | <img width="329" src="https://picsum.photos/200/300"/> | <img width="329" src="https://picsum.photos/200/300"/> |
 | 강좌 소개 페이지   |  강의 영상 페이지   |
 | <img width="329" src="https://picsum.photos/200/300"/> | <img width="329" src="https://picsum.photos/200/300"/> |
+
+
 
 ## 프로젝트 파일 구조
 
