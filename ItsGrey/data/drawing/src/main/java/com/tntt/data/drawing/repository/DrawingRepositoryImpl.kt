@@ -35,8 +35,8 @@ class DrawingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteDrawingInfo(id: String): Flow<Boolean> = flow {
-        drawingDataSource.deleteDrawingDto(id).collect() { result ->
+    override suspend fun deleteDrawingInfo(imageBoxId: String): Flow<Boolean> = flow {
+        drawingDataSource.deleteDrawingDto(imageBoxId).collect() { result ->
             emit(result)
         }
     }

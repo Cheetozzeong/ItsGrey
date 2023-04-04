@@ -29,14 +29,10 @@ class RemoteLayerDataSourceImpl @Inject constructor(
     val layerCollection by lazy { firestore.collection("layer") }
 
     override suspend fun createLayerDtoList(layerDtoList: List<LayerDto>): Flow<List<LayerDto>> = flow {
-        val layerDtoList = mutableListOf<LayerDto>()
         for (layerDto in layerDtoList) {
             layerCollection
                 .document(layerDto.id)
                 .set(layerDto)
-                .addOnSuccessListener {
-                    layerDtoList.add(layerDto)
-                }
                 .await()
         }
         emit(layerDtoList)
@@ -54,7 +50,7 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                     val data = document.data
                     val id = data?.get("id") as String
                     val order = data?.get("order") as Int
-                    val uri = data?.get("uri") as String
+                    val uri = data?.get("url") as String
                     layerDtoList.add(LayerDto(id, imageBoxId, order, uri))
                 }
             }.await()
@@ -129,7 +125,6 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         val requestBody = RequestBody.create(MediaType.parse("image/jpeg"), byteArray)
         val part = MultipartBody.Part.createFormData("file", "my_image.jpg", requestBody)
         val response = apiService.getSketch(part)
-        Log.d("function test", "response = ${response}")
 
         val bmpByteArray = response.bytes()
         val options =BitmapFactory.Options().apply {
@@ -137,7 +132,13 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         }
 
         val resultBitmap = BitmapFactory.decodeByteArray(bmpByteArray, 0, bmpByteArray.size, options)
-
+        val pixels = IntArray(resultBitmap.width * resultBitmap.height)
+        bitmap.getPixels(pixels, 0, resultBitmap.width, 0, 0, resultBitmap.width, resultBitmap.height)
+        for (i in pixels.indices) {
+            if(pixels[i] == Color.WHITE){
+                pixels[i] = Color.TRANSPARENT
+            }
+        }
         emit(resultBitmap)
     }
 
@@ -152,7 +153,7 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
         var url: Uri? = null
 
-        val urlTask = uploadTask.continueWithTask { task ->
+        uploadTask.continueWithTask { task ->
             if(!task.isSuccessful)  {
                 task.exception?.let {
                     throw it

@@ -7,10 +7,7 @@ import com.tntt.model.BoxData
 import com.tntt.model.ImageBoxInfo
 import com.tntt.model.TextBoxInfo
 import com.tntt.model.Thumbnail
-import com.tntt.repo.ImageBoxRepository
-import com.tntt.repo.LayerRepository
-import com.tntt.repo.PageRepository
-import com.tntt.repo.TextBoxRepository
+import com.tntt.repo.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -21,6 +18,8 @@ class EditPageUseCase @Inject constructor(
     private val pageRepository: PageRepository,
     private val imageBoxRepository: ImageBoxRepository,
     private val textBoxRepository: TextBoxRepository,
+    private val layerRepository: LayerRepository,
+    private val drawingRepository: DrawingRepository,
 ){
 
     fun createImageBox(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<ImageBoxInfo> = flow {
@@ -74,8 +73,12 @@ class EditPageUseCase @Inject constructor(
     }
 
     fun deleteImageBox(imageBoxId: String): Flow<Boolean> = flow {
-        imageBoxRepository.deleteImageBoxInfo(imageBoxId).collect() { result ->
-            emit(result)
+        layerRepository.deleteLayerInfoList(imageBoxId).collect() { deleteLayerResult ->
+            drawingRepository.deleteDrawingInfo(imageBoxId).collect() { deleteDrawingResult ->
+                imageBoxRepository.deleteImageBoxInfo(imageBoxId).collect() { deleteImageBoxResult ->
+                    emit(deleteLayerResult && deleteDrawingResult && deleteImageBoxResult)
+                }
+            }
         }
     }
 

@@ -3,7 +3,6 @@ package com.tntt.layer.repository
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
-import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
 import com.tntt.layer.datasource.RemoteLayerDataSource
 import com.tntt.layer.model.LayerDto
 import com.tntt.model.LayerInfo
@@ -17,14 +16,13 @@ import javax.inject.Inject
 
 class LayerRepositoryImpl @Inject constructor(
     private val layerDataSource: RemoteLayerDataSource,
-    private val imageBoxDataSource: RemoteImageBoxDataSource
 ): LayerRepository {
 
     override suspend fun createLayerInfoList(imageBoxId: String, layerInfoList: List<LayerInfo>): Flow<List<LayerInfo>> = flow {
         val layerDtoList = mutableListOf<LayerDto>()
         for (layerInfo in layerInfoList) {
-            layerDataSource.saveImage(layerInfo.bitmap, layerInfo.url).collect() { uri ->
-                layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, uri.toString()))
+            layerDataSource.saveImage(layerInfo.bitmap, layerInfo.id).collect() { url ->
+                layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, url.toString()))
             }
         }
         layerDataSource.createLayerDtoList(layerDtoList).collect() { layerDtoList ->
@@ -37,7 +35,7 @@ class LayerRepositoryImpl @Inject constructor(
         layerDataSource.getLayerDtoList(imageBoxId).collect() { layerDtoList ->
             for (layerDto in layerDtoList) {
                 layerDataSource.getImage(layerDto.url).collect() { bitmap ->
-                    layerInfoList.add(LayerInfo(layerDto.id, layerDto.order, bitmap, layerDto.url))
+                    layerInfoList.add(LayerInfo(layerDto.id, layerDto.order, bitmap))
                 }
             }
             emit(layerInfoList)
@@ -48,7 +46,7 @@ class LayerRepositoryImpl @Inject constructor(
         val layerDtoList = mutableListOf<LayerDto>()
 
         for (layerInfo in layerInfoList) {
-            layerDataSource.saveImage(layerInfo.bitmap, layerInfo.url).collect() { url ->
+            layerDataSource.saveImage(layerInfo.bitmap, layerInfo.id).collect() { url ->
                 layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, url.toString()))
             }
         }

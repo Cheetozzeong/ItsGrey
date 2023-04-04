@@ -42,19 +42,9 @@ class MainActivity : AppCompatActivity() {
             val bitmap =
                 BitmapFactory.decodeResource(applicationContext.resources, R.drawable.ironman)
             val layerList = mutableListOf<LayerInfo>()
-            drawingUseCase.saveImage(bitmap, "ironman1.jpg").collect() { url ->
-                Log.d("function test", "saveImage url = ${url}")
-                drawingUseCase.getImage(url.toString()).collect() { bitmap ->
-                    Log.d("function test", "getImage bitmap = ${bitmap}")
-                    drawingUseCase.getSketch(bitmap).collect() { newBitmap ->
-                        Log.d("function test", "getSketch newBitmap = ${newBitmap}")
-                        drawingUseCase.saveImage(newBitmap, "ironman2.jpg").collect() { newUrl ->
-                            Log.d("function test", "newUrl = ${newUrl}")
-
-                        }
-                    }
-                }
-            }
+//            drawingUseCase.createLayerList("imageboxid1", bitmap).collect() { layerList ->
+//                Log.d("fucntion test", "layerList = ${layerList}")
+//            }
         }
 
         setContent {
