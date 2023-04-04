@@ -28,7 +28,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getBookDto(bookId: String): Flow<BookDto> = flow {
-        var bookDto = BookDto("1", "1", "1", BookType.EDIT, Date())
+        var bookDto = BookDto("1", "1", "1", BookType.WORKING, Date())
         bookCollection.document(bookId).get().addOnCompleteListener { documentSnapshot ->
             val data = documentSnapshot.result?.data
             val id = data?.get("id") as String
@@ -70,7 +70,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 val userId = document.get("userId") as String
                 val title = document.get("title") as String
                 val bookType = BookType.valueOf(document.get("bookType") as String)
-                val saveDate = (document.getDate("saveDate") as Timestamp).toDate()
+                val saveDate = (document.get("saveDate") as Timestamp).toDate()
                 bookDtoList.add(BookDto(id, userId, title, bookType, saveDate))
             }
         }.await()
