@@ -4,8 +4,11 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.tntt.core.common.decoder.StringDecoder
 import com.tntt.home.model.Book
+import com.tntt.home.navigation.userIdArg
+import com.tntt.home.navigation.userNameArg
 import com.tntt.home.usecase.HomeUseCase
 import com.tntt.model.BookInfo
 import com.tntt.model.BookType
@@ -20,9 +23,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomePageViewModel @Inject constructor(
-    private val homeUseCase: HomeUseCase
+    private val homeUseCase: HomeUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    val userId: String = checkNotNull(savedStateHandle[userIdArg])
+    val userName: String = checkNotNull(savedStateHandle[userNameArg])
 
     private val _workingBookList = MutableStateFlow(listOf<Book>())
     val workingBookList: StateFlow<List<Book>> = _workingBookList
@@ -32,14 +38,12 @@ class HomePageViewModel @Inject constructor(
 
     init {
         getPublishedBookList(
-            userId = "1",
-            //TODO firebase에서 받아오기
+            userId = userId,
             sortType = SortType.SAVE_DATE,
             startIndex = 0L
         )
         getWorkingBookList(
-            userId = "1",
-            //TODO firebase에서 받아오기
+            userId = userId,
             sortType = SortType.SAVE_DATE,
             startIndex = 0L
         )
@@ -74,9 +78,7 @@ class HomePageViewModel @Inject constructor(
                 sortType,
                 startIndex,
                 BookType.PUBLISHED
-            ).collect() {
-                    publishedBookList -> _publishedBookList.value = publishedBookList }
+            ).collect() { publishedBookList -> _publishedBookList.value = publishedBookList }
         }
     }
-
 }
