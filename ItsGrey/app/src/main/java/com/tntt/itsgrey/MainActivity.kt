@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.tntt.domain.drawing.usecase.DrawingUseCase
 import com.tntt.itsgrey.navigation.IgNavHost
+import com.tntt.model.LayerInfo
 import dagger.hilt.android.AndroidEntryPoint
 import itsgrey.app.R
 import kotlinx.coroutines.CoroutineScope
@@ -37,12 +38,21 @@ class MainActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            val bitmap = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.ironman)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val bitmap =
+                BitmapFactory.decodeResource(applicationContext.resources, R.drawable.ironman)
+            val layerList = mutableListOf<LayerInfo>()
+            drawingUseCase.saveImage(bitmap, "ironman1.jpg").collect() { url ->
+                Log.d("function test", "saveImage url = ${url}")
+                drawingUseCase.getImage(url.toString()).collect() { bitmap ->
+                    Log.d("function test", "getImage bitmap = ${bitmap}")
+                    drawingUseCase.getSketch(bitmap).collect() { newBitmap ->
+                        Log.d("function test", "getSketch newBitmap = ${newBitmap}")
+                        drawingUseCase.saveImage(newBitmap, "ironman2.jpg").collect() { newUrl ->
+                            Log.d("function test", "newUrl = ${newUrl}")
 
-            drawingUseCase.getSketch(bitmap).collect() { bitmap ->
-                drawingUseCase.saveImage(bitmap).collect() { result ->
-                    Log.d("function test", "result = ${result}")
+                        }
+                    }
                 }
             }
         }

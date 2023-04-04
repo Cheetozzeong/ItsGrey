@@ -9,6 +9,7 @@ import com.tntt.layer.model.LayerDto
 import com.tntt.model.LayerInfo
 import com.tntt.repo.LayerRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.io.InputStream
@@ -19,9 +20,15 @@ class LayerRepositoryImpl @Inject constructor(
     private val imageBoxDataSource: RemoteImageBoxDataSource
 ): LayerRepository {
 
-    override suspend fun createLayerInfo(imageBoxId: String, layerInfo: LayerInfo): Flow<LayerInfo> = flow {
-        layerDataSource.createLayerDto(LayerDto("", imageBoxId, layerInfo.order, layerInfo.bitmap)).collect() { layerDtoId ->
-            emit(layerInfo)
+    override suspend fun createLayerInfoList(imageBoxId: String, layerInfoList: List<LayerInfo>): Flow<List<LayerInfo>> = flow {
+        val layerDtoList = mutableListOf<LayerDto>()
+        for (layerInfo in layerInfoList) {
+            layerDataSource.saveImage(layerInfo.bitmap, layerInfo.url).collect() { uri ->
+                layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, uri.toString()))
+            }
+        }
+        layerDataSource.createLayerDtoList(layerDtoList).collect() { layerDtoList ->
+            emit(layerInfoList)
         }
     }
 
@@ -29,7 +36,9 @@ class LayerRepositoryImpl @Inject constructor(
         val layerInfoList = mutableListOf<LayerInfo>()
         layerDataSource.getLayerDtoList(imageBoxId).collect() { layerDtoList ->
             for (layerDto in layerDtoList) {
-                layerInfoList.add(LayerInfo(layerDto.id, layerDto.order, layerDto.bitmap))
+                layerDataSource.getImage(layerDto.url).collect() { bitmap ->
+                    layerInfoList.add(LayerInfo(layerDto.id, layerDto.order, bitmap, layerDto.url))
+                }
             }
             emit(layerInfoList)
         }
@@ -39,7 +48,9 @@ class LayerRepositoryImpl @Inject constructor(
         val layerDtoList = mutableListOf<LayerDto>()
 
         for (layerInfo in layerInfoList) {
-            layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, layerInfo.bitmap))
+            layerDataSource.saveImage(layerInfo.bitmap, layerInfo.url).collect() { url ->
+                layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, url.toString()))
+            }
         }
         layerDataSource.updateLayerDtoList(layerDtoList).collect() { result ->
             emit(result)
@@ -58,13 +69,15 @@ class LayerRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveImage(bitmap: Bitmap): Flow<Uri?> = flow {
-        layerDataSource.saveImage(bitmap).collect() { result ->
-            emit(result)
+    override suspend fun saveImage(bitmap: Bitmap, url: String): Flow<Uri?> = flow {
+        layerDataSource.saveImage(bitmap, url).collect() { url ->
+            emit(url)
         }
     }
 
-    override suspend fun getImage(uri: Uri): Flow<Bitmap> {
-        TODO("Not yet implemented")
+    override suspend fun getImage(uri: String): Flow<Bitmap> = flow {
+        layerDataSource.getImage(uri).collect() { bitmap ->
+            emit(bitmap)
+        }
     }
 }

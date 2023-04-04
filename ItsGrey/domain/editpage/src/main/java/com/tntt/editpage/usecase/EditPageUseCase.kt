@@ -41,6 +41,24 @@ class EditPageUseCase @Inject constructor(
         }
     }
 
+    fun getImageBoxList(pageId: String): Flow<List<ImageBoxInfo>> = flow {
+        imageBoxRepository.getImageBoxInfoList(pageId).collect() { imageBoxList ->
+            emit(imageBoxList)
+        }
+    }
+
+    fun getTextBoxList(pageId: String): Flow<List<TextBoxInfo>> = flow {
+        textBoxRepository.getTextBoxInfoList(pageId).collect() { textBoxList ->
+            emit(textBoxList)
+        }
+    }
+
+    fun saveImageBox(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<Boolean> = flow {
+        imageBoxRepository.updateImageBoxInfo(pageId, imageBoxInfo).collect() { result ->
+            emit(result)
+        }
+    }
+
     fun savePage(page: Page): Flow<Boolean> = flow {
             textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList).collect() { updateTextBoxResult ->
                 var result = updateTextBoxResult
