@@ -6,7 +6,9 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="web_client_id">870090395674-8b514ccqvub27ucgs5thscbd0k3lj205.apps.googleusercontent.com</string>
+
 </resources>
