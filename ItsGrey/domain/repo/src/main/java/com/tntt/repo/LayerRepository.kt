@@ -15,4 +15,5 @@ interface LayerRepository {
     suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap>
     suspend fun saveImage(bitmap: Bitmap, url: String): Flow<Uri?>
     suspend fun getImage(uri: String): Flow<Bitmap>
+    suspend fun getSumLayerBitmap(layerInfoList: List<LayerInfo>): Flow<Bitmap>
 }

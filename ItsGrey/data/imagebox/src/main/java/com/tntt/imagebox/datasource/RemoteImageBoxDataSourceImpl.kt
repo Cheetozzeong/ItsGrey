@@ -18,13 +18,13 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
     val imageBoxCollection by lazy { firestore.collection("imageBox") }
 
-    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<ImageBoxDto> = flow {
+    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<String> = flow {
         imageBoxCollection
             .document(imageBoxDto.id)
             .set(imageBoxDto)
             .addOnSuccessListener { Log.d("function test", "success createImageBoxDto(${imageBoxDto})") }
             .await()
-        emit(imageBoxDto)
+        emit(imageBoxDto.id)
     }
 
     override suspend fun getImageBoxDtoList(pageId: String): Flow<List<ImageBoxDto>> = flow {
@@ -50,13 +50,26 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
     }
 
     override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean> = flow {
-        var result: Boolean = true
+        var result = false
         imageBoxCollection
             .document(imageBoxDto.id)
             .set(imageBoxDto)
-            .addOnFailureListener {
-                result = false
-            }
+            .addOnSuccessListener { result = true }
+            .await()
+        emit(result)
+    }
+
+    override suspend fun updateImageBoxDtoList(imageBoxDtoList: List<ImageBoxDto>): Flow<Boolean> = flow {
+        var result: Boolean = true
+        for (imageBoxDto in imageBoxDtoList) {
+            imageBoxCollection
+                .document(imageBoxDto.id)
+                .set(imageBoxDto)
+                .addOnFailureListener {
+                    result = false
+                }
+                .await()
+        }
         emit(result)
     }
 
@@ -68,6 +81,7 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
+            .await()
         emit(result)
     }
 }

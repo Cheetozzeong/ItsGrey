@@ -15,23 +15,21 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
     val drawingCollection by lazy { firestore.collection("drawing") }
 
     override suspend fun createDrawingDto(drawingDto: DrawingDto): Flow<String> = flow {
-        val id = UUID.randomUUID().toString()
-        drawingDto.id = id
         drawingCollection
-            .document(id)
+            .document(drawingDto.id)
             .set(drawingDto)
-        emit(id)
+            .await()
+        emit(drawingDto.id)
     }
 
     override suspend fun getDrawingDto(imageBoxId: String): Flow<DrawingDto> = flow {
-
         lateinit var drawingDto: DrawingDto
 
         drawingCollection
             .whereEqualTo("imageBoxId", imageBoxId)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents.firstOrNull() ?: throw NullPointerException()
+                val documentSnapshot = querySnapshot.documents.first()
 
                 val data = documentSnapshot.data
                 val id = data?.get("id") as String
@@ -41,15 +39,17 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
                 val recentColors = data?.get("recentColors") as List<String>
                 drawingDto = DrawingDto(id, imageBoxId, penSizeList, eraserSizeList, penColor, recentColors)
             }
+            .await()
         emit(drawingDto)
     }
 
     override suspend fun updateDrawingDto(drawingDto: DrawingDto): Flow<Boolean> = flow {
-        var result: Boolean = true
+        var result: Boolean = false
         drawingCollection
             .document(drawingDto.id)
             .set(drawingDto)
-            .addOnFailureListener { result = false }
+            .addOnSuccessListener { result = true }
+            .await()
         emit(result)
     }
 

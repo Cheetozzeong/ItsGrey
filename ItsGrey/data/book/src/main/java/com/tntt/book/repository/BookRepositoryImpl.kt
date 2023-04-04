@@ -16,10 +16,10 @@ class BookRepositoryImpl @Inject constructor(
     private val bookDataSource: RemoteBookDataSource
 ) : BookRepository {
 
-    override suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<BookInfo> = flow {
+    override suspend fun createBookInfo(userId: String, bookInfo: BookInfo): Flow<String> = flow {
         val bookDto = BookDto(bookInfo.id, userId, bookInfo.title, BookType.EDIT, Date())
-        bookDataSource.createBookDto(userId, bookDto).collect() { resultBookDto ->
-            emit(BookInfo(resultBookDto.id, resultBookDto.title, resultBookDto.saveDate))
+        bookDataSource.createBookDto(userId, bookDto).collect() { bookId ->
+            emit(bookId)
         }
     }
 

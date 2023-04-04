@@ -16,11 +16,11 @@ class ImageBoxRepositoryImpl @Inject constructor(
     private val layerDataSource: RemoteLayerDataSource,
 ) : ImageBoxRepository {
 
-    override suspend fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<ImageBoxInfo> = flow {
+    override suspend fun createImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<String> = flow {
         layerDataSource.saveImage(imageBoxInfo.image, imageBoxInfo.id).collect() { url ->
             val imageBoxDto = ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData, url.toString())
-            imageBoxDataSource.createImageBoxDto(imageBoxDto).collect() { imageBoxDto ->
-                emit(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, imageBoxInfo.image))
+            imageBoxDataSource.createImageBoxDto(imageBoxDto).collect() { imageBoxId ->
+                emit(imageBoxId)
             }
         }
     }
@@ -37,11 +37,26 @@ class ImageBoxRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateImageBoxInfo(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<Boolean> = flow {
+    override suspend fun updateImageBoxInfo(
+        pageId: String,
+        imageBoxInfo: ImageBoxInfo
+    ): Flow<Boolean> = flow {
         layerDataSource.saveImage(imageBoxInfo.image, imageBoxInfo.id).collect() { url ->
             imageBoxDataSource.updateImageBoxDto(ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData, url.toString())).collect() { result ->
                 emit(result)
             }
+        }
+    }
+
+    override suspend fun updateImageBoxInfoList(pageId: String, imageBoxInfoList: List<ImageBoxInfo>): Flow<Boolean> = flow {
+        val imageBoxDtoList = mutableListOf<ImageBoxDto>()
+        for (imageBoxInfo in imageBoxInfoList) {
+            layerDataSource.saveImage(imageBoxInfo.image, imageBoxInfo.id).collect() { url ->
+                imageBoxDtoList.add(ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData, url.toString()))
+            }
+        }
+        imageBoxDataSource.updateImageBoxDtoList(imageBoxDtoList).collect() { result ->
+            emit(result)
         }
     }
 

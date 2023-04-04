@@ -62,7 +62,11 @@ class DrawingUseCase @Inject constructor(
     suspend fun save(pageId: String, imageBox: ImageBox): Flow<Boolean> = flow {
         drawingRepository.updateDrawingInfo(imageBox.id, imageBox.drawing).collect() { updateDrawingResult ->
             layerRepository.updateLayerInfoList(imageBox.id, imageBox.layerList).collect() { updateLayerResult ->
-
+                layerRepository.getSumLayerBitmap(imageBox.layerList).collect() { sumLayer ->
+                    imageBoxRepository.updateImageBoxInfo(pageId, ImageBoxInfo(imageBox.id, imageBox.boxData, sumLayer)).collect() { result ->
+                        emit(result)
+                    }
+                }
             }
         }
     }

@@ -39,12 +39,7 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            val bitmap =
-                BitmapFactory.decodeResource(applicationContext.resources, R.drawable.ironman)
-            val layerList = mutableListOf<LayerInfo>()
-//            drawingUseCase.createLayerList("imageboxid1", bitmap).collect() { layerList ->
-//                Log.d("fucntion test", "layerList = ${layerList}")
-//            }
+            
         }
 
         setContent {
