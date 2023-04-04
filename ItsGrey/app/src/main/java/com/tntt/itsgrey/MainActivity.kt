@@ -11,8 +11,9 @@ import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.tntt.domain.drawing.usecase.DrawingUseCase
 import com.tntt.itsgrey.navigation.IgNavHost
+import com.tntt.model.BookType
+import com.tntt.model.SortType
 import dagger.hilt.android.AndroidEntryPoint
 import itsgrey.app.R
 import kotlinx.coroutines.CoroutineScope
@@ -28,25 +29,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    @Inject
-    lateinit var drawingUseCase: DrawingUseCase
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        lifecycleScope.launch(Dispatchers.Main) {
-            val bitmap = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.ironman)
-
-            drawingUseCase.getSketch(bitmap).collect() { bitmap ->
-                drawingUseCase.saveImage(bitmap).collect() { result ->
-                    Log.d("function test", "result = ${result}")
-                }
-            }
-        }
-
         setContent {
             val navController = rememberNavController()
             IgNavHost(navController)
