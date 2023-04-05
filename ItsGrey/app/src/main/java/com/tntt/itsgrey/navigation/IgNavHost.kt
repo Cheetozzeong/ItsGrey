@@ -5,8 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.tntt.feature.editpage.navigation.editPageGraphRoutePattern
-import com.tntt.editbook.navigation.editBookPageRoute
-import com.tntt.editbook.navigation.editBookPageScreen
 import com.tntt.feature.editpage.navigation.editPageScreen
 import com.tntt.home.navigation.homePageRoute
 import com.tntt.home.navigation.homePageScreen
