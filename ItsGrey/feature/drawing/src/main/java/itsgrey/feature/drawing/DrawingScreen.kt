@@ -1,15 +1,11 @@
 package itsgrey.feature.drawing
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.layout.LazyLayout
-import androidx.compose.foundation.lazy.layout.LazyLayoutItemProvider
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,18 +20,22 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tntt.designsystem.component.IgIconButton
 import com.tntt.designsystem.component.IgTextButton
 import com.tntt.designsystem.component.IgTopAppBar
+import com.tntt.designsystem.dialog.IgDraggableDialog
 import com.tntt.designsystem.icon.IgIcons
 import com.tntt.model.LayerInfo
 import io.getstream.sketchbook.Sketchbook
 import io.getstream.sketchbook.SketchbookController
 import io.getstream.sketchbook.rememberSketchbookController
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +57,7 @@ fun DrawingRoute(
         Scaffold(
             modifier = Modifier
                 .pointerInput(selectedTool) {
-                    if (selectedTool == DrawingToolLabel.ColorPicker) {
+                    if (selectedTool == DrawingToolLabel.ColorPicker || selectedTool == DrawingToolLabel.Resizing) {
                         detectTapGestures { viewModel.selectTool(DrawingToolLabel.None) }
                     }
                 },
@@ -65,18 +65,26 @@ fun DrawingRoute(
                 DrawingTopAppBar(
                     sketchController = colorPaintController,
                     onClickBackNav = {
-                        viewModel::save
+                        viewModel.updateDrawingInfo(colorPaintController)
+                        viewModel.save()
                         onClickBackNav()
+                    },
+                    onClickSaveButton = {
+                        viewModel.updateDrawingInfo(colorPaintController)
+                        viewModel.save()
                     }
                 )
-                     },
+            },
         ) { paddingValues ->
 
             LaunchedEffect(Unit) {
                 colorPaintController.setImageBitmap(layerList[selectedLayerOrder].bitmap.asImageBitmap())
+                colorPaintController.setPaintColor(Color("#${drawingInfo.penColor}".toColorInt()))
+                colorPaintController.setPaintStrokeWidth(drawingInfo.penSizeList[0].toFloat())
             }
 
             var colorPickerPosition by remember { mutableStateOf(Offset.Zero) }
+            var resizingDialogPosition by remember { mutableStateOf(Offset.Zero) }
 
             Row(
                 Modifier
@@ -92,23 +100,23 @@ fun DrawingRoute(
 
                     SideToolBar(
                         modifier = Modifier
-                            .weight(1f)
                             .fillMaxWidth(),
                         sketchController = colorPaintController,
                         onSelectTool = viewModel::selectTool,
-                        onGloballyPositioned = { colorPickerPosition = it.boundsInRoot().topRight }
+                        onGloballyPositionedColorPicker = { colorPickerPosition = it.boundsInRoot().topRight },
+                        onGloballyPositionedResizing = { resizingDialogPosition = it.boundsInRoot().topRight }
                     )
 
+                    Spacer(Modifier.padding(20.dp))
                     Box(
                         Modifier
                             .width(40.dp)
                             .height(2.dp)
-                            .background(Color.Black)
-                    )
+                            .background(Color.Black))
+                    Spacer(Modifier.padding(20.dp))
 
                     LayerSection(
                         modifier = Modifier
-                            .weight(1f)
                             .fillMaxWidth(),
                         aspectRatio = aspectRatio,
                         layerList = layerList,
@@ -140,9 +148,23 @@ fun DrawingRoute(
                     setSelectedColor = { colorPaintController.setPaintColor(Color(it)) }
                 )
             }
+            if(selectedTool == DrawingToolLabel.Resizing) {
+                IgDraggableDialog(
+                    modifier = Modifier
+                        .offset {
+                            IntOffset(
+                                resizingDialogPosition.x.roundToInt() + 60,
+                                resizingDialogPosition.y.roundToInt()
+                            )
+                        },
+                    minValue = 8f,
+                    maxValue = 100f,
+                    initialFontSize = colorPaintController.currentPaint.strokeWidth,
+                    changedFontSize = { newSize -> colorPaintController.setPaintStrokeWidth(newSize) }
+                )
+            }
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -150,6 +172,7 @@ fun DrawingRoute(
 private fun DrawingTopAppBar(
     sketchController: SketchbookController,
     onClickBackNav: () -> Unit,
+    onClickSaveButton: () -> Unit
 ) {
 
     IgTopAppBar(
@@ -159,9 +182,9 @@ private fun DrawingTopAppBar(
         navigationIconContentDescription = "뒤로가기",
         onNavigationClick = { onClickBackNav() },
         actions = {
-            UndoButton {sketchController.undo()}
-            RedoButton {sketchController.redo()}
-            SaveButton()
+            UndoButton { sketchController.undo() }
+            RedoButton { sketchController.redo() }
+            SaveButton { onClickSaveButton() }
         }
     )
 }
@@ -171,43 +194,41 @@ private fun SideToolBar(
     modifier: Modifier,
     sketchController: SketchbookController,
     onSelectTool: (DrawingToolLabel) -> Unit,
-    onGloballyPositioned: (LayoutCoordinates) -> Unit
+    onGloballyPositionedColorPicker: (LayoutCoordinates) -> Unit,
+    onGloballyPositionedResizing: (LayoutCoordinates) -> Unit,
 ) {
+
+    var isBrushMode by remember { mutableStateOf(true) }
+    var penColor by remember { mutableStateOf(sketchController.currentPaintColor.value) }
 
     Column(
         modifier
             .padding(vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        IgIconButton(
-            modifier = Modifier,
-            onClick = { sketchController.setEraseMode(false) },
-            icon = {
-                Icon(
-                    imageVector = IgIcons.Brush,
-                    contentDescription = "brushButton",
-                    tint = toggleTint(!sketchController.isEraseMode.value)
-                )
-            }
-        )
-
-        IgIconButton(
-            onClick = { sketchController.toggleEraseMode() },
-            icon = {
-                Icon(
-                    painter = painterResource(id = IgIcons.Eraser),
-                    contentDescription = "EraserButton",
-                    tint = toggleTint(sketchController.isEraseMode.value)
-                )
-            }
-        )
+        BrushButton(isSelected = isBrushMode) {
+            isBrushMode = true
+            sketchController.setPaintColor(penColor)
+        }
+        EraserButton(isSelected = !isBrushMode) {
+            isBrushMode = false
+            penColor = sketchController.currentPaintColor.value
+            sketchController.setPaintColor(Color.White)
+        }
         
         Spacer(modifier = Modifier.padding(10.dp))
         
         ColorPickerButton(
             currentColor = sketchController.currentPaintColor.value,
             onClick = { onSelectTool(it) },
-            onGloballyPositioned = { onGloballyPositioned(it) }
+            onGloballyPositioned = { onGloballyPositionedColorPicker(it) }
+        )
+
+        Spacer(modifier = Modifier.padding(20.dp))
+
+        SetPenSizeButton(
+            onClick = { onSelectTool(it) },
+            onGloballyPositioned = { onGloballyPositionedResizing(it) }
         )
     }
 }
@@ -222,19 +243,21 @@ private fun SketchScreen(
     if(layerList.isNotEmpty()) {
 
         Box(
-            modifier = modifier
-                .fillMaxSize()
+            modifier = Modifier
+                .background(Color.White)
         ) {
             Image(
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier
+                    .fillMaxSize()
+                    .zIndex(2f),
                 bitmap = layerList[1].bitmap.asImageBitmap(),
                 contentDescription = "",
                 contentScale = ContentScale.Fit
             )
             Sketchbook(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxSize()
-                    .zIndex(-1f)
+                    .zIndex(1f)
                 ,
                 controller = colorPaintController,
                 onPathListener = {
@@ -301,9 +324,11 @@ private fun RedoButton(onClick: () -> Unit) {
 }
 
 @Composable
-private fun SaveButton() {
+private fun SaveButton(
+    onClick: () -> Unit
+) {
     IgTextButton(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         text = { Text(text = "저장") }
     )
 }
@@ -363,6 +388,26 @@ private fun ColorPickerButton(
                 }
             }
             .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+    )
+}
+
+@Composable
+fun SetPenSizeButton(
+    onClick: (DrawingToolLabel) -> Unit,
+    onGloballyPositioned: (LayoutCoordinates) -> Unit,
+) {
+    Box(
+        Modifier
+            .onGloballyPositioned(onGloballyPositioned)
+            .width(20.dp)
+            .height(20.dp)
+            .clip(CircleShape)
+            .background(Color.Gray)
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    onClick(DrawingToolLabel.Resizing)
+                }
+            }
     )
 }
 

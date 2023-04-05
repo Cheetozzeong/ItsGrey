@@ -19,15 +19,9 @@ fun PageForView(
     modifier: Modifier,
     thumbnail: Thumbnail,
 ) {
-    var parent by rememberSaveable(stateSaver = RectSaver){
-        mutableStateOf(
-            Rect(Offset.Zero, Size.Zero)
-        )
-    }
-    val imageBoxInfo = remember(thumbnail){ mutableStateOf(thumbnail.imageBoxList) }
-    val contentBoxInfoList = remember(thumbnail){
-        thumbnail.textBoxList.toMutableStateList()
-    }
+    var parent by rememberSaveable(stateSaver = RectSaver){ mutableStateOf(Rect(Offset.Zero, Size.Zero)) }
+    val imageBoxInfo = remember(thumbnail) { thumbnail.imageBoxList }
+    val contentBoxInfoList = remember(thumbnail) { thumbnail.textBoxList }
 
     Box(
         modifier
@@ -37,13 +31,13 @@ fun PageForView(
             }
     ){
 
-        imageBoxInfo.value.forEach { imageBox ->
+        imageBoxInfo.forEach { imageBox ->
             ImageBox(
                 parent = parent,
                 imageBoxInfo = imageBox,
             )
         }
-        contentBoxInfoList.map{textBoxInfo->
+        contentBoxInfoList.forEach { textBoxInfo->
             with(textBoxInfo){
                 TextBox(
                     parent = parent,
@@ -76,10 +70,7 @@ fun PageForEdit(
     Box(
         modifier
             .aspectRatio(2f / 3f)
-            .fillMaxHeight()
-            .onGloballyPositioned { layoutCoordinates ->
-                parent = layoutCoordinates.boundsInRoot()
-            }
+            .onGloballyPositioned { layoutCoordinates -> parent = layoutCoordinates.boundsInRoot() }
     ){
         imageBoxList.forEach { imageBoxInfo ->
             with(imageBoxInfo) {

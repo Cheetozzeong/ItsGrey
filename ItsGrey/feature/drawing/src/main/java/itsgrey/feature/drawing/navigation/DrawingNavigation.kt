@@ -38,7 +38,9 @@ fun NavGraphBuilder.drawingScreen(
         composable(
             route = drawingRoute,
         ) {
-            DrawingRoute()
+            DrawingRoute(
+                onClickBackNav = onBackClick
+            )
         }
     }
 

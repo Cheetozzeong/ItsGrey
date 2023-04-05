@@ -50,7 +50,7 @@ class EditPageViewModel @Inject constructor(
                     thumbnail = Thumbnail(
                         listOf(
                             ImageBoxInfo(
-                                id = "image",
+                                id = "gg1",
                                 boxData = BoxData(
                                     offsetRatioX = 0.2f,
                                     offsetRatioY = 0.2f,
@@ -110,7 +110,7 @@ class EditPageViewModel @Inject constructor(
             id = UUID.randomUUID().toString(),
             text = "",
             fontSizeRatio = 0.05f,
-            boxData = BoxData(0.2f, 0.6f , 0.5f, 0.3f)
+            boxData = BoxData(0.2f, 0.6f , 0.5f, 0.2f)
         )
         _textBoxList.value = textBoxList.value + newBox
         _selectedBoxId.value = newBox.id

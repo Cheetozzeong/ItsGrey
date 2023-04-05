@@ -4,5 +4,6 @@ enum class DrawingToolLabel {
     Brush,
     Eraser,
     ColorPicker,
+    Resizing,
     None
 }

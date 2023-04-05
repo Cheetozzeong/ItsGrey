@@ -35,7 +35,7 @@ class RemotePageDataSourceImpl @Inject constructor(
 
         val id = documentSnapshot.id
         val data = documentSnapshot.data
-        val order = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+        val order = (data?.get("order") as Long).toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
 
         val pageDto = PageDto(id, bookId, order)
         emit(pageDto)
@@ -54,7 +54,7 @@ class RemotePageDataSourceImpl @Inject constructor(
             val documentSnapshot = querySnapshot.documents.first()
             val id = documentSnapshot.id as String
             val data = documentSnapshot.data
-            val order = (data?.get("order") as Long).toInt()
+            val order = (data?.get("order") as Long).toString().toInt()
 
             pageDto = PageDto(id, bookId, order)
         }
@@ -73,7 +73,7 @@ class RemotePageDataSourceImpl @Inject constructor(
         for (document in documentSnapshot) {
             val id = document.id
             val data = document.data
-            val order: Int = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+            val order = (data?.get("order") as Long).toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
             pageDtoList.add(PageDto(id, bookId, order))
         }
 

@@ -14,6 +14,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -42,20 +43,19 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
     override suspend fun getLayerDtoList(imageBoxId: String): Flow<List<LayerDto>> = flow {
         val layerDtoList = mutableListOf<LayerDto>()
-        layerCollection
+        val querySnapshot = layerCollection
             .whereEqualTo("imageBoxId", imageBoxId)
             .orderBy("order")
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents
-                for (document in documentSnapshot) {
-                    val data = document.data
-                    val id = data?.get("id") as String
-                    val order = data?.get("order") as Int
-                    val url = data?.get("url") as String
-                    layerDtoList.add(LayerDto(id, imageBoxId, order, url))
-                }
-            }.await()
+            .await()
+        val documentSnapshot = querySnapshot.documents
+        for (document in documentSnapshot) {
+            val data = document.data
+            val id = data?.get("id") as String
+            val order = (data?.get("order") as Long).toString().toInt()
+            val url = data?.get("url") as String
+            layerDtoList.add(LayerDto(id, imageBoxId, order, url))
+        }
         emit(layerDtoList)
     }
 
@@ -93,11 +93,11 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
     override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val byteArray = stream.toByteArray()
 
         val apiService = RetrofitNetwork.getApiService()
-        val requestBody = RequestBody.create(MediaType.parse("image/jpeg"), byteArray)
+        val requestBody = RequestBody.create(MediaType.parse("image/png"), byteArray)
         val part = MultipartBody.Part.createFormData("file", "my_image.jpg", requestBody)
         val response = apiService.getSketch(part)
 
@@ -118,35 +118,43 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                 }
             }
         }
-        resultBitmap.recycle()
         emit(resultBitmap)
     }
 
     override suspend fun saveImage(bitmap: Bitmap, url: String): Flow<Uri?> = flow {
         Log.d("function test", "saveImage(${bitmap}, ${url})")
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val byteArray = stream.toByteArray()
 
         val storageRef = storage.reference
         val imageRef = storageRef.child("/images/${url}")
         val uploadTask = imageRef.putBytes(byteArray)
 
-        var url: Uri? = null
-
-        uploadTask.continueWithTask { task ->
-            if(!task.isSuccessful)  {
-                task.exception?.let {
-                    throw it
+        val downloadUrl = suspendCancellableCoroutine<Uri?> { continuation ->
+            uploadTask.continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { throw it }
+                }
+                imageRef.downloadUrl
+            }.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val result = task.result
+                    if (result != null) {
+                        continuation.resume(result, null)
+                    } else {
+                        continuation.resume(null, null)
+                    }
+                } else {
+                    continuation.resume(null, null)
                 }
             }
-            imageRef.downloadUrl
-        }.addOnCompleteListener { task ->
-            if(task.isSuccessful) {
-                url = task.result
+            continuation.invokeOnCancellation {
+                uploadTask.cancel()
             }
-        }.await()
-        emit(url)
+        }
+        Log.d("function", "saveImage url = ${downloadUrl}")
+        emit(downloadUrl)
     }
 
     override suspend fun getImage(url: String): Flow<Bitmap> = flow {

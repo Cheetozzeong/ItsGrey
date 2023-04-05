@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -15,8 +16,10 @@ import com.tntt.model.DrawingInfo
 import com.tntt.model.LayerInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.getstream.sketchbook.SketchbookController
 import itsgrey.feature.drawing.navigation.imageBoxIdArgs
 import itsgrey.feature.drawing.navigation.imageUriArgs
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -53,15 +56,20 @@ class DrawingViewModel @Inject constructor(
 
         when(imageUri) {
             null -> {   // 기존 이미지 불러오기
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     drawingUseCase.getLayerList(imageBoxId)
                         .collect() {
-                            _layerList.value = it
+                            this.launch(Dispatchers.Main) {
+                                _layerList.value = it
+                            }
                         }
                     drawingUseCase.getDrawing(imageBoxId)
                         .collect() {
-                            _drawingInfo.value = it
+                            this.launch(Dispatchers.Main) {
+                                _drawingInfo.value = it
+                            }
                         }
+                    aspectRatio.value = (_layerList.value[0].bitmap.width / _layerList.value[0].bitmap.height).toFloat()
                 }
             }
             else -> {   // 새로운 이미지를 변환해서 불러오기
@@ -72,6 +80,7 @@ class DrawingViewModel @Inject constructor(
                     ).collect() {
                         _layerList.value = it
                     }
+                    aspectRatio.value = _layerList.value[0].bitmap.width.toFloat() / _layerList.value[0].bitmap.height.toFloat()
                 }
             }
         }
@@ -84,6 +93,10 @@ class DrawingViewModel @Inject constructor(
 
     fun updateBitmap(bitmap: Bitmap) {
         _layerList.value[selectedLayer.value].bitmap = bitmap
+    }
+
+    fun updateDrawingInfo(sketchbookController: SketchbookController) {
+        drawingInfo.value.penColor = "#" + Integer.toHexString(sketchbookController.currentPaintColor.value.toArgb()).substring(2).toUpperCase()
     }
 
     fun save() {
