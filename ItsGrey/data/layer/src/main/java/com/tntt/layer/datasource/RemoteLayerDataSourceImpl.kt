@@ -10,7 +10,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.tntt.layer.model.LayerDto
 import com.tntt.network.retrofit.RetrofitNetwork
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import okhttp3.MediaType
@@ -57,19 +59,19 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         emit(layerDtoList)
     }
 
-    override suspend fun updateLayerDtoList(layerDtoList: List<LayerDto>): Flow<Boolean> = flow {
-        var result: Boolean = true
+    override suspend fun updateLayerDtoList(layerDtoList: List<LayerDto>) = callbackFlow<Boolean> {
         for (layerDto in layerDtoList) {
             layerCollection
                 .document(layerDto.id)
                 .set(layerDto)
-                .addOnSuccessListener { result = false }
-                .await()
+                .addOnSuccessListener {
+                    trySend(true)
+                }
         }
-        emit(result)
+        awaitClose()
     }
 
-    override suspend fun deleteLayerDtoList(imageBoxId: String): Flow<Boolean> = flow {
+    override suspend fun deleteLayerDtoList(imageBoxId: String) = callbackFlow<Boolean> {
         var result: Boolean = true
         layerCollection
             .whereEqualTo("imageBoxId", imageBoxId)
@@ -82,14 +84,14 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                         .delete()
                         .addOnFailureListener { result = false }
                 }
-            }.await()
-        emit(result)
+            }
+        trySend(result)
+        awaitClose()
     }
 
 
 
     override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
-        Log.d("function test", "getSketchBitmap(${bitmap})")
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
         val byteArray = stream.toByteArray()
@@ -102,10 +104,12 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         val bmpByteArray = response.bytes()
         val options =BitmapFactory.Options().apply {
             // 이미지 크기 조정 등의 옵션
+            inPreferredConfig = Bitmap.Config.ARGB_8888
         }
 
         val sourceBitmap = BitmapFactory.decodeByteArray(bmpByteArray, 0, bmpByteArray.size, options)
         val resultBitmap = Bitmap.createBitmap(sourceBitmap.width, sourceBitmap.height, Bitmap.Config.ARGB_8888)
+
         for (x in 0 until resultBitmap.width) {
             for (y in 0 until resultBitmap.height) {
                 val pixel = sourceBitmap.getPixel(x, y)
@@ -114,10 +118,12 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                 }
             }
         }
+        resultBitmap.recycle()
         emit(resultBitmap)
     }
 
     override suspend fun saveImage(bitmap: Bitmap, url: String): Flow<Uri?> = flow {
+        Log.d("function test", "saveImage(${bitmap}, ${url})")
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
         val byteArray = stream.toByteArray()
@@ -140,19 +146,18 @@ class RemoteLayerDataSourceImpl @Inject constructor(
                 url = task.result
             }
         }.await()
-
         emit(url)
     }
 
     override suspend fun getImage(url: String): Flow<Bitmap> = flow {
+        Log.d("function test", "getImage(${url})")
         val connection = URL(url).openConnection() as HttpURLConnection
         connection.doInput = true
         connection.connect()
 
         val inputStream = connection.inputStream
         val bitmap = BitmapFactory.decodeStream(inputStream)
+        Log.d("function test", "getImage bitmap = ${bitmap}")
         emit(bitmap)
     }
-
-
 }

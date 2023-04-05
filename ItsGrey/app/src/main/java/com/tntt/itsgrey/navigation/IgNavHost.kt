@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.tntt.feature.editpage.navigation.editPageGraphRoutePattern
+import com.tntt.editbook.navigation.editBookPageScreen
 import com.tntt.feature.editpage.navigation.editPageScreen
 import com.tntt.home.navigation.homePageRoute
 import com.tntt.home.navigation.homePageScreen
@@ -14,12 +14,15 @@ import itsgrey.feature.drawing.navigation.*
 fun IgNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = editPageGraphRoutePattern
+    currentUserEmail: String,
+    currentUserName:String,
+    startDestination: String = "$homePageRoute/{userId}/{userName}"
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier,
+
     ) {
         editPageScreen(
             onBackClick = {},
@@ -31,8 +34,17 @@ fun IgNavHost(
             onBackClick = {}
         )
         homePageScreen(
-            onThumbnailClick = {},
-            onNewButtonClick = {}
+            onThumbnailClick = {
+//                navController.navigateToBook(stirng)
+                               },
+            currentUserEmail = currentUserEmail,
+            currentUserName = currentUserName
+        )
+        editBookPageScreen(
+            onBackClick = {},
+            onViewerClick = {},
+            onNewPageClick = {},
+//            onViewerClick = { id -> navController.toViewer(id) }
         )
     }
 }

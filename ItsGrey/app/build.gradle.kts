@@ -52,6 +52,7 @@ android {
 dependencies {
 
     implementation(project(":feature:editPage"))
+    implementation(project(":feature:editBook"))
     implementation(project(":feature:home"))
     implementation(project(":feature:drawing"))
     implementation(project(":core:designsystem"))
@@ -66,6 +67,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation(project(mapOf("path" to ":data:layer")))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(Libraries.Test.JUNIT)
@@ -93,6 +95,7 @@ dependencies {
     implementation(project(":domain:home"))
     implementation(project(":domain:login"))
     implementation(project(":domain:viewer"))
+    implementation(project(":data:layer"))
 
     implementation("com.github.skydoves:colorpickerview:2.2.4")
 

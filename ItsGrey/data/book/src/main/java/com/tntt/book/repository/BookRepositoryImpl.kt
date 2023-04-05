@@ -26,6 +26,7 @@ class BookRepositoryImpl @Inject constructor(
     override suspend fun getBookInfo(bookId: String): Flow<BookInfo> = flow {
         Log.d("function test", "getBookInfo(${bookId})")
         bookDataSource.getBookDto(bookId).collect() { bookDto ->
+            Log.d("function test", "bookRepositoryImpl bookDto = ${bookDto}")
             val id = bookDto.id
             val title = bookDto.title
             val saveDate = bookDto.saveDate

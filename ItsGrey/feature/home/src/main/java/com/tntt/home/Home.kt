@@ -1,5 +1,6 @@
 package com.tntt.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,6 +30,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.tntt.designsystem.component.IgPlusPageButton
 import com.tntt.ui.PageForView
 import java.text.SimpleDateFormat
@@ -46,14 +49,13 @@ private enum class WindowSize(val item: Int) {
 
 @Composable
 internal fun HomePageRoute(
-    onNewButtonClick: () -> Unit,
     onThumbnailClick: (String) -> Unit,
     viewModel: HomePageViewModel = hiltViewModel(),
 ){
     HomePageScreen(
-        onNewButtonClick = {onNewButtonClick},
+        onNewButtonClick = viewModel::createBook,
         onThumbnailClick = {onThumbnailClick},
-        viewModel = viewModel
+        viewModel = viewModel,
     )
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,22 +64,16 @@ internal fun HomePageScreen(
     modifier: Modifier = Modifier,
     onNewButtonClick: () -> Unit,
     onThumbnailClick: (String) -> Unit,
-    viewModel: HomePageViewModel
+    viewModel: HomePageViewModel,
 ) {
 
     val displayMetrics = LocalContext.current.resources.displayMetrics
     val screenWidth = displayMetrics.widthPixels / displayMetrics.density
 
-    val dateString = "2023-03-26T11:30:00+0900"
-    val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
-    val date = formatter.parse(dateString)
-
-    // dummy data
-    val user = User(name = "fakeUser",id = "1")
+    val user = User(name = viewModel.userName,id = viewModel.userId)
 
     val publishedBookList by viewModel.publishedBookList.collectAsState()
     val workingBookList by viewModel.workingBookList.collectAsState()
-
 
     var tabPage by remember { mutableStateOf(TabPage.Published) }
 
@@ -90,14 +86,13 @@ internal fun HomePageScreen(
         Scaffold(
             modifier = Modifier,
             topBar = { IgTopAppBar (
-                    modifier = Modifier
-                        .padding(horizontal = 25.dp),
-                    title = stringResource(R.string.home_toolbar_name),
-                    actions = {
-                        Text(text = user.name)
-                    }
-                )
-            }
+                modifier = Modifier
+                    .padding(horizontal = 25.dp),
+                title = stringResource(R.string.home_toolbar_name),
+                actions = {
+                    Text(text = "${user.name}님의 서재")
+                }
+            ) }
         ) { padding ->
             Column(
                 Modifier
@@ -186,7 +181,10 @@ private fun BookList(
             }
             if (tabPage == TabPage.Working) {
                 item {
-                    IgPlusPageButton(onClick = {onNewButtonClick})
+                    IgPlusPageButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { onNewButtonClick() },
+                        text = "New...")
                 }
             }
         }
@@ -204,38 +202,38 @@ private fun BookItem(
 ) {
     val bookId = book.bookInfo.id
     Column {
-            Row {
-                Box(
-                    modifier
-                        .fillMaxSize()
-                )
-                {
-                    Column {
-                        Box (
-                            Modifier
-                                .border(width = 5.dp, MaterialTheme.colorScheme.onPrimary)
-                                .clickable(
-                                    onClick = { onThumbnailClick(bookId) } /*TODO 네비 연*/
-                                )
-                        ) {
-                            PageForView(modifier = Modifier, thumbnail = book.thumbnail!!)
-                        }
-                        Box {
-                            Column {
-                                Text(
-                                    text = book.bookInfo.title,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    textAlign = TextAlign.Center
-                                )
-                                if (tabPage == TabPage.Published) PublishedTimeAgoText(book.bookInfo.saveDate)
-                                else if (tabPage == TabPage.Working) WorkingTimeAgoText(book.bookInfo.saveDate)
-                            }
+        Row {
+            Box(
+                modifier
+                    .fillMaxSize()
+            )
+            {
+                Column {
+                    Box (
+                        Modifier
+                            .border(width = 5.dp, MaterialTheme.colorScheme.onPrimary)
+                            .clickable(
+                                onClick = { onThumbnailClick(bookId) } /*TODO 네비 연*/
+                            )
+                    ) {
+                        PageForView(modifier = Modifier, thumbnail = book.thumbnail!!)
+                    }
+                    Box {
+                        Column {
+                            Text(
+                                text = book.bookInfo.title,
+                                style = MaterialTheme.typography.titleLarge,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center
+                            )
+                            if (tabPage == TabPage.Published) PublishedTimeAgoText(book.bookInfo.saveDate)
+                            else if (tabPage == TabPage.Working) WorkingTimeAgoText(book.bookInfo.saveDate)
                         }
                     }
                 }
             }
+        }
         Spacer(modifier = Modifier.height(20.dp))
     }
 }

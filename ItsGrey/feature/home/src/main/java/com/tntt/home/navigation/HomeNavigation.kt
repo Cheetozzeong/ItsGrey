@@ -8,10 +8,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.tntt.home.HomePageRoute
 
-internal const val pageIdArg = "pageId"
+internal const val userIdArg = "userId"
+internal const val userNameArg = "userName"
 
-const val homePageRoute = "homePage_route"
-private const val homePageGraphRoutePattern = "homePage_route"
+const val homePageRoute = "home_page_route"
+private const val homePageGraphRoutePattern = "home_page_route"
 
 fun NavController.navigateToHomePage(pageId: String) {
     val encodedId = Uri.encode(pageId)
@@ -19,18 +20,22 @@ fun NavController.navigateToHomePage(pageId: String) {
 }
 
 fun NavGraphBuilder.homePageScreen(
-    onNewButtonClick: () -> Unit,
     onThumbnailClick: (String) -> Unit,
+    currentUserEmail: String,
+    currentUserName: String,
 ) {
     composable(
-//        route = "$homePageRoute/{$pageIdArg}",
-//        arguments = listOf(
-//            navArgument(pageIdArg) {type = NavType.StringType}
-//        )
-    route = homePageRoute
+        "$homePageRoute/{$userIdArg}/{$userNameArg}",
+        arguments = listOf(
+            navArgument(userIdArg) {type = NavType.StringType},
+            navArgument(userNameArg) {type = NavType.StringType}
+        )
     ) {
+        it.arguments?.apply {
+            putString(userIdArg, currentUserEmail)
+            putString(userNameArg, currentUserName)
+        }
         HomePageRoute(
-            onNewButtonClick = onNewButtonClick,
             onThumbnailClick = onThumbnailClick
         )
     }
