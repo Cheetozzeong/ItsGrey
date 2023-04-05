@@ -24,10 +24,9 @@ class EditPageUseCase @Inject constructor(
         }
     }
 
-    fun createTextBox(pageId: String, textBoxInfo: TextBoxInfo): Flow<TextBoxInfo> = flow {
-        Log.d("function test","createTextBox")
-        textBoxRepository.createTextBoxInfo(pageId, textBoxInfo).collect() { textBoxInfo ->
-            emit(textBoxInfo)
+    fun createTextBox(pageId: String, textBoxInfo: TextBoxInfo): Flow<String> = flow {
+        textBoxRepository.createTextBoxInfo(pageId, textBoxInfo).collect() { textBoxId ->
+            emit(textBoxId)
         }
     }
 
@@ -42,18 +41,6 @@ class EditPageUseCase @Inject constructor(
         Log.d("function test","getTextBoxList")
         textBoxRepository.getTextBoxInfoList(pageId).collect() { textBoxList ->
             emit(textBoxList)
-        }
-    }
-
-    fun saveImageBoxList(pageId: String, imageBoxInfoList: List<ImageBoxInfo>): Flow<Boolean> = flow {
-        imageBoxRepository.updateImageBoxInfoList(pageId, imageBoxInfoList).collect() { result ->
-            emit(result)
-        }
-    }
-
-    fun saveTextBoxList(pageId: String, textBoxInfoList: List<TextBoxInfo>): Flow<Boolean> = flow {
-        textBoxRepository.updateTextBoxInfoList(pageId, textBoxInfoList).collect() { result ->
-            emit(result)
         }
     }
 

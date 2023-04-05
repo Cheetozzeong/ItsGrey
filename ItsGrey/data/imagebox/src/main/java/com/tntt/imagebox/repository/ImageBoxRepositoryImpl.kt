@@ -1,5 +1,6 @@
 package com.tntt.imagebox.repository
 
+import android.graphics.Bitmap
 import android.util.Log
 import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
 import com.tntt.imagebox.model.ImageBoxDto
@@ -37,23 +38,22 @@ class ImageBoxRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateImageBoxInfo(
-        pageId: String,
-        imageBoxInfo: ImageBoxInfo
-    ): Flow<Boolean> = flow {
-        layerDataSource.saveImage(imageBoxInfo.image, imageBoxInfo.id).collect() { url ->
-            imageBoxDataSource.updateImageBoxDto(ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData, url.toString())).collect() { result ->
-                emit(result)
-            }
-        }
-    }
-
     override suspend fun updateImageBoxInfoList(pageId: String, imageBoxInfoList: List<ImageBoxInfo>): Flow<Boolean> = flow {
-        Log.d("function test","updateImageBoxInfoList")
+        Log.d("function test", "updateImageBoxInfoList(${pageId}, ${imageBoxInfoList})")
         val imageBoxDtoList = mutableListOf<ImageBoxDto>()
         for (imageBoxInfo in imageBoxInfoList) {
-            layerDataSource.saveImage(imageBoxInfo.image, imageBoxInfo.id).collect() { url ->
-                imageBoxDtoList.add(ImageBoxDto(imageBoxInfo.id, pageId, imageBoxInfo.boxData, url.toString()))
+            if(imageBoxInfo.image != null) {
+                layerDataSource.saveImage(imageBoxInfo.image, imageBoxInfo.id).collect() { url ->
+                    Log.d("function test", "updateImageBoxInfoList url = ${url}")
+                    imageBoxDtoList.add(
+                        ImageBoxDto(
+                            imageBoxInfo.id,
+                            pageId,
+                            imageBoxInfo.boxData,
+                            url.toString()
+                        )
+                    )
+                }
             }
         }
         imageBoxDataSource.updateImageBoxDtoList(imageBoxDtoList).collect() { result ->
@@ -66,4 +66,14 @@ class ImageBoxRepositoryImpl @Inject constructor(
             emit(result)
         }
     }
+
+    override suspend fun setImage(imageBoxId: String, image: Bitmap): Flow<Boolean> = flow {
+        layerDataSource.saveImage(image, imageBoxId).collect() { url ->
+            imageBoxDataSource.setImageUrl(imageBoxId, url.toString()).collect() { result ->
+                emit(result)
+            }
+        }
+    }
+
+
 }

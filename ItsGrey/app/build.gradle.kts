@@ -93,6 +93,7 @@ dependencies {
     implementation(project(":domain:home"))
     implementation(project(":domain:login"))
     implementation(project(":domain:viewer"))
+    implementation(project(":data:layer"))
 
     implementation("com.github.skydoves:colorpickerview:2.2.4")
 

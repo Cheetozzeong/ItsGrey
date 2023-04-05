@@ -14,9 +14,9 @@ class TextBoxRepositoryImpl @Inject constructor(
     private val textBoxDataSource: RemoteTextBoxDataSource
 ) : TextBoxRepository {
 
-    override suspend fun createTextBoxInfo(pageId: String, textBoxInfo: TextBoxInfo): Flow<TextBoxInfo> = flow {
-        textBoxDataSource.createTextBoxDto(TextBoxDto(textBoxInfo.id, pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxData)).collect() { textBoxDto ->
-            emit(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
+    override suspend fun createTextBoxInfo(pageId: String, textBoxInfo: TextBoxInfo): Flow<String> = flow {
+        textBoxDataSource.createTextBoxDto(TextBoxDto(textBoxInfo.id, pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxData)).collect() { textBoxId ->
+            emit(textBoxId)
         }
     }
 
@@ -31,9 +31,9 @@ class TextBoxRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateTextBoxInfoList(pageId: String, textBoxInfoList: List<TextBoxInfo>): Flow<Boolean> = flow {
-        Log.d("function test","updateTextBoxInfoList")
+        Log.d("function test", "updateTextBoxInfoList(${pageId}, ${textBoxInfoList})")
         val textBoxDtoList = mutableListOf<TextBoxDto>()
-        for (textBoxInfo in textBoxDtoList) {
+        for (textBoxInfo in textBoxInfoList) {
             textBoxDtoList.add(TextBoxDto(textBoxInfo.id, pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxData))
         }
         textBoxDataSource.updateTextBoxDtoList(textBoxDtoList).collect() { result ->

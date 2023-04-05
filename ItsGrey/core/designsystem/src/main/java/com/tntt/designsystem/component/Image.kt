@@ -116,6 +116,7 @@ fun ImageBoxForEdit(
                                 }
                             }
                         },
+                    contentScale = ContentScale.Fit
                 )
             }
         )

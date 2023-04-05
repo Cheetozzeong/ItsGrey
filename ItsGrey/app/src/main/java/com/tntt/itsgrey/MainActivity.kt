@@ -9,7 +9,6 @@ import com.tntt.designsystem.theme.IgTheme
 import com.tntt.itsgrey.navigation.IgNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

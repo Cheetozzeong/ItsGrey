@@ -45,7 +45,7 @@ class EditPageViewModel @Inject constructor(
     }
 
     private fun getTextBoxList(){
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             editPageUseCase.getTextBoxList(pageId).collect() {
                 _textBoxList.value = it
             }
@@ -111,16 +111,16 @@ class EditPageViewModel @Inject constructor(
     fun deleteBox(boxId: String) {
         viewModelScope.launch {
             if(imageBox.value.isNotEmpty() && imageBox.value[0].id == boxId) {
-                editPageUseCase.deleteImageBox(boxId).collect()
                 _imageBox.value = emptyList()
+                editPageUseCase.deleteImageBox(boxId).collect()
             }
             else {
                 val curTextBoxList = textBoxList.value.toMutableList()
                 val indexToDelete = curTextBoxList.indexOfFirst { it.id == boxId }
 
-                editPageUseCase.deleteTextBox(boxId).collect()
                 curTextBoxList.removeAt(indexToDelete)
                 _textBoxList.value = curTextBoxList
+                editPageUseCase.deleteTextBox(boxId).collect()
             }
         }
     }

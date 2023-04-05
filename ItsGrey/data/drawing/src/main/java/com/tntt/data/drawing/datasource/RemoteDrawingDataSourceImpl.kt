@@ -2,7 +2,9 @@ package com.tntt.data.drawing.datasource
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.data.drawing.model.DrawingDto
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
@@ -14,16 +16,17 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
 
     val drawingCollection by lazy { firestore.collection("drawing") }
 
-    override suspend fun createDrawingDto(drawingDto: DrawingDto): Flow<String> = flow {
+    override suspend fun createDrawingDto(drawingDto: DrawingDto) = callbackFlow<String> {
         drawingCollection
             .document(drawingDto.id)
             .set(drawingDto)
-            .await()
-        emit(drawingDto.id)
+            .addOnSuccessListener {
+                trySend(drawingDto.id)
+            }
+        awaitClose()
     }
 
-    override suspend fun getDrawingDto(imageBoxId: String): Flow<DrawingDto> = flow {
-        lateinit var drawingDto: DrawingDto
+    override suspend fun getDrawingDto(imageBoxId: String) = callbackFlow<DrawingDto> {
 
         drawingCollection
             .whereEqualTo("imageBoxId", imageBoxId)
@@ -37,28 +40,28 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
                 val eraserSizeList = data?.get("eraserSizeList") as List<Int>
                 val penColor = data?.get("penColor") as String
                 val recentColors = data?.get("recentColors") as List<String>
-                drawingDto = DrawingDto(id, imageBoxId, penSizeList, eraserSizeList, penColor, recentColors)
+                val drawingDto = DrawingDto(id, imageBoxId, penSizeList, eraserSizeList, penColor, recentColors)
+                trySend(drawingDto)
             }
-            .await()
-        emit(drawingDto)
+        awaitClose()
     }
 
-    override suspend fun updateDrawingDto(drawingDto: DrawingDto): Flow<Boolean> = flow {
-        var result: Boolean = false
+    override suspend fun updateDrawingDto(drawingDto: DrawingDto) = callbackFlow<Boolean> {
         drawingCollection
             .document(drawingDto.id)
             .set(drawingDto)
-            .addOnSuccessListener { result = true }
-            .await()
-        emit(result)
+            .addOnSuccessListener {
+                trySend(true)
+            }
+        awaitClose()
     }
 
-    override suspend fun deleteDrawingDto(imageBoxId: String): Flow<Boolean> = flow {
+    override suspend fun deleteDrawingDto(imageBoxId: String) = callbackFlow<Boolean> {
         var result: Boolean = true
         drawingCollection
             .whereEqualTo("imageBoxId", imageBoxId)
             .get()
-            .addOnSuccessListener {  querySnapshot ->
+            .addOnSuccessListener { querySnapshot ->
                 val documentSnapshot = querySnapshot.documents
                 for (document in documentSnapshot) {
                     drawingCollection
@@ -66,7 +69,8 @@ class RemoteDrawingDataSourceImpl @Inject constructor(
                         .delete()
                         .addOnFailureListener { result = false }
                 }
-            }.await()
-        emit(result)
+            }
+        trySend(result)
+        awaitClose()
     }
 }

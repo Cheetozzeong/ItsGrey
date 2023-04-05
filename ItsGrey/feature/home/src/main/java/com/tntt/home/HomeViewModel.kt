@@ -55,7 +55,7 @@ class HomePageViewModel @Inject constructor(
 //    stringDecoder: StringDecoder,
 
     fun createBook() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             homeUseCase.createBook(
                 userId,
                 bookInfo = BookInfo(
@@ -68,7 +68,7 @@ class HomePageViewModel @Inject constructor(
     }
 
     private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Long) {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             homeUseCase.getBooks(
                 userId,
                 sortType,
@@ -79,7 +79,7 @@ class HomePageViewModel @Inject constructor(
     }
 
     private fun getPublishedBookList(userId: String, sortType: SortType, startIndex: Long) {
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             homeUseCase.getBooks(
                 userId,
                 sortType,

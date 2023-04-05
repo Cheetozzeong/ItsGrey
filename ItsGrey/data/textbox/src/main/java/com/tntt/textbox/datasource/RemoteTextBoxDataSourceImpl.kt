@@ -5,7 +5,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.tntt.model.BoxData
 import com.tntt.textbox.model.TextBoxDto
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -16,17 +18,18 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
 
     val textBoxCollection by lazy { firestore.collection("textBox") }
 
-    override suspend fun createTextBoxDto(textBoxDto: TextBoxDto): Flow<TextBoxDto> = flow {
-        Log.d("function test", "createTextBoxDto(${textBoxDto})")
+    override suspend fun createTextBoxDto(textBoxDto: TextBoxDto) = callbackFlow<String> {
         textBoxCollection
             .document(textBoxDto.id)
             .set(textBoxDto)
-            .addOnSuccessListener { Log.d("function test", "success createTextBoxDto(${textBoxDto})") }
-            .await()
-        emit(textBoxDto)
+            .addOnSuccessListener {
+                trySend(textBoxDto.id)
+            }
+        awaitClose()
     }
 
     override suspend fun getTextBoxDtoList(pageId: String): Flow<List<TextBoxDto>> = flow {
+        Log.d("function test", "getTextBoxDtoList(${pageId})")
         val textBoxDtoList = mutableListOf<TextBoxDto>()
 
         textBoxCollection
@@ -43,13 +46,16 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
                     val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
                     val gson = Gson()
                     val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
-                    textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxData))
+                    synchronized(textBoxDtoList){
+                        textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxData))
+                    }
                 }
             }.await()
         emit(textBoxDtoList)
     }
 
     override suspend fun updateTextBoxDtoList(textBoxDtoList: List<TextBoxDto>): Flow<Boolean> = flow {
+        Log.d("function test", "updateTextBoxDtoList(${textBoxDtoList})")
         var result: Boolean = true
         Log.d("function test","updateTextBoxDtoList")
         for (textBoxDto in textBoxDtoList) {
@@ -63,7 +69,7 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
         emit(result)
     }
 
-    override suspend fun deleteTextBoxDto(id: String): Flow<Boolean> = flow {
+    override suspend fun deleteTextBoxDto(id: String) = callbackFlow<Boolean> {
         var result: Boolean = true
 
         textBoxCollection
@@ -72,6 +78,7 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
-        emit(result)
+        trySend(result)
+        awaitClose()
     }
 }
