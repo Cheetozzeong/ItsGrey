@@ -1,13 +1,14 @@
 package com.tntt.itsgrey
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
@@ -53,12 +54,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val currentUserEmail = intent.getStringExtra("currentUserEmail")
+        val currentUserName = intent.getStringExtra("currentUserName")
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val upBoxData = BoxData(0.2f, 0.2f,0.4f, 0.4f)
         val downBoxData = BoxData(0.2f, 0.6f,0.4f, 0.4f)
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.a5)
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.logo_main)
         val imageBoxInfo = ImageBoxInfo("5", upBoxData, bitmap)
         val pageId = "24f3c3d8-21d3-40d9-9bd3-4a5b9bba8087"
 
@@ -74,7 +76,11 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val navController = rememberNavController()
-            IgNavHost(navController)
+            IgNavHost(
+                navController = navController,
+                currentUserEmail = currentUserEmail!!,
+                currentUserName = currentUserName!!
+            )
         }
     }
 
