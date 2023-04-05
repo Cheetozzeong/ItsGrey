@@ -57,7 +57,7 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
     override suspend fun updateTextBoxDtoList(textBoxDtoList: List<TextBoxDto>): Flow<Boolean> = flow {
         Log.d("function test", "updateTextBoxDtoList(${textBoxDtoList})")
         var result: Boolean = true
-
+        Log.d("function test","updateTextBoxDtoList")
         for (textBoxDto in textBoxDtoList) {
             textBoxCollection
                 .document(textBoxDto.id)
