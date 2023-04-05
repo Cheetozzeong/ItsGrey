@@ -17,8 +17,7 @@ fun IgNavHost(
     modifier: Modifier = Modifier,
     currentUserEmail: String,
     currentUserName:String,
-    startDestination: String = editBookPageRoute
-//    startDestination: String = "$homePageRoute/{userId}/{userName}"
+    startDestination: String = "$homePageRoute/{userId}/{userName}"
 ) {
     NavHost(
         navController = navController,

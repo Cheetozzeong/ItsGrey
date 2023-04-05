@@ -7,7 +7,9 @@ import com.google.gson.Gson
 
 import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.BoxData
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -18,45 +20,50 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
     val imageBoxCollection by lazy { firestore.collection("imageBox") }
 
-    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<String> = flow {
+    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto) = callbackFlow<String> {
         imageBoxCollection
             .document(imageBoxDto.id)
             .set(imageBoxDto)
-            .addOnSuccessListener { Log.d("function test", "success createImageBoxDto(${imageBoxDto})") }
-            .await()
-        emit(imageBoxDto.id)
+            .addOnSuccessListener {
+                trySend(imageBoxDto.id)
+            }
+        awaitClose()
     }
 
     override suspend fun getImageBoxDtoList(pageId: String): Flow<List<ImageBoxDto>> = flow {
+        Log.d("function test", "getImageBoxDtoList(${pageId})")
         var imageBoxDtoList = mutableListOf<ImageBoxDto>()
-
-        imageBoxCollection
+        val querySnapshot = imageBoxCollection
             .whereEqualTo("pageId", pageId)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents.firstOrNull()
+            .await()
 
-                if(documentSnapshot != null) {
-                    val data = documentSnapshot.data
-                    val id: String = data?.get("id") as String
-                    val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
-                    val url = data?.get("url") as String
-                    val gson = Gson()
-                    val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
-                    imageBoxDtoList.add(ImageBoxDto(id, pageId, boxData, url))
-                }
-            }.await()
+        val documentSnapshot = querySnapshot.documents
+        for (document in documentSnapshot) {
+            val data = document.data
+            Log.d("function test", "getImageBoxDtoList data = ${data}")
+            val id: String = data?.get("id") as String
+            val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
+            val url: String = data?.get("url") as String
+            val gson = Gson()
+            val boxData =
+                gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
+            val imageBoxDto = ImageBoxDto(id, pageId, boxData, url)
+            Log.d("function test", "getImageBoxDtoList imageBoxDto = ${imageBoxDto}")
+            imageBoxDtoList.add(imageBoxDto)
+        }
+
         emit(imageBoxDtoList)
     }
 
-    override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean> = flow {
-        var result = false
+    override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto) = callbackFlow<Boolean> {
         imageBoxCollection
             .document(imageBoxDto.id)
             .set(imageBoxDto)
-            .addOnSuccessListener { result = true }
-            .await()
-        emit(result)
+            .addOnSuccessListener {
+                trySend(true)
+            }
+        awaitClose()
     }
 
     override suspend fun updateImageBoxDtoList(imageBoxDtoList: List<ImageBoxDto>): Flow<Boolean> = flow {
@@ -73,7 +80,7 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
         emit(result)
     }
 
-    override suspend fun deleteImageBoxDto(id: String): Flow<Boolean> = flow {
+    override suspend fun deleteImageBoxDto(id: String) = callbackFlow<Boolean> {
         var result: Boolean = true
         imageBoxCollection
             .document(id)
@@ -81,6 +88,17 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
+            .await()
+        trySend(result)
+        awaitClose()
+    }
+
+    override suspend fun setImageUrl(imageBoxId: String, url: String): Flow<Boolean> = flow {
+        var result = false
+        imageBoxCollection
+            .document(imageBoxId)
+            .update("url", url)
+            .addOnSuccessListener { result = true }
             .await()
         emit(result)
     }

@@ -17,13 +17,11 @@ import javax.inject.Inject
 class EditBookUseCase @Inject constructor(
     private val bookRepository: BookRepository,
     private val pageRepository: PageRepository,
-    private val imageBoxRepository: ImageBoxRepository,
-    private val textBoxRepository: TextBoxRepository,
 ){
 
     suspend fun createPage(bookId: String, pageInfo: PageInfo): Flow<Page> = flow {
-        pageRepository.createPageInfo(bookId, pageInfo).collect() { pageInfo ->
-            pageRepository.getThumbnail(pageInfo.id).collect() { thumbnail ->
+        pageRepository.createPageInfo(bookId, pageInfo).collect() { pageId ->
+            pageRepository.getThumbnail(pageId).collect() { thumbnail ->
                 emit(Page(pageInfo, thumbnail))
             }
         }
@@ -32,9 +30,12 @@ class EditBookUseCase @Inject constructor(
     suspend fun getBook(bookId: String): Flow<Book> = flow {
         bookRepository.getBookInfo(bookId).collect() { bookInfo ->
             pageRepository.getPageInfoList(bookId).collect() { pageInfoList ->
+                Log.d("function test", "pageInfoList = ${pageInfoList}")
                 val pages = mutableListOf<Page>()
                 for (pageInfo in pageInfoList) {
+                    Log.d("function test", "pageInfo = ${pageInfo}")
                     pageRepository.getThumbnail(pageInfo.id).collect() { thumbnail ->
+                        Log.d("function test", "thumbnail = ${thumbnail}")
                         pages.add(Page(pageInfo, thumbnail))
                     }
                 }
