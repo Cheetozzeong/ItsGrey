@@ -7,7 +7,9 @@ import com.google.firebase.firestore.Query
 import com.tntt.book.model.BookDto
 import com.tntt.model.BookType
 import com.tntt.model.SortType
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.util.*
@@ -19,7 +21,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
 
     val bookCollection by lazy { firestore.collection("book") }
 
-    override suspend fun createBookDto(userId: String, bookDto: BookDto): Flow<String> = flow {
+    override suspend fun createBookDto(userId: String, bookDto: BookDto):Flow<String> = flow {
         bookCollection
             .document(bookDto.id)
             .set(bookDto)
@@ -28,18 +30,21 @@ class RemoteBookDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getBookDto(bookId: String): Flow<BookDto> = flow {
-        var bookDto = BookDto("1", "1", "1", BookType.WORKING, Date())
-        bookCollection.document(bookId).get().addOnCompleteListener { documentSnapshot ->
-            val data = documentSnapshot.result?.data
-            val id = data?.get("id") as String
-            val userId = data?.get("userId") as String
-            val title = data?.get("title") as String
-            val bookType = BookType.valueOf(data?.get("bookType") as String)
-            val saveDate = (data?.get("saveDate") as Timestamp).toDate()
-            bookDto = BookDto(id, userId, title, bookType, saveDate)
-        }.await()
+        val documentSnapshot = bookCollection
+            .document(bookId)
+            .get()
+            .await()
+
+        val data = documentSnapshot.data
+        val id = data?.get("id") as String
+        val userId = data?.get("userId") as String
+        val title = data?.get("title") as String
+        val bookType = BookType.valueOf(data?.get("bookType") as String)
+        val saveDate = (data?.get("saveDate") as Timestamp).toDate()
+        val bookDto = BookDto(id, userId, title, bookType, saveDate)
+
         emit(bookDto)
- }
+    }
 
     override suspend fun getBookDtoList(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<BookDto>> = flow {
         var order = sortType.order
@@ -77,13 +82,12 @@ class RemoteBookDataSourceImpl @Inject constructor(
         emit(bookDtoList)
     }
 
-    override suspend fun updateBookDto(bookDto: BookDto): Flow<Boolean> = flow {
+    override suspend fun updateBookDto(bookDto: BookDto):Flow<Boolean> = flow {
         var result = true
         bookCollection
             .document(bookDto.id)
             .set(bookDto)
             .addOnFailureListener { result = false }
-            .await()
         emit(result)
     }
 
@@ -95,7 +99,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 .delete()
                 .addOnFailureListener{
                     result = false
-                }.await()
+                }
         }
         emit(result)
     }

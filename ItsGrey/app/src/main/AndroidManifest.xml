@@ -20,11 +20,7 @@
         <activity
             android:name="com.tntt.itsgrey.FirstActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.tntt.itsgrey.LoginActivity"
@@ -35,6 +31,11 @@
             android:name="com.tntt.itsgrey.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.ItsGrey.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

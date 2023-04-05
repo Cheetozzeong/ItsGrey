@@ -12,7 +12,9 @@ import com.tntt.page.datasource.RemotePageDataSource
 import com.tntt.page.model.PageDto
 import com.tntt.repo.PageRepository
 import com.tntt.textbox.datasource.RemoteTextBoxDataSource
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -24,16 +26,14 @@ class PageRepositoryImpl @Inject constructor(
     private val layerDataSource: RemoteLayerDataSource,
 ): PageRepository {
 
-    override suspend fun createPageInfo(bookId: String, pageInfo: PageInfo): Flow<PageInfo> = flow {
-        Log.d("function test", "createPageInfo(${bookId}, ${pageInfo})")
+    override suspend fun createPageInfo(bookId: String, pageInfo: PageInfo): Flow<String> = flow {
         val pageDto = PageDto(pageInfo.id, bookId, pageInfo.order)
-        pageDataSource.createPageDto(pageDto).collect() { pageDto ->
-            emit(pageInfo)
+        pageDataSource.createPageDto(pageDto).collect() { pageId ->
+            emit(pageId)
         }
     }
 
     override suspend fun getPageInfo(bookId: String, pageOrder: Int): Flow<PageInfo> = flow {
-        Log.d("function test", "getPageInfo(${bookId}, ${pageOrder})")
         pageDataSource.getPageDto(bookId, pageOrder).collect() { pageDto ->
             emit(PageInfo(pageDto.id, pageDto.order))
         }
@@ -75,16 +75,21 @@ class PageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getThumbnail(pageId: String): Flow<Thumbnail> = flow {
+        Log.d("function test", "getThumbnail(${pageId})")
         val imageBoxInfoList = mutableListOf<ImageBoxInfo>()
         val textBoxInfoList = mutableListOf<TextBoxInfo>()
 
         imageBoxDataSource.getImageBoxDtoList(pageId).collect() { imageBoxDtoList ->
+            Log.d("function test", "getThumbnail imageBoxDtoList = ${imageBoxDtoList}")
             for (imageBoxDto in imageBoxDtoList) {
                 layerDataSource.getImage(imageBoxDto.url).collect() { bitmap ->
+                    Log.d("function test", "bitmap = ${bitmap}")
                     imageBoxInfoList.add(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, bitmap))
                 }
             }
+            Log.d("function test", "before getTextBoxDtoList")
             textBoxDataSource.getTextBoxDtoList(pageId).collect() { textBoxDtoList ->
+                Log.d("function test", "getThumbnail textBoxDtoList = ${textBoxDtoList}")
                 for (textBoxDto in textBoxDtoList) {
                     textBoxInfoList.add(TextBoxInfo(textBoxDto.id, textBoxDto.text, textBoxDto.fontSizeRatio, textBoxDto.boxData))
                 }
