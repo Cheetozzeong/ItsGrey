@@ -49,6 +49,7 @@ class ImageBoxRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateImageBoxInfoList(pageId: String, imageBoxInfoList: List<ImageBoxInfo>): Flow<Boolean> = flow {
+        Log.d("function test","updateImageBoxInfoList")
         val imageBoxDtoList = mutableListOf<ImageBoxDto>()
         for (imageBoxInfo in imageBoxInfoList) {
             layerDataSource.saveImage(imageBoxInfo.image, imageBoxInfo.id).collect() { url ->

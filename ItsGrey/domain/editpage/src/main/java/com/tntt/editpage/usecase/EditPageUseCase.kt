@@ -32,12 +32,14 @@ class EditPageUseCase @Inject constructor(
     }
 
     fun getImageBoxList(pageId: String): Flow<List<ImageBoxInfo>> = flow {
+        Log.d("function test","getImageBoxList")
         imageBoxRepository.getImageBoxInfoList(pageId).collect() { imageBoxList ->
             emit(imageBoxList)
         }
     }
 
     fun getTextBoxList(pageId: String): Flow<List<TextBoxInfo>> = flow {
+        Log.d("function test","getTextBoxList")
         textBoxRepository.getTextBoxInfoList(pageId).collect() { textBoxList ->
             emit(textBoxList)
         }
@@ -56,6 +58,7 @@ class EditPageUseCase @Inject constructor(
     }
 
     fun savePage(page: Page): Flow<Boolean> = flow {
+        Log.d("function test","savePage")
         textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList).collect() { updateTextBoxResult ->
             imageBoxRepository.updateImageBoxInfoList(page.id, page.thumbnail.imageBoxList).collect() { updateImageBoxResult ->
                 emit(updateTextBoxResult && updateImageBoxResult)

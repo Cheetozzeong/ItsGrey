@@ -61,6 +61,7 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
     override suspend fun updateImageBoxDtoList(imageBoxDtoList: List<ImageBoxDto>): Flow<Boolean> = flow {
         var result: Boolean = true
+        Log.d("function test","updateImageBoxDtoList")
         for (imageBoxDto in imageBoxDtoList) {
             imageBoxCollection
                 .document(imageBoxDto.id)

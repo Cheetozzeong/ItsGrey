@@ -32,7 +32,6 @@ import com.tntt.ui.PageForEdit
 @Composable
 internal fun EditPageRoute(
     viewModel: EditPageViewModel = hiltViewModel(),
-    onBackClick: () -> Unit,
     onImageToDrawClick: (imageBoxId: String, imageUri: Uri?) -> Unit
 ) {
     val textBoxList by viewModel.textBoxList.collectAsStateWithLifecycle()
@@ -43,7 +42,7 @@ internal fun EditPageRoute(
         textBoxList = textBoxList,
         imageBox = imageBoxList,
         selectedBoxId = selectedBoxId,
-        onBackClick = onBackClick,
+        onBackClick = viewModel::savePage,
         onImageToDrawClick = onImageToDrawClick,
         onCreateTextBox = viewModel::createTextBox,
         onCreateImageBox = viewModel::createImageBox,

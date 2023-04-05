@@ -1,5 +1,6 @@
 package com.tntt.textbox.repository
 
+import android.util.Log
 import com.tntt.model.TextBoxInfo
 import com.tntt.repo.TextBoxRepository
 import com.tntt.textbox.datasource.RemoteTextBoxDataSource
@@ -30,6 +31,7 @@ class TextBoxRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateTextBoxInfoList(pageId: String, textBoxInfoList: List<TextBoxInfo>): Flow<Boolean> = flow {
+        Log.d("function test","updateTextBoxInfoList")
         val textBoxDtoList = mutableListOf<TextBoxDto>()
         for (textBoxInfo in textBoxDtoList) {
             textBoxDtoList.add(TextBoxDto(textBoxInfo.id, pageId, textBoxInfo.text, textBoxInfo.fontSizeRatio, textBoxInfo.boxData))
