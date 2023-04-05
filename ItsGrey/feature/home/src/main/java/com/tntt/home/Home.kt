@@ -49,19 +49,11 @@ private enum class WindowSize(val item: Int) {
 
 @Composable
 internal fun HomePageRoute(
-    onNewButtonClick: () -> Unit,
     onThumbnailClick: (String) -> Unit,
     viewModel: HomePageViewModel = hiltViewModel(),
 ){
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-//    val curUserId = navBackStackEntry?.arguments?.getString("curUserId")!!
-//    val curUserName = navBackStackEntry?.arguments?.getString("curUserName")!!
-//
-//    viewModel.setCurUserId(curUserId!!)
-
     HomePageScreen(
-        onNewButtonClick = {onNewButtonClick},
+        onNewButtonClick = viewModel::createBook,
         onThumbnailClick = {onThumbnailClick},
         viewModel = viewModel,
     )
@@ -73,8 +65,6 @@ internal fun HomePageScreen(
     onNewButtonClick: () -> Unit,
     onThumbnailClick: (String) -> Unit,
     viewModel: HomePageViewModel,
-//    curUserId: String,
-//    curUserName: String
 ) {
 
     val displayMetrics = LocalContext.current.resources.displayMetrics
@@ -84,7 +74,6 @@ internal fun HomePageScreen(
 
     val publishedBookList by viewModel.publishedBookList.collectAsState()
     val workingBookList by viewModel.workingBookList.collectAsState()
-
 
     var tabPage by remember { mutableStateOf(TabPage.Published) }
 
@@ -101,10 +90,9 @@ internal fun HomePageScreen(
                     .padding(horizontal = 25.dp),
                 title = stringResource(R.string.home_toolbar_name),
                 actions = {
-                    Text(text = user.name)
+                    Text(text = "${user.name}님의 서재")
                 }
-            )
-            }
+            ) }
         ) { padding ->
             Column(
                 Modifier
@@ -195,7 +183,7 @@ private fun BookList(
                 item {
                     IgPlusPageButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {onNewButtonClick},
+                        onClick = { onNewButtonClick() },
                         text = "New...")
                 }
             }

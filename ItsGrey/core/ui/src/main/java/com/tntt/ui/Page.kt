@@ -24,8 +24,8 @@ fun PageForView(
             Rect(Offset.Zero, Size.Zero)
         )
     }
-    val imageBoxInfo = remember{ mutableStateOf(thumbnail.imageBoxList) }
-    val contentBoxInfoList = remember{
+    val imageBoxInfo = remember(thumbnail){ mutableStateOf(thumbnail.imageBoxList) }
+    val contentBoxInfoList = remember(thumbnail){
         thumbnail.textBoxList.toMutableStateList()
     }
 
