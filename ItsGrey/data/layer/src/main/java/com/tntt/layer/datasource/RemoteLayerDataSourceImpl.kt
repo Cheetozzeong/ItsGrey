@@ -43,20 +43,19 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
     override suspend fun getLayerDtoList(imageBoxId: String): Flow<List<LayerDto>> = flow {
         val layerDtoList = mutableListOf<LayerDto>()
-        layerCollection
+        val querySnapshot = layerCollection
             .whereEqualTo("imageBoxId", imageBoxId)
             .orderBy("order")
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents
-                for (document in documentSnapshot) {
-                    val data = document.data
-                    val id = data?.get("id") as String
-                    val order = data?.get("order") as Int
-                    val url = data?.get("url") as String
-                    layerDtoList.add(LayerDto(id, imageBoxId, order, url))
-                }
-            }.await()
+            .await()
+        val documentSnapshot = querySnapshot.documents
+        for (document in documentSnapshot) {
+            val data = document.data
+            val id = data?.get("id") as String
+            val order = (data?.get("order") as Long).toString().toInt()
+            val url = data?.get("url") as String
+            layerDtoList.add(LayerDto(id, imageBoxId, order, url))
+        }
         emit(layerDtoList)
     }
 
@@ -94,11 +93,11 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
     override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val byteArray = stream.toByteArray()
 
         val apiService = RetrofitNetwork.getApiService()
-        val requestBody = RequestBody.create(MediaType.parse("image/jpeg"), byteArray)
+        val requestBody = RequestBody.create(MediaType.parse("image/png"), byteArray)
         val part = MultipartBody.Part.createFormData("file", "my_image.jpg", requestBody)
         val response = apiService.getSketch(part)
 
@@ -113,20 +112,19 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
         for (x in 0 until resultBitmap.width) {
             for (y in 0 until resultBitmap.height) {
-                val pixel = resultBitmap.getPixel(x, y)
-                if(pixel == Color.WHITE) {
-                    resultBitmap.setPixel(x, y, Color.TRANSPARENT)
+                val pixel = sourceBitmap.getPixel(x, y)
+                if(pixel == Color.BLACK) {
+                    resultBitmap.setPixel(x, y, Color.BLACK)
                 }
             }
         }
-        resultBitmap.recycle()
         emit(resultBitmap)
     }
 
     override suspend fun saveImage(bitmap: Bitmap, url: String): Flow<Uri?> = flow {
         Log.d("function test", "saveImage(${bitmap}, ${url})")
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val byteArray = stream.toByteArray()
 
         val storageRef = storage.reference

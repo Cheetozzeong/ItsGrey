@@ -6,7 +6,7 @@ import java.util.*
 data class LayerInfo(
     val id: String,
     val order: Int,
-    val bitmap: Bitmap,
+    var bitmap: Bitmap,
 ) {
     constructor(order: Int, bitmap: Bitmap) : this(
         id = UUID.randomUUID().toString(),

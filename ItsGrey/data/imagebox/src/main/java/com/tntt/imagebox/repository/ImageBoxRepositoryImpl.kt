@@ -69,6 +69,7 @@ class ImageBoxRepositoryImpl @Inject constructor(
 
     override suspend fun setImage(imageBoxId: String, image: Bitmap): Flow<Boolean> = flow {
         layerDataSource.saveImage(image, imageBoxId).collect() { url ->
+            Log.d("function", "setImage url = ${url}")
             imageBoxDataSource.setImageUrl(imageBoxId, url.toString()).collect() { result ->
                 emit(result)
             }

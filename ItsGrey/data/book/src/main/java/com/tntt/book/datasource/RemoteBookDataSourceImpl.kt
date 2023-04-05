@@ -46,7 +46,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
         emit(bookDto)
     }
 
-    override suspend fun getBookDtoList(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<BookDto>> = flow {
+    override suspend fun getBookDtoList(userId: String, sortType: SortType, startIndex: Int, bookType: BookType): Flow<List<BookDto>> = flow {
         var order = sortType.order
         var by = sortType.by
 
@@ -62,7 +62,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 .whereEqualTo("userId", userId)
                 .whereEqualTo("bookType", bookType)
                 .orderBy("title", Query.Direction.ASCENDING)
-                .limit(startIndex + 1)
+                .limit((startIndex + 1L))
                 .get()
                 .await()
 
