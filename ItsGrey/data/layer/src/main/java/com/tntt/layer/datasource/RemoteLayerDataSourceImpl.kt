@@ -14,6 +14,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -132,21 +133,30 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         val imageRef = storageRef.child("/images/${url}")
         val uploadTask = imageRef.putBytes(byteArray)
 
-        var url: Uri? = null
-
-        uploadTask.continueWithTask { task ->
-            if(!task.isSuccessful)  {
-                task.exception?.let {
-                    throw it
+        val downloadUrl = suspendCancellableCoroutine<Uri?> { continuation ->
+            uploadTask.continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { throw it }
+                }
+                imageRef.downloadUrl
+            }.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val result = task.result
+                    if (result != null) {
+                        continuation.resume(result, null)
+                    } else {
+                        continuation.resume(null, null)
+                    }
+                } else {
+                    continuation.resume(null, null)
                 }
             }
-            imageRef.downloadUrl
-        }.addOnCompleteListener { task ->
-            if(task.isSuccessful) {
-                url = task.result
+            continuation.invokeOnCancellation {
+                uploadTask.cancel()
             }
-        }.await()
-        emit(url)
+        }
+        Log.d("function", "saveImage url = ${downloadUrl}")
+        emit(downloadUrl)
     }
 
     override suspend fun getImage(url: String): Flow<Bitmap> = flow {

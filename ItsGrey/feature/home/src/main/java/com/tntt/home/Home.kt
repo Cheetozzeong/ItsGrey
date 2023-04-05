@@ -1,6 +1,5 @@
 package com.tntt.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
@@ -30,8 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.tntt.designsystem.component.IgPlusPageButton
 import com.tntt.ui.PageForView
 import java.text.SimpleDateFormat
@@ -160,31 +158,44 @@ private fun BookList(
     onNewButtonClick: () -> Unit
 ) {
     val windowSize = computeWindowSizeClasses(screenWidth)
-
     IgTheme {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(windowSize.item),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 50.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = modifier.fillMaxHeight()
-        ) {
-            items(books) { book ->
-                BookItem(
-                    modifier = Modifier,
-                    book = book,
-                    tabPage = tabPage,
-                    onThumbnailClick = {
-                        onThumbnailClick
-                    }
-                )
+        if (books.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                Text(
+                    text = stringResource(R.string.homeNullListMessage),
+                    style = MaterialTheme.typography.displayMedium)
             }
-            if (tabPage == TabPage.Working) {
-                item {
-                    IgPlusPageButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { onNewButtonClick() },
-                        text = "New...")
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(windowSize.item),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 50.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = modifier.fillMaxHeight()
+            ) {
+                items(books) { book ->
+                    BookItem(
+                        modifier = Modifier,
+                        book = book,
+                        tabPage = tabPage,
+                        onThumbnailClick = {
+                            onThumbnailClick
+                        }
+                    )
+                }
+                if (tabPage == TabPage.Working) {
+                    item {
+                        IgPlusPageButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { onNewButtonClick() },
+                            text = "New..."
+                        )
+                    }
                 }
             }
         }
