@@ -1,8 +1,6 @@
 package com.tntt.itsgrey
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -10,7 +8,6 @@ import androidx.navigation.compose.rememberNavController
 import com.tntt.designsystem.theme.IgTheme
 import com.tntt.itsgrey.navigation.IgNavHost
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

@@ -80,7 +80,9 @@ class PageRepositoryImpl @Inject constructor(
 
         imageBoxDataSource.getImageBoxDtoList(pageId).collect() { imageBoxDtoList ->
             for (imageBoxDto in imageBoxDtoList) {
-                imageBoxInfoList.add(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, imageBoxDto.image))
+                layerDataSource.getImage(imageBoxDto.url).collect() { bitmap ->
+                    imageBoxInfoList.add(ImageBoxInfo(imageBoxDto.id, imageBoxDto.boxData, bitmap))
+                }
             }
             textBoxDataSource.getTextBoxDtoList(pageId).collect() { textBoxDtoList ->
                 for (textBoxDto in textBoxDtoList) {
@@ -93,6 +95,12 @@ class PageRepositoryImpl @Inject constructor(
 
     override suspend fun hasCover(bookId: String): Flow<Boolean> = flow {
         pageDataSource.hasCover(bookId).collect() { result ->
+            emit(result)
+        }
+    }
+
+    override suspend fun deletePageInfo(pageId: String): Flow<Boolean> = flow {
+        pageDataSource.deletePageDto(pageId).collect() { result ->
             emit(result)
         }
     }

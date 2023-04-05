@@ -4,9 +4,7 @@ import android.util.Log
 import com.tntt.editpage.model.Page
 import com.tntt.model.ImageBoxInfo
 import com.tntt.model.TextBoxInfo
-import com.tntt.repo.ImageBoxRepository
-import com.tntt.repo.PageRepository
-import com.tntt.repo.TextBoxRepository
+import com.tntt.repo.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -16,12 +14,13 @@ class EditPageUseCase @Inject constructor(
     private val pageRepository: PageRepository,
     private val imageBoxRepository: ImageBoxRepository,
     private val textBoxRepository: TextBoxRepository,
+    private val layerRepository: LayerRepository,
+    private val drawingRepository: DrawingRepository,
 ){
-
-    fun createImageBox(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<ImageBoxInfo> = flow {
+    fun createImageBox(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<String> = flow {
         Log.d("function test","createImageBox")
-        imageBoxRepository.createImageBoxInfo(pageId, imageBoxInfo).collect() { imageBoxInfo ->
-            emit(imageBoxInfo)
+        imageBoxRepository.createImageBoxInfo(pageId, imageBoxInfo).collect() { imageBoxId ->
+            emit(imageBoxId)
         }
     }
 
@@ -32,30 +31,46 @@ class EditPageUseCase @Inject constructor(
         }
     }
 
-    fun getPage(pageId: String): Flow<Page> = flow {
-        pageRepository.getThumbnail(pageId).collect() { thumbnail ->
-            emit(Page(pageId, thumbnail))
+    fun getImageBoxList(pageId: String): Flow<List<ImageBoxInfo>> = flow {
+        imageBoxRepository.getImageBoxInfoList(pageId).collect() { imageBoxList ->
+            emit(imageBoxList)
+        }
+    }
+
+    fun getTextBoxList(pageId: String): Flow<List<TextBoxInfo>> = flow {
+        textBoxRepository.getTextBoxInfoList(pageId).collect() { textBoxList ->
+            emit(textBoxList)
+        }
+    }
+
+    fun saveImageBoxList(pageId: String, imageBoxInfoList: List<ImageBoxInfo>): Flow<Boolean> = flow {
+        imageBoxRepository.updateImageBoxInfoList(pageId, imageBoxInfoList).collect() { result ->
+            emit(result)
+        }
+    }
+
+    fun saveTextBoxList(pageId: String, textBoxInfoList: List<TextBoxInfo>): Flow<Boolean> = flow {
+        textBoxRepository.updateTextBoxInfoList(pageId, textBoxInfoList).collect() { result ->
+            emit(result)
         }
     }
 
     fun savePage(page: Page): Flow<Boolean> = flow {
-            textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList).collect() { updateTextBoxResult ->
-                var result = updateTextBoxResult
-                val imageBoxList = page.thumbnail.imageBoxList
-                for (imageBoxInfo in imageBoxList) {
-                    imageBoxRepository.updateImageBoxInfo(page.id, imageBoxInfo)
-                        .collect() { updateImageBoxResult ->
-                            result = result && updateImageBoxResult
-                        }
-                }
-                emit(result)
+        textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList).collect() { updateTextBoxResult ->
+            imageBoxRepository.updateImageBoxInfoList(page.id, page.thumbnail.imageBoxList).collect() { updateImageBoxResult ->
+                emit(updateTextBoxResult && updateImageBoxResult)
             }
+        }
     }
 
     fun deleteImageBox(imageBoxId: String): Flow<Boolean> = flow {
-        Log.d("function test","deleteTextBox")
-        imageBoxRepository.deleteImageBoxInfo(imageBoxId).collect() { result ->
-            emit(result)
+        Log.d("function test","deleteImageBox")
+        layerRepository.deleteLayerInfoList(imageBoxId).collect() { deleteLayerResult ->
+            drawingRepository.deleteDrawingInfo(imageBoxId).collect() { deleteDrawingResult ->
+                imageBoxRepository.deleteImageBoxInfo(imageBoxId).collect() { deleteImageBoxResult ->
+                    emit(deleteLayerResult && deleteDrawingResult && deleteImageBoxResult)
+                }
+            }
         }
     }
 

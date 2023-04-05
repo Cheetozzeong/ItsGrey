@@ -1,10 +1,8 @@
 package com.tntt.user.datasource
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.tntt.network.Firestore
 import com.tntt.user.model.UserDto
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 

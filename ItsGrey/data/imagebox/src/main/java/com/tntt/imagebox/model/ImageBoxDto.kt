@@ -8,5 +8,5 @@ data class ImageBoxDto(
     var id: String,
     val pageId: String,
     val boxData: BoxData,
-    val image: Bitmap,
+    val url: String,
 )
