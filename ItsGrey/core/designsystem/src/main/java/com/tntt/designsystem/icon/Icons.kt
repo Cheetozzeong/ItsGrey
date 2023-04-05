@@ -24,7 +24,7 @@ object IgIcons {
     val AddTextBox = Icons.Rounded.TextFields
     val Brush = Icons.Filled.Brush
     val Eraser = R.drawable.icon_eraser_48
-
+    val Edit = Icons.Rounded.Edit
 }
 
 /**
