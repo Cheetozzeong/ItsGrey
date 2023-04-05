@@ -39,5 +39,11 @@ fun IgNavHost(
             currentUserEmail = currentUserEmail,
             currentUserName = currentUserName
         )
+        editBookPageScreen(
+            onBackClick = {},
+            onViewerClick = {},
+            onNewPageClick = {},
+//            onViewerClick = { id -> navController.toViewer(id) }
+        )
     }
 }
