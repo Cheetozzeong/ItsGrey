@@ -1,4 +1,4 @@
-package com.tntt.network
+package com.tntt.network.firebase
 
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore

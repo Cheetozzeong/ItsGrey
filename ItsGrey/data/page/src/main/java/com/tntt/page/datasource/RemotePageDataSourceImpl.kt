@@ -2,12 +2,10 @@ package com.tntt.page.datasource
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.tntt.network.Firestore
 import com.tntt.page.model.PageDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import java.util.UUID
 import javax.inject.Inject
 
 class RemotePageDataSourceImpl @Inject constructor(
@@ -112,6 +110,16 @@ class RemotePageDataSourceImpl @Inject constructor(
             .addOnSuccessListener { querySnapshot ->
                 if (!querySnapshot.isEmpty) result = true
             }
+            .await()
+        emit(result)
+    }
+
+    override suspend fun deletePageDto(pageId: String): Flow<Boolean> = flow {
+        var result = false
+        pageCollection
+            .document(pageId)
+            .delete()
+            .addOnSuccessListener { result = true }
             .await()
         emit(result)
     }
