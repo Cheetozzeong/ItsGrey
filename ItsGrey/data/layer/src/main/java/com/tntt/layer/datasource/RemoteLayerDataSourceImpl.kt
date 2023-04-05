@@ -104,12 +104,14 @@ class RemoteLayerDataSourceImpl @Inject constructor(
             // 이미지 크기 조정 등의 옵션
         }
 
-        val resultBitmap = BitmapFactory.decodeByteArray(bmpByteArray, 0, bmpByteArray.size, options)
-        val pixels = IntArray(resultBitmap.width * resultBitmap.height)
-        bitmap.getPixels(pixels, 0, resultBitmap.width, 0, 0, resultBitmap.width, resultBitmap.height)
-        for (i in pixels.indices) {
-            if(pixels[i] == Color.WHITE){
-                pixels[i] = Color.TRANSPARENT
+        val sourceBitmap = BitmapFactory.decodeByteArray(bmpByteArray, 0, bmpByteArray.size, options)
+        val resultBitmap = Bitmap.createBitmap(sourceBitmap.width, sourceBitmap.height, Bitmap.Config.ARGB_8888)
+        for (x in 0 until resultBitmap.width) {
+            for (y in 0 until resultBitmap.height) {
+                val pixel = sourceBitmap.getPixel(x, y)
+                if(pixel == Color.BLACK) {
+                    resultBitmap.setPixel(x, y, Color.BLACK)
+                }
             }
         }
         emit(resultBitmap)

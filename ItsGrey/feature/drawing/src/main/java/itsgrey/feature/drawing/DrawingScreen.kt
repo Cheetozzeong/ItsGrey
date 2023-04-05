@@ -1,6 +1,7 @@
 package itsgrey.feature.drawing
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -18,11 +19,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tntt.designsystem.component.IgIconButton
@@ -48,85 +51,89 @@ fun DrawingRoute(
     val selectedLayerOrder by viewModel.selectedLayer.collectAsStateWithLifecycle()
 
     val colorPaintController = rememberSketchbookController()
-    LaunchedEffect(Unit) {
-        colorPaintController.setImageBitmap(layerList[1].bitmap.asImageBitmap())
-    }
 
-    Scaffold(
-        modifier = Modifier
-            .pointerInput(selectedTool) {
-                if (selectedTool == DrawingToolLabel.ColorPicker) {
-                    detectTapGestures { viewModel.selectTool(DrawingToolLabel.None) }
-                }
-            },
-        topBar = { DrawingTopAppBar(colorPaintController) },
-    ) { paddingValues ->
+    if(layerList.isNotEmpty()) {
+        Scaffold(
+            modifier = Modifier
+                .pointerInput(selectedTool) {
+                    if (selectedTool == DrawingToolLabel.ColorPicker) {
+                        detectTapGestures { viewModel.selectTool(DrawingToolLabel.None) }
+                    }
+                },
+            topBar = { DrawingTopAppBar(colorPaintController) },
+        ) { paddingValues ->
 
-        var colorPickerPosition by remember { mutableStateOf(Offset.Zero) }
+            LaunchedEffect(Unit) {
+                colorPaintController.setImageBitmap(layerList[selectedLayerOrder].bitmap.asImageBitmap())
+            }
 
-        Row(
-            Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
+            var colorPickerPosition by remember { mutableStateOf(Offset.Zero) }
 
-            Column(
-                modifier = Modifier
-                    .width(70.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
             ) {
 
-                SideToolBar(
+                Column(
                     modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    sketchController = colorPaintController,
-                    onSelectTool = viewModel::selectTool,
-                    onGloballyPositioned = { colorPickerPosition = it.boundsInRoot().topRight }
-                )
+                        .width(70.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    SideToolBar(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        sketchController = colorPaintController,
+                        onSelectTool = viewModel::selectTool,
+                        onGloballyPositioned = { colorPickerPosition = it.boundsInRoot().topRight }
+                    )
+
+                    Box(
+                        Modifier
+                            .width(40.dp)
+                            .height(2.dp)
+                            .background(Color.Black)
+                    )
+
+                    LayerSection(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        aspectRatio = aspectRatio,
+                        layerList = layerList,
+                        selectedLayerOrder = selectedLayerOrder
+                    )
+                }
 
                 Box(
                     Modifier
-                        .width(40.dp)
-                        .height(2.dp)
-                        .background(Color.Black)
-                )
-
-                LayerSection(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    aspectRatio = aspectRatio,
-                    layerList = layerList,
-                    selectedLayerOrder = selectedLayerOrder
-                )
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primary)
+                ) {
+                    SketchScreen(
+                        modifier = Modifier
+                            .aspectRatio(aspectRatio)
+                            .align(Alignment.Center)
+                        ,
+                        layerList = layerList,
+                        colorPaintController = colorPaintController,
+                        onDrawPath = viewModel::updateBitmap
+                    )
+                }
             }
 
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primary)
-            ) {
-                SketchScreen(
-                    modifier = Modifier
-                        .aspectRatio(aspectRatio)
-                        .align(Alignment.Center)
-                    ,
-                    layerList = layerList,
-                    colorPaintController = colorPaintController,
-                    onDrawPath = viewModel::updateBitmap
+            if(selectedTool == DrawingToolLabel.ColorPicker) {
+                ColorPicker(
+                    currentColor =  colorPaintController.currentPaintColor.value,
+                    offset = colorPickerPosition,
+                    setSelectedColor = { colorPaintController.setPaintColor(Color(it)) }
                 )
             }
-        }
-
-        if(selectedTool == DrawingToolLabel.ColorPicker) {
-            ColorPicker(
-                currentColor =  colorPaintController.currentPaintColor.value,
-                offset = colorPickerPosition,
-                setSelectedColor = { colorPaintController.setPaintColor(Color(it)) }
-            )
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -199,16 +206,30 @@ private fun SketchScreen(
     colorPaintController: SketchbookController,
     onDrawPath: (Bitmap) -> Unit
 ) {
-    Canvas(modifier = modifier.fillMaxSize()) {
-        drawImage(layerList[0].bitmap.asImageBitmap())
-    }
-    Sketchbook(
-        modifier = modifier.fillMaxSize(),
-        controller = colorPaintController,
-        onPathListener = {
-            onDrawPath(colorPaintController.getSketchbookBitmap().asAndroidBitmap())
+    if(layerList.isNotEmpty()) {
+
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                bitmap = layerList[1].bitmap.asImageBitmap(),
+                contentDescription = "",
+                contentScale = ContentScale.Fit
+            )
+            Sketchbook(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(-1f)
+                ,
+                controller = colorPaintController,
+                onPathListener = {
+                    onDrawPath(colorPaintController.getSketchbookBitmap().asAndroidBitmap())
+                }
+            )
         }
-    )
+    }
 }
 
 @Composable
@@ -220,6 +241,7 @@ private fun LayerSection(
 ) {
     LazyColumn(
         modifier = modifier,
+        reverseLayout = true
     ) {
         items(items = layerList, key = {item: LayerInfo -> item.id}) { layerInfo ->
             Box(

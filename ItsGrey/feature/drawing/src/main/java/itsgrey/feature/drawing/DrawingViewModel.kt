@@ -1,28 +1,34 @@
 package itsgrey.feature.drawing
 
+import android.app.Application
 import android.graphics.Bitmap
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tntt.core.common.decoder.StringDecoder
+import com.tntt.domain.drawing.usecase.DrawingUseCase
 import com.tntt.model.DrawingInfo
 import com.tntt.model.LayerInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.getstream.sketchbook.SketchbookController
+import dagger.hilt.android.qualifiers.ApplicationContext
 import itsgrey.feature.drawing.navigation.imageBoxIdArgs
 import itsgrey.feature.drawing.navigation.imageUriArgs
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DrawingViewModel @Inject constructor(
+    drawingUseCase: DrawingUseCase,
     savedStateHandle: SavedStateHandle,
     stringDecoder: StringDecoder,
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
+
+    private val context = getApplication<Application>().applicationContext
 
     val imageBoxId: String = checkNotNull(savedStateHandle[imageBoxIdArgs])
     val imageUri: String? = savedStateHandle[imageUriArgs]
@@ -41,35 +47,34 @@ class DrawingViewModel @Inject constructor(
 
     val aspectRatio: MutableStateFlow<Float> = MutableStateFlow(1f)
 
-    init {
 
-        // TODO: boxData 불러오기
+    init {
 
         when(imageUri) {
             null -> {   // 기존 이미지 불러오기
-                // TODO: 기존 layer 불러오기
-                // TODO: drawing 불러오기
+                viewModelScope.launch {
+                    drawingUseCase.getLayerList(imageBoxId)
+                        .collect() {
+                            _layerList.value = it
+                        }
+                    drawingUseCase.getDrawing(imageBoxId)
+                        .collect() {
+                            _drawingInfo.value = it
+                        }
+                }
             }
             else -> {   // 새로운 이미지를 변환해서 불러오기
-                // TODO: 이미지 선화로 변환해서 layer 불러오기
+                viewModelScope.launch {
+                    drawingUseCase.createLayerList(
+                        imageBoxId,
+                        MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(imageUri))
+                    ).collect() {
+                        _layerList.value = it
+                    }
+                }
             }
         }
-
-        // fake
-        _layerList.value = listOf(
-            LayerInfo(
-                id = "first",
-                order = 0,
-                bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-            ),
-            LayerInfo(
-                id = "second",
-                order = 1,
-                bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-            )
-        )
-        aspectRatio.value = 2f / 3f
-        _selectedLayer.value = 1
+        _selectedLayer.value = 0
     }
 
     fun selectTool(selectedTool: DrawingToolLabel) {
