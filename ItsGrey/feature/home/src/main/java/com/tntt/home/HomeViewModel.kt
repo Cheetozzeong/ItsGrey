@@ -56,7 +56,6 @@ class HomePageViewModel @Inject constructor(
 
     fun createBook() {
         viewModelScope.launch {
-            Log.d("why!!!","createBook")
             homeUseCase.createBook(
                 userId,
                 bookInfo = BookInfo(

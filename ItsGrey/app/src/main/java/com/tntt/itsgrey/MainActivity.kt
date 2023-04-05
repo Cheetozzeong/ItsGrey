@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import com.tntt.designsystem.theme.IgTheme
 import com.tntt.itsgrey.navigation.IgNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,11 +21,13 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             val navController = rememberNavController()
-            IgNavHost(
-                navController = navController,
-                currentUserEmail = currentUserEmail!!,
-                currentUserName = currentUserName!!
-            )
+            IgTheme {
+                IgNavHost(
+                    navController = navController,
+                    currentUserEmail = currentUserEmail!!,
+                    currentUserName = currentUserName!!
+                )
+            }
         }
     }
 }

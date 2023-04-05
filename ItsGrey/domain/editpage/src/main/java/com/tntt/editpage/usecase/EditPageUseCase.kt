@@ -1,18 +1,13 @@
 package com.tntt.editpage.usecase
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.util.Log
 import com.tntt.editpage.model.Page
-import com.tntt.model.BoxData
 import com.tntt.model.ImageBoxInfo
 import com.tntt.model.TextBoxInfo
-import com.tntt.model.Thumbnail
 import com.tntt.repo.ImageBoxRepository
-import com.tntt.repo.LayerRepository
 import com.tntt.repo.PageRepository
 import com.tntt.repo.TextBoxRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -24,12 +19,14 @@ class EditPageUseCase @Inject constructor(
 ){
 
     fun createImageBox(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<ImageBoxInfo> = flow {
+        Log.d("function test","createImageBox")
         imageBoxRepository.createImageBoxInfo(pageId, imageBoxInfo).collect() { imageBoxInfo ->
             emit(imageBoxInfo)
         }
     }
 
     fun createTextBox(pageId: String, textBoxInfo: TextBoxInfo): Flow<TextBoxInfo> = flow {
+        Log.d("function test","createTextBox")
         textBoxRepository.createTextBoxInfo(pageId, textBoxInfo).collect() { textBoxInfo ->
             emit(textBoxInfo)
         }
@@ -56,12 +53,14 @@ class EditPageUseCase @Inject constructor(
     }
 
     fun deleteImageBox(imageBoxId: String): Flow<Boolean> = flow {
+        Log.d("function test","deleteTextBox")
         imageBoxRepository.deleteImageBoxInfo(imageBoxId).collect() { result ->
             emit(result)
         }
     }
 
     fun deleteTextBox(textBoxId: String): Flow<Boolean> = flow {
+        Log.d("function test","deleteTextBox")
         textBoxRepository.deleteTextBoxInfo(textBoxId).collect() { result ->
             emit(result)
         }
