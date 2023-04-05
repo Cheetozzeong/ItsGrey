@@ -9,6 +9,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tntt.core.common.decoder.StringDecoder
+import com.tntt.domain.drawing.model.ImageBox
 import com.tntt.domain.drawing.usecase.DrawingUseCase
 import com.tntt.model.DrawingInfo
 import com.tntt.model.LayerInfo
@@ -22,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DrawingViewModel @Inject constructor(
-    drawingUseCase: DrawingUseCase,
+    private val drawingUseCase: DrawingUseCase,
     savedStateHandle: SavedStateHandle,
     stringDecoder: StringDecoder,
     application: Application
@@ -85,4 +86,15 @@ class DrawingViewModel @Inject constructor(
         _layerList.value[selectedLayer.value].bitmap = bitmap
     }
 
+    fun save() {
+        viewModelScope.launch {
+            drawingUseCase.save(
+                imageBox = ImageBox(
+                    id = imageBoxId,
+                    layerList = layerList.value,
+                    drawing = drawingInfo.value,
+                )
+            ).collect()
+        }
+    }
 }

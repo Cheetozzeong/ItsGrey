@@ -40,6 +40,7 @@ import io.getstream.sketchbook.rememberSketchbookController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawingRoute(
+    onClickBackNav: () -> Unit,
     viewModel: DrawingViewModel = hiltViewModel()
 ) {
 
@@ -60,7 +61,15 @@ fun DrawingRoute(
                         detectTapGestures { viewModel.selectTool(DrawingToolLabel.None) }
                     }
                 },
-            topBar = { DrawingTopAppBar(colorPaintController) },
+            topBar = {
+                DrawingTopAppBar(
+                    sketchController = colorPaintController,
+                    onClickBackNav = {
+                        viewModel::save
+                        onClickBackNav()
+                    }
+                )
+                     },
         ) { paddingValues ->
 
             LaunchedEffect(Unit) {
@@ -138,13 +147,17 @@ fun DrawingRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DrawingTopAppBar(sketchController: SketchbookController) {
+private fun DrawingTopAppBar(
+    sketchController: SketchbookController,
+    onClickBackNav: () -> Unit,
+) {
 
     IgTopAppBar(
         modifier = Modifier,
         title = "",
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "뒤로가기",
+        onNavigationClick = { onClickBackNav() },
         actions = {
             UndoButton {sketchController.undo()}
             RedoButton {sketchController.redo()}

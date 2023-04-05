@@ -14,7 +14,7 @@ import itsgrey.feature.drawing.navigation.*
 fun IgNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = homePageRoute
+    startDestination: String = editPageGraphRoutePattern
 ) {
     NavHost(
         navController = navController,
