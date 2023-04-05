@@ -13,10 +13,13 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.tntt.domain.drawing.usecase.DrawingUseCase
+import com.tntt.editbook.model.Book
 import com.tntt.editbook.usecase.EditBookUseCase
 import com.tntt.editpage.model.Page
 import com.tntt.editpage.usecase.EditPageUseCase
 import com.tntt.home.usecase.HomeUseCase
+import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
+import com.tntt.imagebox.repository.ImageBoxRepositoryImpl
 import com.tntt.itsgrey.navigation.IgNavHost
 import com.tntt.layer.datasource.RemoteLayerDataSource
 import com.tntt.model.*
@@ -31,7 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import java.util.UUID
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -52,25 +55,28 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var remoteLayerDataSource: RemoteLayerDataSource
 
+    @Inject
+    lateinit var imageBoxRepository: ImageBoxRepositoryImpl
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val currentUserEmail = intent.getStringExtra("currentUserEmail")
         val currentUserName = intent.getStringExtra("currentUserName")
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val upBoxData = BoxData(0.2f, 0.2f,0.4f, 0.4f)
-        val downBoxData = BoxData(0.2f, 0.6f,0.4f, 0.4f)
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.logo_main)
-        val imageBoxInfo = ImageBoxInfo("5", upBoxData, bitmap)
-        val pageId = "24f3c3d8-21d3-40d9-9bd3-4a5b9bba8087"
+        val userId = "하핫"
+        val bookInfo = BookInfo("하핫북2", "하핫제목2", Date())
+        val deleteBookIdList = listOf("하핫북6", "하핫북5")
+        val pageInfo = PageInfo("2-하핫페이지1", 1)
 
-        val imageBoxInfoList = mutableListOf<ImageBoxInfo>()
-        val textBoxInfoList = mutableListOf<TextBoxInfo>()
-
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.test)
+        val boxData = BoxData(0.25f, 0.65f, 0.3f, 0.3f)
+        val imageBoxInfo = ImageBoxInfo("하핫이미지박스1", boxData, bitmap)
+        val textBoxInfo = TextBoxInfo("하핫텍스트박스1", "하핫텍스트1", 0.3f, boxData)
         lifecycleScope.launch(Dispatchers.IO) {
-//            homeUseCase.getBooks("1", SortType.TITLE, 0, BookType.WORKING).collect()
-            editBookUseCase.getBook("0e39df61-40f1-42d0-8edc-0a7e63334f2f").collect() { book ->
-                Log.d("function test", "book = ${book}")
+            drawingUseCase.getLayerList(imageBoxInfo.id).collect() { layerList ->
+                Log.d("haha", "layerList = ${layerList}")
+
             }
         }
 
@@ -80,6 +86,8 @@ class MainActivity : AppCompatActivity() {
                 navController = navController,
                 currentUserEmail = currentUserEmail!!,
                 currentUserName = currentUserName!!
+//                currentUserEmail = "",
+//                currentUserName = "",
             )
         }
     }

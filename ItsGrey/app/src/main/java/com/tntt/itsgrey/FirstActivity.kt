@@ -23,7 +23,7 @@ class FirstActivity : AppCompatActivity() {
                         .putExtra("currentUserEmail",firebaseAuth.currentUser!!.email.toString())
                         .putExtra("currentUserName",firebaseAuth.currentUser!!.displayName.toString())
                 } else {
-                    Log.d("why!!!!!!","curUser가 Null")
+                    Log.d("GoogleSign","curUser가 Null")
                     Intent(this@FirstActivity, LoginActivity::class.java)
                 }
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

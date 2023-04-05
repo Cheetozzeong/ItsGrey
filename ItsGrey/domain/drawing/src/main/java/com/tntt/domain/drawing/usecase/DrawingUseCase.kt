@@ -25,19 +25,29 @@ class DrawingUseCase @Inject constructor(
 ){
 
     suspend fun createLayerList(imageBoxId: String, bitmap: Bitmap): Flow<List<LayerInfo>> = flow {
-        val layerList = mutableListOf<LayerInfo>()
+        layerRepository.deleteLayerInfoList(imageBoxId).collect() { result ->
+            if(result) {
+                val layerList = mutableListOf<LayerInfo>()
 
-        val drawingBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(drawingBitmap)
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-        val drawingLayer = LayerInfo(0, drawingBitmap)
-        layerRepository.getSketchBitmap(bitmap).collect() { sketchBitmap ->
-            val sketchLayer = LayerInfo(1, sketchBitmap)
-            layerList.add(drawingLayer)
-            layerList.add(sketchLayer)
-            layerRepository.createLayerInfoList(imageBoxId, layerList).collect() { layerInfoList ->
-                emit(layerInfoList)
+                val drawingBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(drawingBitmap)
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                val drawingLayer = LayerInfo(0, drawingBitmap)
+                layerRepository.getSketchBitmap(bitmap).collect() { sketchBitmap ->
+                    val sketchLayer = LayerInfo(1, sketchBitmap)
+                    layerList.add(drawingLayer)
+                    layerList.add(sketchLayer)
+                    layerRepository.createLayerInfoList(imageBoxId, layerList).collect() { layerInfoList ->
+                        emit(layerInfoList)
+                    }
+                }
             }
+        }
+    }
+
+    suspend fun createDrawing(imageBoxId: String, drawingInfo: DrawingInfo): Flow<String> = flow {
+        drawingRepository.createDrawingInfo(imageBoxId, drawingInfo).collect() { drawingId ->
+            emit(drawingId)
         }
     }
 
@@ -50,12 +60,6 @@ class DrawingUseCase @Inject constructor(
     suspend fun getDrawing(imageBoxId: String): Flow<DrawingInfo> = flow {
         drawingRepository.getDrawingInfo(imageBoxId).collect() { drawingInfo ->
             emit(drawingInfo)
-        }
-    }
-
-    suspend fun updateLayerList(imageBoxId: String, layerInfoList: List<LayerInfo>): Flow<Boolean> = flow {
-        layerRepository.updateLayerInfoList(imageBoxId, layerInfoList).collect() { result ->
-            emit(result)
         }
     }
 

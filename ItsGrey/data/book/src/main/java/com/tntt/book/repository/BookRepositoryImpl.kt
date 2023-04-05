@@ -35,7 +35,9 @@ class BookRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getBookInfoList(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<BookInfo>> = flow {
+        Log.d("haha", "getBookInfoList(${userId}, ${sortType}, ${startIndex}, ${bookType})")
         bookDataSource.getBookDtoList(userId, sortType, startIndex, bookType).collect() { bookDtoList ->
+            Log.d("haha", "getBookInfoList bookDtoList = ${bookDtoList}")
             val bookInfoList = mutableListOf<BookInfo>()
             for (bookDto in bookDtoList){
                 bookInfoList.add(BookInfo(bookDto.id, bookDto.title, bookDto.saveDate))
