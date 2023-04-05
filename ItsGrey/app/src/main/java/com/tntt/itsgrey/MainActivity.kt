@@ -1,17 +1,18 @@
 package com.tntt.itsgrey
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.tntt.itsgrey.navigation.IgNavHost
+import dagger.hilt.android.AndroidEntryPoint
 import com.tntt.model.LayerInfo
 import dagger.hilt.android.AndroidEntryPoint
 import itsgrey.app.R
@@ -30,7 +31,8 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val currentUserEmail = intent.getStringExtra("currentUserEmail")
+        val currentUserName = intent.getStringExtra("currentUserName")
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -39,7 +41,11 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val navController = rememberNavController()
-            IgNavHost(navController)
+            IgNavHost(
+                navController = navController,
+                currentUserEmail = currentUserEmail!!,
+                currentUserName = currentUserName!!
+            )
         }
     }
 
