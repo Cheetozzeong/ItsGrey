@@ -4,13 +4,10 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.tntt.model.BoxData
-import com.tntt.model.BoxState
-import com.tntt.network.Firestore
 import com.tntt.textbox.model.TextBoxDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import java.util.UUID
 import javax.inject.Inject
 
 class RemoteTextBoxDataSourceImpl @Inject constructor(

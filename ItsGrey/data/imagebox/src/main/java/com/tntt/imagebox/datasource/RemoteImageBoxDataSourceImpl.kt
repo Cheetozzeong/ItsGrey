@@ -7,12 +7,9 @@ import com.google.gson.Gson
 
 import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.BoxData
-import com.tntt.model.BoxState
-import com.tntt.network.Firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import java.util.UUID
 import javax.inject.Inject
 
 class RemoteImageBoxDataSourceImpl @Inject constructor(
@@ -21,13 +18,13 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
 
     val imageBoxCollection by lazy { firestore.collection("imageBox") }
 
-    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<ImageBoxDto> = flow {
+    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<String> = flow {
         imageBoxCollection
             .document(imageBoxDto.id)
             .set(imageBoxDto)
             .addOnSuccessListener { Log.d("function test", "success createImageBoxDto(${imageBoxDto})") }
             .await()
-        emit(imageBoxDto)
+        emit(imageBoxDto.id)
     }
 
     override suspend fun getImageBoxDtoList(pageId: String): Flow<List<ImageBoxDto>> = flow {
@@ -43,25 +40,36 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
                     val data = documentSnapshot.data
                     val id: String = data?.get("id") as String
                     val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
-//                    val image = data?.get("image") as Bitmap
+                    val url = data?.get("url") as String
                     val gson = Gson()
                     val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
-
-                    val image = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-                    imageBoxDtoList.add(ImageBoxDto(id, pageId, boxData, image))
+                    imageBoxDtoList.add(ImageBoxDto(id, pageId, boxData, url))
                 }
             }.await()
         emit(imageBoxDtoList)
     }
 
     override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean> = flow {
-        var result: Boolean = true
+        var result = false
         imageBoxCollection
             .document(imageBoxDto.id)
             .set(imageBoxDto)
-            .addOnFailureListener {
-                result = false
-            }
+            .addOnSuccessListener { result = true }
+            .await()
+        emit(result)
+    }
+
+    override suspend fun updateImageBoxDtoList(imageBoxDtoList: List<ImageBoxDto>): Flow<Boolean> = flow {
+        var result: Boolean = true
+        for (imageBoxDto in imageBoxDtoList) {
+            imageBoxCollection
+                .document(imageBoxDto.id)
+                .set(imageBoxDto)
+                .addOnFailureListener {
+                    result = false
+                }
+                .await()
+        }
         emit(result)
     }
 
@@ -73,6 +81,7 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
+            .await()
         emit(result)
     }
 }

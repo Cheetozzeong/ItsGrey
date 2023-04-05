@@ -12,4 +12,5 @@ interface PageRepository {
     suspend fun updatePageInfoList(bookId: String, pageInfoList: List<PageInfo>): Flow<Boolean>
     suspend fun getThumbnail(pageId: String): Flow<Thumbnail>
     suspend fun hasCover(bookId: String): Flow<Boolean>
+    suspend fun deletePageInfo(pageId: String): Flow<Boolean>
 }

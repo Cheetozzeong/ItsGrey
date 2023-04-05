@@ -54,6 +54,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore-ktx:23.0.4")
     implementation ("com.google.firebase:firebase-analytics:17.2.1")
     implementation ("com.google.firebase:firebase-database:19.2.0")
+    implementation ("com.google.firebase:firebase-storage:19.2.0")
 
     // Hilt
     implementation("com.google.dagger:hilt-android:${Versions.HILT}")
@@ -64,8 +65,9 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.3")
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
 
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+
     implementation(project(":core:network"))
     implementation(project(":domain:model"))
     implementation(project(":domain:repo"))
-    implementation(project(":data:imagebox"))
 }

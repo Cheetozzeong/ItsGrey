@@ -53,12 +53,13 @@ class EditBookUseCase @Inject constructor(
         }
     }
 
-    suspend fun saveBook(book: Book, userId: String, bookType: BookType = BookType.EDIT): Flow<Boolean> = flow {
-        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
-            bookRepository.updateBookInfo(book.bookInfo, userId, bookType).collect() { updateBookInfoResult ->
-                emit(savePagesResult && updateBookInfoResult)
-            }
-        }
+    suspend fun saveBook(book: Book, userId: String, bookType: BookType = BookType.WORKING): Flow<Boolean> = flow {
+//        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
+//            bookRepository.updateBookInfo(book.bookInfo, userId, bookType).collect() { updateBookInfoResult ->
+//                emit(savePagesResult && updateBookInfoResult)
+//            }
+//        }
+
     }
 
     suspend fun publishBook(book: Book, userId: String): Flow<Boolean> = flow {
@@ -71,6 +72,12 @@ class EditBookUseCase @Inject constructor(
             else{
                 emit(false)
             }
+        }
+    }
+
+    suspend fun deletePage(pageId: String): Flow<Boolean> = flow {
+        pageRepository.deletePageInfo(pageId).collect() { result ->
+            emit(result)
         }
     }
 }
