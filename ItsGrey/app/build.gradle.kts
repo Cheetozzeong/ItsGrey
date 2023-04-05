@@ -16,8 +16,8 @@ android {
         applicationId = "com.tntt.itsgrey"
         minSdk = AppConfig.minSdk
         targetSdk = AppConfig.targetSdk
-        versionName = "1.0.1"
-        versionCode = 2
+        versionName = "2.0.1"
+        versionCode = 3
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,6 +57,7 @@ dependencies {
     implementation(project(":feature:drawing"))
     implementation(project(":core:designsystem"))
     implementation(project(":domain:home"))
+    implementation(project(":core:designsystem"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)

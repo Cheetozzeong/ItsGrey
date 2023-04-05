@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.tntt.designsystem.theme.IgTheme
 import com.tntt.itsgrey.navigation.IgNavHost
@@ -29,19 +28,15 @@ class MainActivity : AppCompatActivity() {
         val currentUserEmail = intent.getStringExtra("currentUserEmail")
         val currentUserName = intent.getStringExtra("currentUserName")
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContent {
             val navController = rememberNavController()
             IgTheme {
                 IgNavHost(
                     navController = navController,
-//                currentUserEmail = currentUserEmail!!,
-//                currentUserName = currentUserName!!
-                    currentUserEmail = currentUserEmail ?: "Email",
-                    currentUserName = currentUserName ?:"userName"
+                    currentUserEmail = currentUserEmail!!,
+                    currentUserName = currentUserName!!
                 )
             }
         }
     }
-
 }

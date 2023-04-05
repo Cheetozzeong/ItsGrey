@@ -17,8 +17,8 @@ fun IgNavHost(
     modifier: Modifier = Modifier,
     currentUserEmail: String,
     currentUserName:String,
-//    startDestination: String = "$homePageRoute/{userId}/{userName}"
-    startDestination: String = editPageGraphRoutePattern
+    startDestination: String = "$homePageRoute/{userId}/{userName}"
+//     startDestination: String = editPageGraphRoutePattern
 ) {
     NavHost(
         navController = navController,
