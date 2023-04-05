@@ -19,12 +19,12 @@ class RemoteBookDataSourceImpl @Inject constructor(
 
     val bookCollection by lazy { firestore.collection("book") }
 
-    override suspend fun createBookDto(userId: String, bookDto: BookDto): Flow<BookDto> = flow {
+    override suspend fun createBookDto(userId: String, bookDto: BookDto): Flow<String> = flow {
         bookCollection
             .document(bookDto.id)
             .set(bookDto)
             .await()
-        emit(bookDto)
+        emit(bookDto.id)
     }
 
     override suspend fun getBookDto(bookId: String): Flow<BookDto> = flow {

@@ -1,27 +1,36 @@
 package com.tntt.layer.repository
 
 import android.graphics.Bitmap
-import com.tntt.imagebox.datasource.RemoteImageBoxDataSource
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.net.Uri
+import android.util.Log
 import com.tntt.layer.datasource.RemoteLayerDataSource
 import com.tntt.layer.model.LayerDto
 import com.tntt.model.LayerInfo
 import com.tntt.repo.LayerRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.io.File
+import java.io.InputStream
 import javax.inject.Inject
 
 class LayerRepositoryImpl @Inject constructor(
     private val layerDataSource: RemoteLayerDataSource,
-    private val imageBoxDataSource: RemoteImageBoxDataSource
 ): LayerRepository {
 
-    override suspend fun createLayerInfo(imageBoxId: String, layerInfo: LayerInfo): Flow<LayerInfo> = flow {
-        layerDataSource.createLayerDto(LayerDto("", imageBoxId, layerInfo.order, layerInfo.bitmap)).collect() { layerDtoId ->
-            emit(layerInfo)
+    override suspend fun createLayerInfoList(imageBoxId: String, layerInfoList: List<LayerInfo>): Flow<List<LayerInfo>> = flow {
+        val layerDtoList = mutableListOf<LayerDto>()
+        for (layerInfo in layerInfoList) {
+            layerDataSource.saveImage(layerInfo.bitmap, layerInfo.id).collect() { url ->
+                layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, url.toString()))
+            }
+        }
+        layerDataSource.createLayerDtoList(layerDtoList).collect() { layerDtoList ->
+            emit(layerInfoList)
         }
     }
 
@@ -29,7 +38,9 @@ class LayerRepositoryImpl @Inject constructor(
         val layerInfoList = mutableListOf<LayerInfo>()
         layerDataSource.getLayerDtoList(imageBoxId).collect() { layerDtoList ->
             for (layerDto in layerDtoList) {
-                layerInfoList.add(LayerInfo(layerDto.id, layerDto.order, layerDto.bitmap))
+                layerDataSource.getImage(layerDto.url).collect() { bitmap ->
+                    layerInfoList.add(LayerInfo(layerDto.id, layerDto.order, bitmap))
+                }
             }
             emit(layerInfoList)
         }
@@ -39,7 +50,9 @@ class LayerRepositoryImpl @Inject constructor(
         val layerDtoList = mutableListOf<LayerDto>()
 
         for (layerInfo in layerInfoList) {
-            layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, layerInfo.bitmap))
+            layerDataSource.saveImage(layerInfo.bitmap, layerInfo.id).collect() { url ->
+                layerDtoList.add(LayerDto(layerInfo.id, imageBoxId, layerInfo.order, url.toString()))
+            }
         }
         layerDataSource.updateLayerDtoList(layerDtoList).collect() { result ->
             emit(result)
@@ -53,27 +66,30 @@ class LayerRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSketchBitmap(bitmap: Bitmap): Flow<Bitmap> = flow {
-        TODO("이미지 전달 후 밑그림 가져오기")
-    }
-
-    override suspend fun retrofitTest(): Flow<String> = flow {
-        layerDataSource.retrofitTest().collect() { result ->
-            emit(result)
+        layerDataSource.getSketchBitmap(bitmap).collect() { bitmap ->
+            emit(bitmap)
         }
     }
 
+    override suspend fun saveImage(bitmap: Bitmap, url: String): Flow<Uri?> = flow {
+        layerDataSource.saveImage(bitmap, url).collect() { url ->
+            emit(url)
+        }
+    }
 
-    // 서버 통신 테스트 메서드
-//    suspend fun createRoughSketch() {
-//        val apiService = RetrofitNetwork.getApiService("http://146.56.113.80:8000/")
-//        GlobalScope.launch(Dispatchers.IO) {
-//            val response = apiService.getData()
-//            withContext(Dispatchers.Main) {
-//                if (response.isSuccessful) {
-//                    val data = response.body()
-//                    print(data)
-//                }
-//            }
-//        }
-//    }
+    override suspend fun getImage(uri: String): Flow<Bitmap> = flow {
+        layerDataSource.getImage(uri).collect() { bitmap ->
+            emit(bitmap)
+        }
+    }
+
+    override suspend fun getSumLayerBitmap(layerInfoList: List<LayerInfo>): Flow<Bitmap> = flow {
+        val sumLayer = Bitmap.createBitmap(layerInfoList[0].bitmap.width, layerInfoList[0].bitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(sumLayer)
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        for (layerInfo in layerInfoList) {
+            canvas.drawBitmap(layerInfo.bitmap, 0f, 0f, null)
+        }
+        emit(sumLayer)
+    }
 }
