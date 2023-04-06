@@ -9,6 +9,8 @@ import com.tntt.feature.editpage.navigation.editPageGraphRoutePattern
 import com.tntt.feature.editpage.navigation.editPageScreen
 import com.tntt.home.navigation.homePageRoute
 import com.tntt.home.navigation.homePageScreen
+import com.tntt.viewer.Navigation.viewerPageRoute
+import com.tntt.viewer.Navigation.viewerPageScreen
 import itsgrey.feature.drawing.navigation.*
 
 @Composable
@@ -17,8 +19,8 @@ fun IgNavHost(
     modifier: Modifier = Modifier,
     currentUserEmail: String,
     currentUserName:String,
-    startDestination: String = "$homePageRoute/{userId}/{userName}"
-//     startDestination: String = editPageGraphRoutePattern
+//    startDestination: String = "$homePageRoute/{userId}/{userName}"
+    startDestination: String = viewerPageRoute
 ) {
     NavHost(
         navController = navController,
@@ -47,6 +49,9 @@ fun IgNavHost(
             onViewerClick = {},
             onNewPageClick = {},
 //            onViewerClick = { id -> navController.toViewer(id) }
+        )
+        viewerPageScreen(
+            onBackClick = {},
         )
     }
 }
