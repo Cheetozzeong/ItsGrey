@@ -42,12 +42,12 @@ class HomePageViewModel @Inject constructor(
         getPublishedBookList(
             userId = userId,
             sortType = SortType.SAVE_DATE,
-            startIndex = 0L
+            startIndex = 0
         )
         getWorkingBookList(
             userId = userId,
             sortType = SortType.SAVE_DATE,
-            startIndex = 0L
+            startIndex = 0
         )
     }
 
@@ -56,20 +56,21 @@ class HomePageViewModel @Inject constructor(
 
     fun createBook() {
         viewModelScope.launch {
-            Log.d("GoogleSign","createBook")
-            homeUseCase.createBook(
-                userId,
-                bookInfo = BookInfo(
-                    id = UUID.randomUUID().toString(),
-                    title = "새로운 책",
-                    saveDate = Date()
-                )
-            ).collect()
+            CoroutineScope(Dispatchers.Main).launch {
+                homeUseCase.createBook(
+                    userId,
+                    bookInfo = BookInfo(
+                        id = UUID.randomUUID().toString(),
+                        title = "새로운 책",
+                        saveDate = Date()
+                    )
+                ).collect()
+            }
         }
     }
 
-    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Long) {
-        viewModelScope.launch {
+    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Int) {
+        CoroutineScope(Dispatchers.Main).launch {
             homeUseCase.getBooks(
                 userId,
                 sortType,
@@ -79,7 +80,7 @@ class HomePageViewModel @Inject constructor(
         }
     }
 
-    private fun getPublishedBookList(userId: String, sortType: SortType, startIndex: Long) {
+    private fun getPublishedBookList(userId: String, sortType: SortType, startIndex: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             homeUseCase.getBooks(
                 userId,

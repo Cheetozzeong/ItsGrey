@@ -47,6 +47,9 @@ dependencies {
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:ui"))
+    implementation(project(":core:common"))
+    implementation(project(":domain:drawing"))
+    implementation(project(":domain:model"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
@@ -59,7 +62,6 @@ dependencies {
     implementation(Libraries.Compose.UI.UI)
     implementation(Libraries.Compose.UI.PREVIEW)
     implementation(Libraries.Compose.UI.TOOLING)
-    implementation(project(mapOf("path" to ":core:common")))
     // UI Tests
     androidTestImplementation(Libraries.AndroidTest.COMPOSE_UI_TEST_JUNIT4)
     debugImplementation(Libraries.Test.COMPOSE_UI_TEST_MANIFEST)
@@ -84,5 +86,6 @@ dependencies {
 
     implementation("com.github.skydoves:orchestra-colorpicker:1.0.5")
     implementation("io.coil-kt:coil-compose:1.4.0")
+    implementation("io.getstream:sketchbook:1.0.4")
 
 }

@@ -3,6 +3,7 @@ package com.tntt.feature.editpage
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -31,7 +32,6 @@ import com.tntt.ui.PageForEdit
 @Composable
 internal fun EditPageRoute(
     viewModel: EditPageViewModel = hiltViewModel(),
-    onBackClick: () -> Unit,
     onImageToDrawClick: (imageBoxId: String, imageUri: Uri?) -> Unit
 ) {
     val textBoxList by viewModel.textBoxList.collectAsStateWithLifecycle()
@@ -42,7 +42,7 @@ internal fun EditPageRoute(
         textBoxList = textBoxList,
         imageBox = imageBoxList,
         selectedBoxId = selectedBoxId,
-        onBackClick = onBackClick,
+        onBackClick = viewModel::savePage,
         onImageToDrawClick = onImageToDrawClick,
         onCreateTextBox = viewModel::createTextBox,
         onCreateImageBox = viewModel::createImageBox,
@@ -53,7 +53,7 @@ internal fun EditPageRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 internal fun EditPageScreen(
     textBoxList: List<TextBoxInfo>,
@@ -68,7 +68,6 @@ internal fun EditPageScreen(
     onBoxSelected: (String) -> Unit,
     deleteBox: (String) -> Unit
 ) {
-
     Scaffold(
         topBar = {
             EditBookTopAppBar(
@@ -79,7 +78,10 @@ internal fun EditPageScreen(
         Column(
             Modifier.padding(paddingValues)
         ) {
-            Row {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 CreateImageBoxButton(onCreateImageBox = onCreateImageBox)
                 CreateTextBoxButton(onCreateTextBox = onCreateTextBox)
             }
@@ -236,20 +238,6 @@ fun EditBookTopAppBar(
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Back",
         onNavigationClick = { onBackClick() },
-        actions = {
-            IgIconButton(
-                onClick = { /*TODO*/ },
-                icon = {
-                    Icon(
-                        imageVector = IgIcons.Template,
-                        contentDescription = "Preview",
-                    )
-                }
-            )
-            IgTextButton(
-                onClick = { /*TODO*/ },
-                text = { Text(text = "저장") }
-            )
-        }
+        actions = {}
     )
 }

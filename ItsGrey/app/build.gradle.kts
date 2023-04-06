@@ -16,8 +16,8 @@ android {
         applicationId = "com.tntt.itsgrey"
         minSdk = AppConfig.minSdk
         targetSdk = AppConfig.targetSdk
-        versionName = "1.0.1"
-        versionCode = 2
+        versionName = "2.0.1"
+        versionCode = 3
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,10 +51,13 @@ android {
 
 dependencies {
 
+    implementation(project(":feature:editBook"))
     implementation(project(":feature:editPage"))
     implementation(project(":feature:home"))
     implementation(project(":feature:drawing"))
+    implementation(project(":core:designsystem"))
     implementation(project(":domain:home"))
+    implementation(project(":core:designsystem"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
@@ -65,6 +68,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation(project(mapOf("path" to ":data:layer")))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(Libraries.Test.JUNIT)

@@ -23,7 +23,7 @@ class HomeUseCase @Inject constructor(
         }
     }
 
-    suspend fun getBooks(userId: String, sortType: SortType, startIndex: Long, bookType: BookType): Flow<List<Book>> = flow {
+    suspend fun getBooks(userId: String, sortType: SortType, startIndex: Int, bookType: BookType): Flow<List<Book>> = flow {
         val bookList = mutableListOf<Book>()
         bookRepository.getBookInfoList(userId, sortType, startIndex, bookType).collect() { bookInfoList ->
             Log.d("haha", "getBooks bookInfoList = ${bookInfoList}")

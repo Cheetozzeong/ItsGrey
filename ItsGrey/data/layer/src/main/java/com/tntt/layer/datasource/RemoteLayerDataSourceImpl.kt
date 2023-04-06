@@ -52,7 +52,7 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         for (document in documentSnapshot) {
             val data = document.data
             val id = data?.get("id") as String
-            val order = (data?.get("order") as Long).toInt()
+            val order = (data?.get("order") as Long).toString().toInt()
             val url = data?.get("url") as String
             layerDtoList.add(LayerDto(id, imageBoxId, order, url))
         }
