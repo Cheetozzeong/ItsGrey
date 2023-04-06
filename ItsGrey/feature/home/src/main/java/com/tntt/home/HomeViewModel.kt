@@ -55,19 +55,21 @@ class HomePageViewModel @Inject constructor(
 //    stringDecoder: StringDecoder,
 
     fun createBook() {
-        CoroutineScope(Dispatchers.Main).launch {
-            homeUseCase.createBook(
-                userId,
-                bookInfo = BookInfo(
-                    id = UUID.randomUUID().toString(),
-                    title = "새로운 책",
-                    saveDate = Date()
-                )
-            ).collect()
+        viewModelScope.launch {
+            CoroutineScope(Dispatchers.Main).launch {
+                homeUseCase.createBook(
+                    userId,
+                    bookInfo = BookInfo(
+                        id = UUID.randomUUID().toString(),
+                        title = "새로운 책",
+                        saveDate = Date()
+                    )
+                ).collect()
+            }
         }
     }
 
-    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Long) {
+    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             homeUseCase.getBooks(
                 userId,

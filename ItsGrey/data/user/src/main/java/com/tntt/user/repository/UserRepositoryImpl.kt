@@ -6,7 +6,6 @@ import com.tntt.user.datasource.RemoteUserDataSource
 import com.tntt.user.datasource.RemoteUserDataSourceImpl
 import com.tntt.user.model.UserDto
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

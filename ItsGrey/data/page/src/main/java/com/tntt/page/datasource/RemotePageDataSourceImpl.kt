@@ -5,7 +5,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.page.model.PageDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -102,17 +101,17 @@ class RemotePageDataSourceImpl @Inject constructor(
             .get()
             .await()
 
-            if (!querySnapshot.isEmpty) result = true
+        if (!querySnapshot.isEmpty) result = true
         emit(result)
     }
 
     override suspend fun deletePageDto(pageId: String): Flow<Boolean> = flow {
-        var result = false
+        var result = true
         pageCollection
             .document(pageId)
             .delete()
-            .addOnSuccessListener {
-                result = true
+            .addOnFailureListener {
+                result = false
             }.await()
         emit(result)
     }
