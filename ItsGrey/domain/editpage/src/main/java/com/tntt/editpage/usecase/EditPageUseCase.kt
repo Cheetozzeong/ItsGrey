@@ -1,67 +1,76 @@
 package com.tntt.editpage.usecase
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.util.Log
 import com.tntt.editpage.model.Page
-import com.tntt.model.BoxData
 import com.tntt.model.ImageBoxInfo
 import com.tntt.model.TextBoxInfo
-import com.tntt.model.Thumbnail
-import com.tntt.repo.ImageBoxRepository
-import com.tntt.repo.LayerRepository
-import com.tntt.repo.PageRepository
-import com.tntt.repo.TextBoxRepository
+import com.tntt.repo.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 
 class EditPageUseCase @Inject constructor(
-    private val pageRepository: PageRepository,
     private val imageBoxRepository: ImageBoxRepository,
     private val textBoxRepository: TextBoxRepository,
+    private val layerRepository: LayerRepository,
+    private val drawingRepository: DrawingRepository,
 ){
-
-    fun createImageBox(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<ImageBoxInfo> = flow {
-        imageBoxRepository.createImageBoxInfo(pageId, imageBoxInfo).collect() { imageBoxInfo ->
-            emit(imageBoxInfo)
+    fun createImageBox(pageId: String, imageBoxInfo: ImageBoxInfo): Flow<String> = flow {
+        Log.d("function test","createImageBox")
+        imageBoxRepository.createImageBoxInfo(pageId, imageBoxInfo).collect() { imageBoxId ->
+            emit(imageBoxId)
         }
     }
 
-    fun createTextBox(pageId: String, textBoxInfo: TextBoxInfo): Flow<TextBoxInfo> = flow {
-        textBoxRepository.createTextBoxInfo(pageId, textBoxInfo).collect() { textBoxInfo ->
-            emit(textBoxInfo)
+    fun createTextBox(pageId: String, textBoxInfo: TextBoxInfo): Flow<String> = flow {
+        textBoxRepository.createTextBoxInfo(pageId, textBoxInfo).collect() { textBoxId ->
+            emit(textBoxId)
         }
     }
 
-    fun getPage(pageId: String): Flow<Page> = flow {
-        pageRepository.getThumbnail(pageId).collect() { thumbnail ->
-            emit(Page(pageId, thumbnail))
+    fun getImageBoxList(pageId: String): Flow<List<ImageBoxInfo>> = flow {
+        Log.d("function test","getImageBoxList")
+        imageBoxRepository.getImageBoxInfoList(pageId).collect() { imageBoxList ->
+            emit(imageBoxList)
+        }
+    }
+
+    fun getTextBoxList(pageId: String): Flow<List<TextBoxInfo>> = flow {
+        Log.d("function test","getTextBoxList")
+        textBoxRepository.getTextBoxInfoList(pageId).collect() { textBoxList ->
+            emit(textBoxList)
         }
     }
 
     fun savePage(page: Page): Flow<Boolean> = flow {
-            textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList).collect() { updateTextBoxResult ->
-                var result = updateTextBoxResult
-                val imageBoxList = page.thumbnail.imageBoxList
-                for (imageBoxInfo in imageBoxList) {
-                    imageBoxRepository.updateImageBoxInfo(page.id, imageBoxInfo)
-                        .collect() { updateImageBoxResult ->
-                            result = result && updateImageBoxResult
-                        }
-                }
-                emit(result)
+        Log.d("function test","savePage")
+        textBoxRepository.updateTextBoxInfoList(page.id, page.thumbnail.textBoxList).collect() { updateTextBoxResult ->
+            imageBoxRepository.updateImageBoxInfoList(page.id, page.thumbnail.imageBoxList).collect() { updateImageBoxResult ->
+                emit(updateTextBoxResult && updateImageBoxResult)
             }
+        }
+    }
+
+    fun updateImageBox(pageId: String, imageBoxList: List<ImageBoxInfo>) = flow {
+        imageBoxRepository.updateImageBoxInfoList(pageId, imageBoxList).collect() { updateImageBoxResult ->
+            emit(updateImageBoxResult)
+        }
     }
 
     fun deleteImageBox(imageBoxId: String): Flow<Boolean> = flow {
-        imageBoxRepository.deleteImageBoxInfo(imageBoxId).collect() { result ->
-            emit(result)
+        Log.d("function test","deleteImageBox")
+        layerRepository.deleteLayerInfoList(imageBoxId).collect() { deleteLayerResult ->
+            drawingRepository.deleteDrawingInfo(imageBoxId).collect() { deleteDrawingResult ->
+                imageBoxRepository.deleteImageBoxInfo(imageBoxId).collect() { deleteImageBoxResult ->
+                    emit(deleteLayerResult && deleteDrawingResult && deleteImageBoxResult)
+                }
+            }
         }
     }
 
     fun deleteTextBox(textBoxId: String): Flow<Boolean> = flow {
+        Log.d("function test","deleteTextBox")
         textBoxRepository.deleteTextBoxInfo(textBoxId).collect() { result ->
             emit(result)
         }

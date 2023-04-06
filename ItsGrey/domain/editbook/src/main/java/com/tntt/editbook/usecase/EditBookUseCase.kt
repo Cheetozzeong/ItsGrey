@@ -12,18 +12,17 @@ import com.tntt.repo.TextBoxRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import java.util.*
 import javax.inject.Inject
 
 class EditBookUseCase @Inject constructor(
     private val bookRepository: BookRepository,
     private val pageRepository: PageRepository,
-    private val imageBoxRepository: ImageBoxRepository,
-    private val textBoxRepository: TextBoxRepository,
 ){
 
     suspend fun createPage(bookId: String, pageInfo: PageInfo): Flow<Page> = flow {
-        pageRepository.createPageInfo(bookId, pageInfo).collect() { pageInfo ->
-            pageRepository.getThumbnail(pageInfo.id).collect() { thumbnail ->
+        pageRepository.createPageInfo(bookId, pageInfo).collect() { pageId ->
+            pageRepository.getThumbnail(pageId).collect() { thumbnail ->
                 emit(Page(pageInfo, thumbnail))
             }
         }
@@ -32,9 +31,12 @@ class EditBookUseCase @Inject constructor(
     suspend fun getBook(bookId: String): Flow<Book> = flow {
         bookRepository.getBookInfo(bookId).collect() { bookInfo ->
             pageRepository.getPageInfoList(bookId).collect() { pageInfoList ->
+                Log.d("function test", "pageInfoList = ${pageInfoList}")
                 val pages = mutableListOf<Page>()
                 for (pageInfo in pageInfoList) {
+                    Log.d("function test", "pageInfo = ${pageInfo}")
                     pageRepository.getThumbnail(pageInfo.id).collect() { thumbnail ->
+                        Log.d("function test", "thumbnail = ${thumbnail}")
                         pages.add(Page(pageInfo, thumbnail))
                     }
                 }
@@ -54,12 +56,12 @@ class EditBookUseCase @Inject constructor(
     }
 
     suspend fun saveBook(book: Book, userId: String, bookType: BookType = BookType.WORKING): Flow<Boolean> = flow {
-//        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
-//            bookRepository.updateBookInfo(book.bookInfo, userId, bookType).collect() { updateBookInfoResult ->
-//                emit(savePagesResult && updateBookInfoResult)
-//            }
-//        }
-
+        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
+            val publishBookInfo = BookInfo(book.bookInfo.id, book.bookInfo.title, Date())
+            bookRepository.updateBookInfo(publishBookInfo, userId, bookType).collect() { updateBookInfoResult ->
+                emit(savePagesResult && updateBookInfoResult)
+            }
+        }
     }
 
     suspend fun publishBook(book: Book, userId: String): Flow<Boolean> = flow {
@@ -72,6 +74,12 @@ class EditBookUseCase @Inject constructor(
             else{
                 emit(false)
             }
+        }
+    }
+
+    suspend fun deletePage(pageId: String): Flow<Boolean> = flow {
+        pageRepository.deletePageInfo(pageId).collect() { result ->
+            emit(result)
         }
     }
 }

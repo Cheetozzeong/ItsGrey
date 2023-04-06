@@ -16,8 +16,8 @@ android {
         applicationId = "com.tntt.itsgrey"
         minSdk = AppConfig.minSdk
         targetSdk = AppConfig.targetSdk
-        versionName = "1.0.1"
-        versionCode = 2
+        versionName = "2.0.1"
+        versionCode = 3
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -54,6 +54,9 @@ dependencies {
     implementation(project(":feature:editPage"))
     implementation(project(":feature:home"))
     implementation(project(":feature:drawing"))
+    implementation(project(":feature:editBook"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":feature:viewer"))
     implementation(project(":domain:home"))
 
     implementation(Libraries.KTX.CORE)
@@ -65,6 +68,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation(project(mapOf("path" to ":data:layer")))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(Libraries.Test.JUNIT)
@@ -92,6 +96,9 @@ dependencies {
     implementation(project(":domain:home"))
     implementation(project(":domain:login"))
     implementation(project(":domain:viewer"))
+    implementation(project(":data:layer"))
+    implementation(project(":data:imagebox"))
+    implementation(project(":domain:repo"))
 
     implementation("com.github.skydoves:colorpickerview:2.2.4")
 

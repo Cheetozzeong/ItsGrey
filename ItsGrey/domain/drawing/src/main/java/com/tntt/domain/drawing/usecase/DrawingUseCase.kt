@@ -1,7 +1,11 @@
 package com.tntt.domain.drawing.usecase
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.net.Uri
+import android.util.Log
 import com.tntt.domain.drawing.model.ImageBox
 import com.tntt.model.DrawingInfo
 import com.tntt.model.ImageBoxInfo
@@ -19,49 +23,56 @@ class DrawingUseCase @Inject constructor(
     private val layerRepository: LayerRepository,
     private val imageBoxRepository: ImageBoxRepository,
 ){
-    suspend fun createLayerList(bitmap: Bitmap, imageBoxInfo: ImageBoxInfo): Flow<List<LayerInfo>> = flow {
-        // 밑그림 검출 서버와 통신하여 밑그림 얻어오기
 
-        val layerInfoList = mutableListOf<LayerInfo>()
+    suspend fun createLayerList(imageBoxId: String, bitmap: Bitmap): Flow<List<LayerInfo>> = flow {
+        layerRepository.deleteLayerInfoList(imageBoxId).collect() { result ->
+            if(result) {
+                val layerList = mutableListOf<LayerInfo>()
 
-        val whiteBoard = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-        whiteBoard.eraseColor(Color.WHITE)
-        val drawingLayer = LayerInfo("", 1, whiteBoard)
-        layerRepository.createLayerInfo(imageBoxInfo.id, drawingLayer).collect() { drawingLayerInfo ->
-            layerInfoList.add(drawingLayerInfo)
-            layerRepository.getSketchBitmap(bitmap).collect() { sketchBitmap ->
-                val sketchLayer = LayerInfo("", 2, sketchBitmap)
-                layerRepository.createLayerInfo(imageBoxInfo.id, sketchLayer).collect() { sketchLayerInfo ->
-                    layerInfoList.add(sketchLayerInfo)
+                val drawingBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(drawingBitmap)
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                val drawingLayer = LayerInfo(0, drawingBitmap)
+                layerRepository.getSketchBitmap(bitmap).collect() { sketchBitmap ->
+                    val sketchLayer = LayerInfo(1, sketchBitmap)
+                    layerList.add(drawingLayer)
+                    layerList.add(sketchLayer)
+                    layerRepository.createLayerInfoList(imageBoxId, layerList).collect() { layerInfoList ->
+                        emit(layerInfoList)
+                    }
                 }
-                emit(layerInfoList)
             }
         }
     }
 
-    suspend fun createDrawing(imageBoxId: String): Flow<DrawingInfo> = flow {
-        val penSizeList = listOf<Int>(8, 12, 16)
-        val eraseSizeList = listOf<Int>(8, 12, 16)
-        val penColor = "#000000"
-        val recentColorList = mutableListOf<String>()
-        val drawingInfo = DrawingInfo("", penSizeList, eraseSizeList, penColor, recentColorList)
-        drawingRepository.createDrawingInfo(imageBoxId, drawingInfo)
-        emit(drawingInfo)
+    suspend fun createDrawing(imageBoxId: String, drawingInfo: DrawingInfo): Flow<String> = flow {
+        drawingRepository.createDrawingInfo(imageBoxId, drawingInfo).collect() { drawingId ->
+            emit(drawingId)
+        }
     }
 
-    suspend fun saveDrawing(pageId: String, imageBox: ImageBox): Flow<Boolean> = flow {
-//        layerRepository.updateLayerInfoList(imageBox.id, imageBox.layerList).collect() { layerResult ->
-//            drawingRepository.updateDrawingInfo(imageBox.id, imageBox.drawing).collect() { drawingResult ->
-//                imageBoxRepository.updateImageBoxInfo(pageId, ImageBoxInfo(imageBox.id, imageBox.boxData)).collect() { imageBoxResult ->
-//                    emit(layerResult && drawingResult && imageBoxResult)
-//                }
-//            }
-//        }
+    suspend fun getLayerList(imageBoxId: String): Flow<List<LayerInfo>> = flow {
+        layerRepository.getLayerInfoList(imageBoxId).collect() { layerList ->
+            emit(layerList)
+        }
     }
 
-    suspend fun retrofitTest(): Flow<String> = flow {
-        layerRepository.retrofitTest().collect() { result ->
-            emit(result)
+    suspend fun getDrawing(imageBoxId: String): Flow<DrawingInfo> = flow {
+        drawingRepository.getDrawingInfo(imageBoxId).collect() { drawingInfo ->
+            emit(drawingInfo)
+        }
+    }
+
+    suspend fun save(imageBox: ImageBox): Flow<Boolean> = flow {
+        drawingRepository.updateDrawingInfo(imageBox.id, imageBox.drawing).collect() { updateDrawingResult ->
+            layerRepository.updateLayerInfoList(imageBox.id, imageBox.layerList).collect() { updateLayerResult ->
+                layerRepository.getSumLayerBitmap(imageBox.layerList).collect() { sumLayer ->
+                    Log.d("function test", "sumLayer = ${sumLayer}")
+                    imageBoxRepository.setImage(imageBox.id, sumLayer).collect() { result ->
+                        emit(result)
+                    }
+                }
+            }
         }
     }
 }

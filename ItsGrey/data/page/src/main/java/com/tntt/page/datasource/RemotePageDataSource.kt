@@ -4,10 +4,11 @@ import com.tntt.page.model.PageDto
 import kotlinx.coroutines.flow.Flow
 
 interface RemotePageDataSource {
-    suspend fun createPageDto(pageDto: PageDto): Flow<PageDto>
+    suspend fun createPageDto(pageDto: PageDto): Flow<String>
     suspend fun getPageDto(bookId: String, pageOrder: Int): Flow<PageDto>
     suspend fun getFirstPageDto(bookId: String): Flow<PageDto?>
     suspend fun getPageDtoList(bookId: String): Flow<List<PageDto>>
     suspend fun updatePageDto(pageDtoList: List<PageDto>): Flow<Boolean>
     suspend fun hasCover(bookId: String): Flow<Boolean>
+    suspend fun deletePageDto(pageId: String): Flow<Boolean>
 }

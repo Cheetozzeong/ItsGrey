@@ -1,9 +1,16 @@
 package com.tntt.model
 
 import android.graphics.Bitmap
+import java.util.*
 
 data class LayerInfo(
-    var id: String,
+    val id: String,
     val order: Int,
-    val bitmap: Bitmap,
-)
+    var bitmap: Bitmap,
+) {
+    constructor(order: Int, bitmap: Bitmap) : this(
+        id = UUID.randomUUID().toString(),
+        order = order,
+        bitmap = bitmap,
+    )
+}

@@ -5,8 +5,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface RemoteImageBoxDataSource {
 
-    suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<ImageBoxDto>
+    suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<String>
     suspend fun getImageBoxDtoList(pageId: String): Flow<List<ImageBoxDto>>
     suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean>
+    suspend fun updateImageBoxDtoList(imageBoxDtoList: List<ImageBoxDto>): Flow<Boolean>
     suspend fun deleteImageBoxDto(id: String):  Flow<Boolean>
+    suspend fun setImageUrl(imageBoxId: String, url: String): Flow<Boolean>
 }

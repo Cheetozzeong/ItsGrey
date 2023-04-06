@@ -101,7 +101,6 @@ fun IgTabsMain(
     titles: List<String>,
     selectedTabIndex: (Int) -> Unit
 ){
-
     var selectedTabIndex by remember { mutableStateOf(0) }
     Row(
         modifier = Modifier
@@ -113,7 +112,7 @@ fun IgTabsMain(
                 selected = selectedTabIndex == index,
                 onClick = { selectedTabIndex = index;
                           selectedTabIndex(selectedTabIndex)},
-                text = { Text(text = title) },
+                text = { Text(text = title, style = MaterialTheme.typography.titleLarge) },
                 modifier = Modifier.weight(1f),
                 enabled = selectedTabIndex != index
             )

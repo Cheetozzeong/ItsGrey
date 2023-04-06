@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="waitMessage">책을 불러오는 중이에요! 잠시만 기다려주세요!</string>
+</resources>
