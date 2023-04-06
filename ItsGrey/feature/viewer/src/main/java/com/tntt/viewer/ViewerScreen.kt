@@ -1,177 +1,240 @@
 package com.tntt.viewer
 
 import android.content.res.Configuration
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.tntt.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTopAppBar
 import com.tntt.designsystem.icon.IgIcons
-import com.tntt.designsystem.theme.IgTheme
+import com.tntt.editbook.model.Page
+import com.tntt.model.*
+import com.tntt.ui.PageForView
 import itsgrey.feature.viewer.R
+import org.burnoutcrew.reorderable.*
+import kotlin.math.ceil
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
+
 @Composable
-private fun ViewerTopAppBar() {
-    IgTopAppBar(
-        title = "BOOK TITLE",
-        navigationIcon = IgIcons.NavigateBefore,
-        navigationIconContentDescription = "Back",
-        onNavigationClick = { /*TODO*/ },
+internal fun ViewerPageRoute(
+    viewModel: ViewerViewModel = hiltViewModel(),
+    onBackClick: () -> Unit,
+) {
+    val bookTitle by viewModel.bookTitle.collectAsStateWithLifecycle()
+    val thumbnailOfPageDataList by viewModel.thumbnailOfPageData.collectAsStateWithLifecycle()
+    val selectedPage by viewModel.selectedPage.collectAsStateWithLifecycle()
+
+    EditBookScreen(
+        bookTitle = bookTitle,
+        thumbnailOfPageDataList = thumbnailOfPageDataList.toMutableList(),
+        selectedPage = selectedPage,
+        updateSelectedPage = viewModel::updateSelectedPage,
+        onBackClick = onBackClick,
     )
 }
 
 @Composable
-private fun ThumbnailOfPage(
-    @DrawableRes drawable: Int,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        shape = MaterialTheme.shapes.extraSmall,
-        modifier = modifier
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxHeight()
-        ) {
-            Image(
-                painter = painterResource(drawable),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Preview
-@Composable
-private fun BookSection(
-    modifier: Modifier = Modifier
+private fun EditBookScreen(
+    bookTitle: String,
+    thumbnailOfPageDataList: MutableList<Page>,
+    selectedPage: Int,
+    updateSelectedPage: (index: Int) -> Unit,
+    onBackClick: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
-    val pagerState = rememberPagerState()
 
-    HorizontalPager(
-        state = pagerState,
-        count = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            ThumbnailOfPageData.size
-        } else{
-            ThumbnailOfPageData.size / 2
-        },
-        modifier = Modifier
-            .fillMaxSize()
-            .let {
-                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    it.padding(5.dp, 10.dp)
-                } else {
-                    it.padding(10.dp, 50.dp)
-                }
-            },
-    ) {page ->
-        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            ThumbnailOfPage(
-                drawable = ThumbnailOfPageData[page],
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .fillMaxHeight(1f)
-                    .padding(50.dp)
-            )
-        } else {
-            Row(
-                Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .padding()
-            ) {
-                ThumbnailOfPage(
-                    drawable = ThumbnailOfPageData[page*2],
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .fillMaxHeight(1f)
-                        .padding(9.dp)
-                )
-                if (page < ThumbnailOfPageData.size - 1) {
-                    ThumbnailOfPage(
-                        drawable = ThumbnailOfPageData[(page*2)+1],
-                        modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .fillMaxHeight(1f)
-                            .padding(9.dp)
-                    )
-                }
-            }
-        }
+    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+        VerticalModeScreen(bookTitle, thumbnailOfPageDataList, selectedPage, updateSelectedPage, onBackClick)
+    } else {
+        HorizontalModeScreen(bookTitle, thumbnailOfPageDataList, selectedPage, updateSelectedPage, onBackClick)
     }
 }
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ViewerScreen(
+private fun ViewerTopAppBar(
+    bookTitle: String,
+    onBackClick: () -> Unit,
+) {
+    IgTopAppBar(
+        title = bookTitle,
+        navigationIcon = IgIcons.NavigateBefore,
+        navigationIconContentDescription = "Back",
+        onNavigationClick = {/*TODO : onBackClick -> save 후 이동 */
+            // 1. save
+            onBackClick()
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun VerticalModeScreen(
+    bookTitle: String,
+    thumbnailOfPageDataList: MutableList<Page>,
+    selectedPage: Int,
+    updateSelectedPage: (index: Int) -> Unit,
+    onBackClick: () -> Unit,
 ) {
     IgTheme {
         Scaffold(
-            topBar = { ViewerTopAppBar() }
+            topBar = { ViewerTopAppBar(bookTitle, onBackClick) }
         ) { padding ->
-            Column (
+            Column(
                 Modifier
                     .padding(padding)
                     .fillMaxSize()
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .background(color = MaterialTheme.colorScheme.secondary)
                 ) {
-                    BookSection()
+                    MainSection(thumbnailOfPageDataList, selectedPage, updateSelectedPage)
                 }
             }
         }
     }
 }
 
-@Preview(name = "vertical", device = "spec:shape=Normal,width=360,height=640,unit=dp,dpi=480")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PreviewVerticalViewerScreen() {
-    ViewerScreen()
+fun HorizontalModeScreen(
+    bookTitle: String,
+    thumbnailOfPageDataList: MutableList<Page>,
+    selectedPage: Int,
+    updateSelectedPage: (index: Int) -> Unit,
+    onBackClick: () -> Unit,
+) {
+    IgTheme {
+        Scaffold(
+            topBar = { ViewerTopAppBar(bookTitle, onBackClick) }
+        ) { padding ->
+            Row(
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.secondary)
+                ) {
+                    MainSection(thumbnailOfPageDataList, selectedPage, updateSelectedPage)
+                }
+            }
+        }
+    }
 }
 
-@Preview(name = "horizontal", device = "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480")
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun PreviewHorizontalViewerScreen() {
-    ViewerScreen()
-}
+private fun MainSection(
+    thumbnailOfPageDataList: MutableList<Page>,
+    selectedPage: Int,
+    updateSelectedPage: (index: Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val configuration = LocalConfiguration.current
+    val pagerState = rememberPagerState(initialPage = selectedPage)
 
-/*
-TODO: 추후에 resource 삭제 요망
-* */
-private val ThumbnailOfPageData = listOf(
-    R.drawable.ab1_inversions,
-    R.drawable.ab2_quick_yoga,
-    R.drawable.ab3_stretching,
-    R.drawable.ab4_tabata,
-    R.drawable.ab5_hiit,
-    R.drawable.ab6_pre_natal_yoga,
-    R.drawable.fc1_short_mantras,
-    R.drawable.fc2_nature_meditations,
-    R.drawable.fc3_stress_and_anxiety,
-    R.drawable.fc4_self_massage,
-    R.drawable.fc5_overwhelmed,
-    R.drawable.fc6_nightly_wind_down
-)
+    LaunchedEffect(pagerState.currentPage) {
+        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            updateSelectedPage(pagerState.currentPage)
+        } else {
+            if (selectedPage in pagerState.currentPage * 2..pagerState.currentPage * 2 + 1) return@LaunchedEffect
+            updateSelectedPage(pagerState.currentPage * 2)
+        }
+    }
+
+    LaunchedEffect(selectedPage) {
+        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            pagerState.scrollToPage(selectedPage)
+        } else {
+            pagerState.scrollToPage(selectedPage / 2)
+        }
+    }
+
+    if (thumbnailOfPageDataList.size == 0) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        )
+        {
+            Text(
+                text = stringResource(R.string.waitMessage),
+                style = MaterialTheme.typography.displayMedium)
+        }
+    }
+    else {
+        HorizontalPager(
+            state = pagerState,
+            count = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                thumbnailOfPageDataList.size
+            } else {
+                ceil(thumbnailOfPageDataList.size.toFloat() / 2.0).toInt()
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .let {
+                    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        it.padding(horizontal = 10.dp)
+                    } else {
+                        it.padding(vertical = 10.dp)
+                    }
+                },
+        ) { page ->
+
+            if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                Box(modifier = Modifier) {
+                    PageForView(
+                        thumbnail = thumbnailOfPageDataList[page].thumbnail,
+                        modifier = modifier
+                    )
+                }
+            } else {
+                Row(
+                    Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    PageForView(
+                        thumbnail = thumbnailOfPageDataList[page * 2].thumbnail,
+                        modifier = Modifier
+                    )
+                    if ((page * 2) + 1 <= thumbnailOfPageDataList.size - 1) {
+                        PageForView(
+                            thumbnail = thumbnailOfPageDataList[(page * 2) + 1].thumbnail,
+                            modifier = Modifier
+                        )
+                    } else {
+                        Box(
+                            Modifier.aspectRatio(2f / 3f)
+                                .background(MaterialTheme.colorScheme.secondary)
+                        ) {
+                            Text(
+                                text = "마지막 페이지 입니다!",
+                                style = MaterialTheme.typography.displaySmall)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -26,6 +26,8 @@ import androidx.compose.ui.zIndex
 import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.airbnb.lottie.compose.*
 import com.tntt.designsystem.component.IgIconButton
 import com.tntt.designsystem.component.IgTextButton
 import com.tntt.designsystem.component.IgTopAppBar
@@ -53,7 +55,20 @@ fun DrawingRoute(
 
     val colorPaintController = rememberSketchbookController()
 
-    if(layerList.isNotEmpty()) {
+    if(layerList.isEmpty()) {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
+        val progress by animateLottieCompositionAsState(composition = composition, iterations = LottieConstants.IterateForever)
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            LottieAnimation(
+                composition = composition,
+                progress = { progress },
+            )
+        }
+    }else {
         Scaffold(
             modifier = Modifier
                 .pointerInput(selectedTool) {
@@ -65,8 +80,6 @@ fun DrawingRoute(
                 DrawingTopAppBar(
                     sketchController = colorPaintController,
                     onClickBackNav = {
-                        viewModel.updateDrawingInfo(colorPaintController)
-                        viewModel.save()
                         onClickBackNav()
                     },
                     onClickSaveButton = {
@@ -248,11 +261,10 @@ private fun SketchScreen(
         ) {
             Image(
                 modifier = modifier
-                    .fillMaxSize()
-                    .zIndex(2f),
+                    .zIndex(2f)
+                    .align(Alignment.Center),
                 bitmap = layerList[1].bitmap.asImageBitmap(),
                 contentDescription = "",
-                contentScale = ContentScale.Fit
             )
             Sketchbook(
                 modifier = modifier

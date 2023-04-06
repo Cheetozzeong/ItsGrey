@@ -61,7 +61,7 @@ class RemoteBookDataSourceImpl @Inject constructor(
                 .whereEqualTo("userId", userId)
                 .whereEqualTo("bookType", bookType)
                 .orderBy("title", Query.Direction.ASCENDING)
-                .limit((startIndex + 1L))
+                .limit((startIndex + 1).toLong())
                 .get()
                 .await()
 

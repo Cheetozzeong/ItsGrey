@@ -7,8 +7,9 @@ import androidx.navigation.compose.NavHost
 import com.tntt.editbook.Navigation.editBookPageRoute
 import com.tntt.editbook.Navigation.editBookPageScreen
 import com.tntt.feature.editpage.navigation.editPageScreen
-import com.tntt.home.navigation.homePageRoute
 import com.tntt.home.navigation.homePageScreen
+import com.tntt.viewer.Navigation.viewerPageRoute
+import com.tntt.viewer.Navigation.viewerPageScreen
 import itsgrey.feature.drawing.navigation.*
 
 @Composable
@@ -31,9 +32,16 @@ fun IgNavHost(
             onImageClick = { id, uri ->
                 navController.toDrawing(id, uri)
             },
+            navController = navController
         )
         drawingScreen(
-            onBackClick = {}
+            onBackClick = {
+                navController.navigate(editPageGraphRoutePattern) {
+                    popUpTo(editPageGraphRoutePattern) {
+                        inclusive = true
+                    }
+                }
+            }
         )
         homePageScreen(
             onThumbnailClick = {
@@ -48,6 +56,9 @@ fun IgNavHost(
             onNewPageClick = {},
 //            onViewerClick = { id -> navController.toViewer(id) }
             currentUserEmail = currentUserEmail,
+        )
+        viewerPageScreen(
+            onBackClick = {},
         )
     }
 }

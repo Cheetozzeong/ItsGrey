@@ -159,7 +159,7 @@ private fun BookList(
 ) {
     val windowSize = computeWindowSizeClasses(screenWidth)
     IgTheme {
-        if (books.isEmpty()) {
+        if (books.isEmpty() && tabPage == TabPage.Published) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
