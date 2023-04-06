@@ -43,13 +43,4 @@ fun NavGraphBuilder.drawingScreen(
             )
         }
     }
-
-
-//    Log.d("testNav uri2", "$drawingGraphRoutePattern/${imageBoxIdArgs}/${imageUriArgs}")
-//    navigation(
-//        route = "$drawingGraphRoutePattern/${imageBoxIdArgs}/${imageUriArgs}",
-//        startDestination = drawingRoute
-//    ) {
-//
-//    }
 }

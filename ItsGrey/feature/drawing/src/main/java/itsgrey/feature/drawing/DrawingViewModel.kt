@@ -2,6 +2,8 @@ package itsgrey.feature.drawing
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Matrix
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.compose.ui.graphics.toArgb
@@ -69,18 +71,18 @@ class DrawingViewModel @Inject constructor(
                                 _drawingInfo.value = it
                             }
                         }
-                    aspectRatio.value = (_layerList.value[0].bitmap.width / _layerList.value[0].bitmap.height).toFloat()
+                    aspectRatio.value = (_layerList.value[1].bitmap.width.toFloat() / _layerList.value[1].bitmap.height.toFloat())
                 }
             }
             else -> {   // 새로운 이미지를 변환해서 불러오기
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     drawingUseCase.createLayerList(
                         imageBoxId,
                         MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(imageUri))
                     ).collect() {
                         _layerList.value = it
                     }
-                    aspectRatio.value = _layerList.value[0].bitmap.width.toFloat() / _layerList.value[0].bitmap.height.toFloat()
+                    aspectRatio.value = _layerList.value[1].bitmap.width.toFloat() / _layerList.value[1].bitmap.height.toFloat()
                 }
             }
         }

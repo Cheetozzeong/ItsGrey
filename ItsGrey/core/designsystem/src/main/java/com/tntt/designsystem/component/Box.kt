@@ -53,7 +53,10 @@ fun Box(
                     position.y.roundToInt()
                 )
             }
-            .size((size.width / density.value).dp, (size.height / density.value).dp)
+            .size(
+                (size.width / density.value).dp,
+                (size.height / density.value).dp
+            )
     ) {
         innerContent()
     }
@@ -73,8 +76,8 @@ fun BoxForEdit(
 
     val density = rememberSaveable { mutableStateOf(1f) }
     val position = remember(inputPosition) { mutableStateOf(inputPosition) }
-    val size = remember(inputSize) { mutableStateOf(inputSize.times(1 / density.value)) }
-    val ratio by lazy { inputSize.width / inputSize.height }
+    val size = remember(inputSize) { mutableStateOf(inputSize) }
+    val ratio = remember(inputSize) { inputSize.height / inputSize.width }
 
     val borderStyle = if (isSelected) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
     val borderColor = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary
@@ -106,7 +109,10 @@ fun BoxForEdit(
                     style = borderStyle
                 )
             }
-            .size(size.value.width.dp, size.value.height.dp)
+            .size(
+                (size.value.width / density.value).dp,
+                (size.value.height / density.value).dp
+            )
     ) {
         innerContent()
     }
@@ -115,25 +121,25 @@ fun BoxForEdit(
         key = inputSize,
         isSelected,
         position.value.times(1 / density.value),
-        size.value,
+        size.value.times(1 / density.value),
         onDrag = { dragAmount ->
             when (resizeType) {
                 ResizeType.Ratio -> {
                     size.value = Size(
-                        size.value.width + dragAmount.x / density.value,
-                        size.value.height + dragAmount.x * ratio / density.value
+                        size.value.width + dragAmount.x,
+                        size.value.height + dragAmount.x * ratio
                     )
                 }
                 ResizeType.Free -> {
                     size.value = Size(
-                        size.value.width + dragAmount.x / density.value,
-                        size.value.height + dragAmount.y / density.value
+                        size.value.width + dragAmount.x,
+                        size.value.height + dragAmount.y
                     )
                 }
             }
         },
         onDragEnd = {
-            updateSize(size.value.times(density.value))
+            updateSize(size.value)
         }
     )
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
 import com.tntt.core.common.decoder.StringDecoder
 import com.tntt.feature.editpage.EditPageRoute
 
@@ -25,6 +26,7 @@ fun NavController.navigateToEditPage(pageId: String) {
 }
 
 fun NavGraphBuilder.editPageScreen(
+    navController: NavController,
     onBackClick: () -> Unit,
     onImageClick: (String, Uri?) -> Unit,
 ) {
@@ -40,7 +42,7 @@ fun NavGraphBuilder.editPageScreen(
             route = editPageRoute
         ) {
             EditPageRoute(
-                onImageToDrawClick = onImageClick
+                onImageToDrawClick = onImageClick,
             )
         }
     }

@@ -87,5 +87,6 @@ dependencies {
     implementation("com.github.skydoves:orchestra-colorpicker:1.0.5")
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("io.getstream:sketchbook:1.0.4")
+    implementation("com.airbnb.android:lottie-compose:6.0.0")
 
 }
