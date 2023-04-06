@@ -1,11 +1,7 @@
 package com.tntt.home
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import com.tntt.core.common.decoder.StringDecoder
 import com.tntt.home.model.Book
 import com.tntt.home.navigation.userIdArg
 import com.tntt.home.navigation.userNameArg
@@ -42,12 +38,12 @@ class HomePageViewModel @Inject constructor(
         getPublishedBookList(
             userId = userId,
             sortType = SortType.SAVE_DATE,
-            startIndex = 0L
+            startIndex = 0
         )
         getWorkingBookList(
             userId = userId,
             sortType = SortType.SAVE_DATE,
-            startIndex = 0L
+            startIndex = 0
         )
     }
 
@@ -67,7 +63,7 @@ class HomePageViewModel @Inject constructor(
         }
     }
 
-    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Long) {
+    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             homeUseCase.getBooks(
                 userId,
@@ -78,7 +74,7 @@ class HomePageViewModel @Inject constructor(
         }
     }
 
-    private fun getPublishedBookList(userId: String, sortType: SortType, startIndex: Long) {
+    private fun getPublishedBookList(userId: String, sortType: SortType, startIndex: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             homeUseCase.getBooks(
                 userId,

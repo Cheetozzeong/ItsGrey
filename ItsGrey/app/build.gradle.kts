@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":feature:editBook"))
     implementation(project(":feature:home"))
     implementation(project(":feature:drawing"))
+    implementation(project(":feature:viewer"))
     implementation(project(":domain:home"))
     implementation(project(":core:designsystem"))
 
