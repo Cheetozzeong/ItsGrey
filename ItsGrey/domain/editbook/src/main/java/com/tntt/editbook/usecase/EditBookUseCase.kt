@@ -12,6 +12,7 @@ import com.tntt.repo.TextBoxRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import java.util.*
 import javax.inject.Inject
 
 class EditBookUseCase @Inject constructor(
@@ -55,12 +56,12 @@ class EditBookUseCase @Inject constructor(
     }
 
     suspend fun saveBook(book: Book, userId: String, bookType: BookType = BookType.WORKING): Flow<Boolean> = flow {
-//        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
-//            bookRepository.updateBookInfo(book.bookInfo, userId, bookType).collect() { updateBookInfoResult ->
-//                emit(savePagesResult && updateBookInfoResult)
-//            }
-//        }
-
+        savePages(book.bookInfo.id, book.pages).collect() { savePagesResult ->
+            val publishBookInfo = BookInfo(book.bookInfo.id, book.bookInfo.title, Date())
+            bookRepository.updateBookInfo(publishBookInfo, userId, bookType).collect() { updateBookInfoResult ->
+                emit(savePagesResult && updateBookInfoResult)
+            }
+        }
     }
 
     suspend fun publishBook(book: Book, userId: String): Flow<Boolean> = flow {

@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 
 class EditPageUseCase @Inject constructor(
-    private val pageRepository: PageRepository,
     private val imageBoxRepository: ImageBoxRepository,
     private val textBoxRepository: TextBoxRepository,
     private val layerRepository: LayerRepository,

@@ -12,7 +12,6 @@ import com.tntt.layer.model.LayerDto
 import com.tntt.network.retrofit.RetrofitNetwork
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
@@ -48,6 +47,7 @@ class RemoteLayerDataSourceImpl @Inject constructor(
             .orderBy("order")
             .get()
             .await()
+
         val documentSnapshot = querySnapshot.documents
         for (document in documentSnapshot) {
             val data = document.data
@@ -59,19 +59,21 @@ class RemoteLayerDataSourceImpl @Inject constructor(
         emit(layerDtoList)
     }
 
-    override suspend fun updateLayerDtoList(layerDtoList: List<LayerDto>) = callbackFlow<Boolean> {
+    override suspend fun updateLayerDtoList(layerDtoList: List<LayerDto>): Flow<Boolean> = flow {
+        var result = true
         for (layerDto in layerDtoList) {
             layerCollection
                 .document(layerDto.id)
                 .set(layerDto)
-                .addOnSuccessListener {
-                    trySend(true)
-                }
+                .addOnFailureListener { result = false }
+                .await()
         }
-        awaitClose()
+        emit(result)
     }
 
-    override suspend fun deleteLayerDtoList(imageBoxId: String) = callbackFlow<Boolean> {
+    override suspend fun deleteLayerDtoList(imageBoxId: String): Flow<Boolean> = flow {
+        val storageRef = storage.reference
+
         var result: Boolean = true
         layerCollection
             .whereEqualTo("imageBoxId", imageBoxId)
@@ -79,14 +81,16 @@ class RemoteLayerDataSourceImpl @Inject constructor(
             .addOnSuccessListener { querySnapshot ->
                 val documentSnapshot = querySnapshot.documents
                 for (document in documentSnapshot) {
+                    val imageRef = storageRef.child("/images/${document.id}")
+                    imageRef.delete()
+
                     layerCollection
                         .document(document.id)
                         .delete()
                         .addOnFailureListener { result = false }
                 }
-            }
-        trySend(result)
-        awaitClose()
+            }.await()
+        emit(result)
     }
 
 
@@ -98,7 +102,7 @@ class RemoteLayerDataSourceImpl @Inject constructor(
 
         val apiService = RetrofitNetwork.getApiService()
         val requestBody = RequestBody.create(MediaType.parse("image/png"), byteArray)
-        val part = MultipartBody.Part.createFormData("file", "my_image.jpg", requestBody)
+        val part = MultipartBody.Part.createFormData("file", "my_image.png", requestBody)
         val response = apiService.getSketch(part)
 
         val bmpByteArray = response.bytes()
