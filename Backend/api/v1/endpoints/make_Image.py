@@ -1,9 +1,10 @@
 from fastapi import Response, UploadFile, APIRouter, HTTPException
 
 import os
-import time
 import secrets
+# import time
 
+from math import ceil
 from pathlib import Path
 from datetime import datetime
 
@@ -21,22 +22,22 @@ router = APIRouter()
 detector = hub.load('core/tf_model').signatures['default']
 
 lower_group = ['Tortoise', 'Magpie', 'Sea turtle', 'Human eye', 'Bird', 'Doll', 'Tick', 'Boy', 'Bear', 'Brown bear',
-               'Woodpecker', 'Blue jay', 'Person', 'Bee', 'Bat', 'Popcorn', 'Carnivore', 'Cattle', 'Camel', 'Coat',
-               'Suit', 'Cat', 'Bronze sculpture', 'Beetle', 'Fountain', 'Human mouth', 'Dinosaur', 'Ratchet', 'Scarf',
-               'Dolphin', 'Mug', 'Human body', 'Food', 'Fruit', 'Fox', 'Human foot', 'Human leg', 'Isopod', 'Grape',
-               'Human ear', 'Panda', 'Giraffe', 'Woman', 'Rhinoceros', 'Goldfish', 'Goat', 'Marine invertebrates',
-               'Horse', 'Hamster', 'Insect', 'Jaguar', 'Kangaroo', 'Koala', 'Lynx', 'Lavender', 'Human head', 'Lizard',
-               'Mammal', 'Mouse', 'Bust', 'Man', 'Mushroom', 'Pitcher', 'Ostrich', 'Girl', 'Plant', 'Penguin',
-               'Polar bear', 'Pig', 'Reptile', 'Raven', 'Red panda', 'Rose', 'Rabbit', 'Sculpture', 'Squirrel',
-               'Scorpion', 'Snake', 'Sheep', 'Tiger', 'Strawberry', 'Tree', 'Tomato', 'Worm', 'Whale', 'Zebra',
-               'Monkey', 'Lion', 'Chicken', 'Eagle', 'Owl', 'Duck', 'Turtle', 'Hippopotamus', 'Crocodile', 'Squid',
-               'Spider', 'Deer', 'Frog', 'Dog', 'Elephant', 'Shark', 'Leopard', 'Porcupine', 'Flower', 'Canary',
-               'Cheetah', 'Palm tree', 'Fish', 'Lobster', 'Hedgehog', 'Otter', 'Bull', 'Oyster', 'Butterfly',
-               'Antelope', 'Moths and butterflies', 'Jellyfish', 'Goose', 'Mule', 'Swan', 'Raccoon', 'Human face',
-               'Human arm', 'Falcon', 'Snail', 'Shellfish', 'Dragonfly', 'Sunflower', 'Marine mammal', 'Sea lion',
-               'Ladybug', 'Parrot', 'Sparrow', 'Kitchen & dining room table', 'Dog bed', 'Cat furniture', 'Animal',
-               'Turkey', 'Lily', 'Human nose', 'Ant', 'Human hand', 'Skunk', 'Teddy bear', 'Shrimp', 'Crab', 'Seahorse',
-               'Alpaca', 'Armadillo']
+                'Woodpecker', 'Blue jay', 'Person', 'Bee', 'Bat', 'Popcorn', 'Carnivore', 'Cattle', 'Camel', 'Coat',
+                'Suit', 'Cat', 'Bronze sculpture', 'Beetle', 'Fountain', 'Human mouth', 'Dinosaur', 'Ratchet', 'Scarf',
+                'Dolphin', 'Mug', 'Human body', 'Food', 'Fruit', 'Fox', 'Human foot', 'Human leg', 'Isopod', 'Grape',
+                'Human ear', 'Panda', 'Giraffe', 'Woman', 'Rhinoceros', 'Goldfish', 'Goat', 'Marine invertebrates',
+                'Horse', 'Hamster', 'Insect', 'Jaguar', 'Kangaroo', 'Koala', 'Lynx', 'Lavender', 'Human head', 'Lizard',
+                'Mammal', 'Mouse', 'Bust', 'Man', 'Mushroom', 'Pitcher', 'Ostrich', 'Girl', 'Plant', 'Penguin',
+                'Polar bear', 'Pig', 'Reptile', 'Raven', 'Red panda', 'Rose', 'Rabbit', 'Sculpture', 'Squirrel',
+                'Scorpion', 'Snake', 'Sheep', 'Tiger', 'Strawberry', 'Tree', 'Tomato', 'Worm', 'Whale', 'Zebra',
+                'Monkey', 'Lion', 'Chicken', 'Eagle', 'Owl', 'Duck', 'Turtle', 'Hippopotamus', 'Crocodile', 'Squid',
+                'Spider', 'Deer', 'Frog', 'Dog', 'Elephant', 'Shark', 'Leopard', 'Porcupine', 'Flower', 'Canary',
+                'Cheetah', 'Palm tree', 'Fish', 'Lobster', 'Hedgehog', 'Otter', 'Bull', 'Oyster', 'Butterfly',
+                'Antelope', 'Moths and butterflies', 'Jellyfish', 'Goose', 'Mule', 'Swan', 'Raccoon', 'Human face',
+                'Human arm', 'Falcon', 'Snail', 'Shellfish', 'Dragonfly', 'Sunflower', 'Marine mammal', 'Sea lion',
+                'Ladybug', 'Parrot', 'Sparrow', 'Kitchen & dining room table', 'Dog bed', 'Cat furniture', 'Animal',
+                'Turkey', 'Lily', 'Human nose', 'Ant', 'Human hand', 'Skunk', 'Teddy bear', 'Shrimp', 'Crab', 'Seahorse',
+                'Alpaca', 'Armadillo']
 
 
 @router.post("/api/v1/itsGrey/makeImage")
@@ -50,29 +51,24 @@ async def make_image(file: UploadFile):
     '''
 
     try:
-        target_image = get_image(file) # 받은 이미지 경로
-        detect_img(detector, target_image) # 이미지 객체 탐색
-        detection_class_entities = res["detection_class_entities"] # 결과
+        target_image = get_image(file)
+        detect_img(detector, target_image)
 
         img = cv2.imread(str(target_image))
-        is_need_higher_threshold = select_threshold(detection_class_entities[0]) # Higher / Lower Group 반환
 
-        # 조건에 따라 Canny Edge Detection 사용
-        if is_need_higher_threshold:
-            img = canny_edge_detection(img, 5, 50, 100)
-        else:
-            img = canny_edge_detection(img, 5, 50, 200)
+        pil_img = Image.fromarray(canny_each_object(img))
 
         # 결과 파일 저장
-        result_image = random_img_filename()
-        cv2.imwrite(str(IMG_DIR / result_image), img)
-        os.remove(target_image)
+        result_image = random_img_filename('bmp')
+        pil_img.save(str(IMG_DIR / result_image))
 
-        # 결과 Response
+        os.remove(target_image)
         with open(str(IMG_DIR / result_image), 'rb') as image_file:
             result = image_file.read()
+        os.remove(str(IMG_DIR / result_image))
 
-            return Response(result, media_type='image/jpeg')
+        # 결과 Response
+        return Response(result, media_type='image/bmp')
     
     # 문제가 발생하면 임시 파일 전부 제거 후 500 Response
     except:
@@ -87,25 +83,35 @@ async def make_image(file: UploadFile):
 
 def get_image(file: UploadFile):
     '''
-    이미지를 BE에 저장하고 경로를 반환하는 함수
+    jpg, png 이미지를 BE에 저장하고 경로를 반환하는 함수
     '''
 
-    file_name = random_img_filename()
-    local_path = IMG_DIR / file_name
+    if file.filename.lower().endswith('png'):
+        file_name = random_img_filename('png')
+        local_path = IMG_DIR / file_name
 
-    with open(local_path, 'wb') as file_object:
-        file_object.write(file.file.read())
+        with open(local_path, 'wb') as file_object:
+            image = Image.open(file.file)
+            image = image.convert('RGB')
+            image.save(file_object, format='JPEG', quality=100)
+
+    elif file.filename.lower().endswith('jpg') or file.filename.lower().endswith('jpeg'):
+        file_name = random_img_filename('jpg')
+        local_path = IMG_DIR / file_name
+
+        with open(local_path, 'wb') as file_object:
+            file_object.write(file.file.read())
 
     return local_path
 
 
-def random_img_filename():
+def random_img_filename(file_type: str) -> str:
     '''
     난수를 활용한 이미지 파일 이름 생성 함수
     '''
 
     current_time = datetime.now().strftime('%Y%m%d%H%M%S')
-    name = f'{current_time}-{secrets.token_hex(16)}.jpg'
+    name = f'{current_time}-{secrets.token_hex(16)}.{file_type}'
 
     return name
 
@@ -187,9 +193,6 @@ def detect_img(detector, path):
 
     result = {key: value.numpy() for key, value in result.items()}
 
-    # print("Found %d objects." % len(result["detection_scores"]))
-    # print("Inference time: ", end_time - start_time)
-
     res = result
 
 
@@ -217,3 +220,32 @@ def canny_edge_detection(img, kernel_size=5, low_threshold=50, high_threshold=10
     edge_img = cv2.bitwise_not(edge_img)
 
     return edge_img
+
+
+def canny_each_object(img):
+    '''
+    각 오브젝트별 Canny Edge Detection을 차등 적용하는 함수
+    '''
+
+    copy_img = img.copy()
+    copy_img = canny_edge_detection(copy_img, 5, 50, 100)
+    im_width, im_height = (Image.fromarray(np.uint8(img))).size
+
+    i = 0
+
+    while i < 100 and res['detection_scores'][i] >= 0.1:
+        ymin, xmin, ymax, xmax = res['detection_boxes'][i]
+        (left, right, bottom, top) = (int(xmin * im_width), ceil(xmax * im_width), int(ymin * im_height), ceil(ymax * im_height))
+
+        roi = img[bottom:top, left:right].copy()
+
+        if res['detection_class_entities'][i].decode() in lower_group:
+            edges = canny_edge_detection(roi, 5, 50, 100)
+        else:
+            edges = canny_edge_detection(roi, 5, 50, 200)
+
+        edges_resized = cv2.resize(edges, ((right - left), (top - bottom)))
+        copy_img[bottom:top, left:right] = edges_resized
+        i += 1
+
+    return copy_img
