@@ -8,6 +8,8 @@ import com.tntt.editbook.Navigation.editBookPageScreen
 import com.tntt.feature.editpage.navigation.editPageGraphRoutePattern
 import com.tntt.feature.editpage.navigation.editPageScreen
 import com.tntt.home.navigation.homePageScreen
+import com.tntt.viewer.Navigation.viewerPageRoute
+import com.tntt.viewer.Navigation.viewerPageScreen
 import itsgrey.feature.drawing.navigation.*
 
 @Composable
@@ -53,6 +55,9 @@ fun IgNavHost(
             onViewerClick = {},
             onNewPageClick = {},
 //            onViewerClick = { id -> navController.toViewer(id) }
+        )
+        viewerPageScreen(
+            onBackClick = {},
         )
     }
 }
