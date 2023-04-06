@@ -1,6 +1,7 @@
 package com.tntt.designsystem.dialog
 
 
+import android.widget.NumberPicker.OnValueChangeListener
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,18 +14,21 @@ import com.tntt.designsystem.theme.IgTheme
 @Composable
 fun IgTitleEditDialog(
     currentTitle: String,
-    onTitleChanged: (String) -> Unit,
     onDismiss: () -> Unit,
+    onValueChange: (String) -> Unit
 ) {
     val (title, setTitle) = remember { mutableStateOf(currentTitle) }
 
     IgTheme() {
         AlertDialog(
-            onDismissRequest = { onDismiss() },
+            onDismissRequest = onDismiss,
             title = {
                 OutlinedTextField(
                     value = title,
-                    onValueChange = {  },
+                    onValueChange = { newTitle ->
+                        setTitle(newTitle)
+                        onValueChange(newTitle)
+                    },
                     singleLine = true,
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth(),
@@ -33,9 +37,8 @@ fun IgTitleEditDialog(
             confirmButton = {
                 Button(
                     onClick = {
-                        onTitleChanged(title)
                         onDismiss()
-                              },
+                    },
                 ) {
                     Text(
                         text = "완료",

@@ -1,18 +1,18 @@
 package com.tntt.editbook.Navigation
 
 import android.net.Uri
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
+import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.tntt.editbook.EditBookPageRoute
 
-internal const val pageIdArg = "pageId"
+internal const val bookIdArg = "bookId"
+internal const val userIdArg = "userId"
 
 const val editBookPageRoute = "editBookPage_route"
 private const val editBookPageGraphRoutePattern = "editBookPage_route"
 
-fun NavController.navigateToEditBookPage(pageId: String) {
-    val encodedId = Uri.encode(pageId)
+fun NavController.navigateToEditBookPage(bookId: String) {
+    val encodedId = Uri.encode(bookId)
     this.navigate("$editBookPageGraphRoutePattern/$encodedId")
 }
 
@@ -21,14 +21,21 @@ fun NavGraphBuilder.editBookPageScreen(
     onViewerClick: () -> Unit,
 //    onViewerClick: (String) -> Unit,
     onNewPageClick: () -> Unit,
+    currentUserEmail: String,
+//    currentBookId: String,
 ) {
     composable(
-//        route = "$editBookPageRoute/{pageIdArg}",
-//        arguments = listOf(
-//            navArgument(pageIdArg) {type = NavType.StringType}
-//        )
-        route = editBookPageRoute
+        route = editBookPageRoute,
+//        route = "$editBookPageRoute/{$userIdArg}/{$bookIdArg}",
+        arguments = listOf(
+            navArgument(userIdArg) {type = NavType.StringType},
+//            navArgument(bookIdArg) {type = NavType.StringType},
+        )
     ) {
+        it.arguments?.apply {
+            putString(userIdArg, currentUserEmail)
+//            putString(bookIdArg, currentBookId)
+        }
         EditBookPageRoute(
             onBackClick = onBackClick,
             onViewerClick = onViewerClick,

@@ -14,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.geometry.Offset
@@ -30,13 +29,13 @@ import com.google.accompanist.pager.rememberPagerState
 import com.tntt.designsystem.component.IgPlusPageButton
 import com.tntt.designsystem.theme.IgTheme
 import com.tntt.designsystem.component.IgTopAppBar
+import com.tntt.designsystem.dialog.IgDeleteDialog
 import com.tntt.designsystem.dialog.IgTitleEditDialog
 import com.tntt.designsystem.icon.IgIcons
 import com.tntt.editbook.model.Page
 import com.tntt.model.*
 import com.tntt.ui.PageForView
 import org.burnoutcrew.reorderable.*
-import kotlin.math.ceil
 
 
 @Composable
@@ -61,9 +60,15 @@ internal fun EditBookPageRoute(
         updateSelectedPage = viewModel::updateSelectedPage,
         updatePageOrder = viewModel::updatePageOrder,
         isPageDragEnabled = viewModel::isPageDragEnabled,
+        titleChange = viewModel::titleChange,
         onBackClick = onBackClick,
         onViewerClick = onViewerClick,
         onNewPageClick = onNewPageClick,
+        getBook = viewModel::getBook,
+        createPage = viewModel::createPage,
+        deletePage = viewModel::deletePage,
+        publishBook = viewModel::publishBook,
+        saveBook = viewModel::saveBook,
     )
 }
 
@@ -77,20 +82,25 @@ private fun EditBookScreen(
     updateSelectedPage: (index: Int) -> Unit,
     updatePageOrder: (from: Int, to: Int) -> Unit,
     isPageDragEnabled: (ItemPosition, ItemPosition) -> Boolean,
+    titleChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onViewerClick: () -> Unit,
 //    onViewerClick: (String) -> Unit,
     onNewPageClick: () -> Unit,
+    createPage: (Boolean) -> Unit,
+    deletePage: (String) -> Unit,
+    publishBook: () -> Unit,
+    saveBook: () -> Unit,
+    getBook: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
 
     if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-        VerticalModeScreen(bookTitle, thumbnailOfPageDataList, isCoverExist, movePage, selectedPage, updateSelectedPage, updatePageOrder, isPageDragEnabled, onBackClick, onViewerClick, onNewPageClick)
+        VerticalModeScreen(bookTitle, thumbnailOfPageDataList, isCoverExist, movePage, selectedPage, updateSelectedPage, updatePageOrder, isPageDragEnabled, titleChange, onBackClick, onViewerClick, onNewPageClick, createPage, deletePage, publishBook, saveBook, getBook)
     } else {
-        HorizontalModeScreen(bookTitle, thumbnailOfPageDataList, isCoverExist, movePage, selectedPage, updateSelectedPage, updatePageOrder, isPageDragEnabled, onBackClick, onViewerClick, onNewPageClick)
+        HorizontalModeScreen(bookTitle, thumbnailOfPageDataList, isCoverExist, movePage, selectedPage, updateSelectedPage, updatePageOrder, isPageDragEnabled, titleChange, onBackClick, onViewerClick, onNewPageClick, createPage, deletePage, publishBook, saveBook, getBook)
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,14 +109,19 @@ private fun EditBookTopAppBar(
     onBackClick: () -> Unit,
     onViewerClick: () -> Unit,
 //    onViewerClick: (String) -> Unit,
+    titleChange: (String) -> Unit,
+    publishBook: () -> Unit,
+    saveBook: () -> Unit,
+    getBook: () -> Unit,
 ) {
     var showEditTitleDialog by remember { mutableStateOf(false) }
+    /*TODO : NAV : save 완료 -> onBackClick */
     IgTopAppBar(
         title = bookTitle,
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Back",
-        onNavigationClick = {/*TODO : onBackClick -> save 후 이동 */
-            // 1. save
+        onNavigationClick = {
+            saveBook()
             onBackClick()
         },
         actions = {
@@ -121,11 +136,20 @@ private fun EditBookTopAppBar(
                     tint = Color.Black,
                 )
             }
+            /* TODO : editTitleDialog 완료 -> Save 완료 */
             if (showEditTitleDialog) {
-                IgTitleEditDialog(currentTitle = bookTitle, onTitleChanged = {}, onDismiss = { showEditTitleDialog = false } )
+                IgTitleEditDialog(
+                    currentTitle = bookTitle,
+                    onDismiss = { showEditTitleDialog = false },
+                    onValueChange = {
+                        titleChange(it)
+                        saveBook()
+                    }
+                )
             }
+            /*TODO : NAV : save 완료 -> onBackClick */
             IconButton(
-                onClick = { /*TODO : onViewerClick -> save 후 이동 */ },
+                onClick = { saveBook() },
                 modifier = Modifier
                     .padding(8.dp, 0.dp)
             ) {
@@ -135,8 +159,12 @@ private fun EditBookTopAppBar(
                     tint = Color.Black,
                 )
             }
+            /*TODO : NAV : publish 완료 -> save 완료 -> onBackClick */
             Button(
-                onClick = { /*TODO : (publish) onBackClick -> save 후 이동 */ },
+                onClick = {
+                    publishBook()
+                    saveBook()
+                  },
                 modifier = Modifier
                     .padding(8.dp, 0.dp)
             ) {
@@ -159,14 +187,20 @@ private fun VerticalModeScreen(
     updateSelectedPage: (index: Int) -> Unit,
     updatePageOrder: (from: Int, to: Int) -> Unit,
     isPageDragEnabled: (ItemPosition, ItemPosition) -> Boolean,
+    titleChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onViewerClick: () -> Unit,
 //    onViewerClick: (String) -> Unit,
     onNewPageClick: () -> Unit,
+    createPage: (Boolean) -> Unit,
+    deletePage: (String) -> Unit,
+    publishBook: () -> Unit,
+    saveBook: () -> Unit,
+    getBook: () -> Unit,
 ) {
     IgTheme {
         Scaffold(
-            topBar = { EditBookTopAppBar(bookTitle, onBackClick, onViewerClick) }
+            topBar = { EditBookTopAppBar(bookTitle, onBackClick, onViewerClick, titleChange, publishBook, saveBook, getBook) }
         ) { padding ->
             Column(
                 Modifier
@@ -179,7 +213,7 @@ private fun VerticalModeScreen(
                         .fillMaxWidth()
                         .background(color = MaterialTheme.colorScheme.secondary)
                 ) {
-                    MainSection(thumbnailOfPageDataList, isCoverExist, selectedPage, updateSelectedPage, updatePageOrder, onNewPageClick)
+                    MainSection(thumbnailOfPageDataList, isCoverExist, selectedPage, updateSelectedPage, updatePageOrder, onNewPageClick, createPage, deletePage, saveBook, getBook)
                 }
                 Box(modifier = Modifier
                     .weight(0.25f)
@@ -187,7 +221,7 @@ private fun VerticalModeScreen(
                     .background(color = MaterialTheme.colorScheme.secondary)
                     .border(width = 1.dp, color = MaterialTheme.colorScheme.tertiary)
                 ) {
-                    VerticalModeSideSection(thumbnailOfPageDataList, isCoverExist, movePage, selectedPage, updateSelectedPage, updatePageOrder, isPageDragEnabled, onNewPageClick)
+                    VerticalModeSideSection(thumbnailOfPageDataList, isCoverExist, movePage, selectedPage, updateSelectedPage, updatePageOrder, isPageDragEnabled, onNewPageClick, createPage, saveBook, getBook)
                 }
             }
         }
@@ -205,15 +239,22 @@ fun HorizontalModeScreen(
     updateSelectedPage: (index: Int) -> Unit,
     updatePageOrder: (from: Int, to: Int) -> Unit,
     isPageDragEnabled: (ItemPosition, ItemPosition) -> Boolean,
+    titleChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onViewerClick: () -> Unit,
 //    onViewerClick: (String) -> Unit,
     onNewPageClick: () -> Unit,
+    createPage: (Boolean) -> Unit,
+    deletePage: (String) -> Unit,
+    publishBook: () -> Unit,
+    saveBook: () -> Unit,
+    getBook: () -> Unit,
 ) {
-    val recColor = MaterialTheme.colorScheme.tertiary
     IgTheme {
+        val recColor = MaterialTheme.colorScheme.tertiary
+
         Scaffold(
-            topBar = { EditBookTopAppBar(bookTitle, onBackClick, onViewerClick) }
+            topBar = { EditBookTopAppBar(bookTitle, onBackClick, onViewerClick, titleChange, publishBook, saveBook, getBook) }
         ) { padding ->
             Row(
                 Modifier
@@ -233,7 +274,7 @@ fun HorizontalModeScreen(
                         )
                     }
                 ) {
-                    HorizontalModeSideSection(thumbnailOfPageDataList, isCoverExist, movePage, selectedPage, updateSelectedPage, updatePageOrder, isPageDragEnabled, onNewPageClick)
+                    HorizontalModeSideSection(thumbnailOfPageDataList, isCoverExist, movePage, selectedPage, updateSelectedPage, updatePageOrder, isPageDragEnabled, onNewPageClick, createPage, saveBook, getBook)
                 }
                 Box(
                     modifier = Modifier
@@ -241,7 +282,7 @@ fun HorizontalModeScreen(
                         .fillMaxWidth()
                         .background(color = MaterialTheme.colorScheme.secondary)
                 ) {
-                    MainSection(thumbnailOfPageDataList, isCoverExist, selectedPage, updateSelectedPage, updatePageOrder, onNewPageClick)
+                    MainSection(thumbnailOfPageDataList, isCoverExist, selectedPage, updateSelectedPage, updatePageOrder, onNewPageClick, createPage, deletePage, saveBook, getBook)
                 }
             }
         }
@@ -258,6 +299,9 @@ private fun VerticalModeSideSection(
     updatePageOrder: (from: Int, to: Int) -> Unit,
     isPageDragEnabled: (ItemPosition, ItemPosition) -> Boolean,
     onNewPageClick: () -> Unit,
+    createPage: (Boolean) -> Unit,
+    saveBook: () -> Unit,
+    getBook: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lazyListState = rememberReorderableLazyListState(
@@ -266,19 +310,23 @@ private fun VerticalModeSideSection(
         onDragEnd = { from, to -> updatePageOrder(from, to)
         })
     val recColor = MaterialTheme.colorScheme.tertiary
+
     Row {
         if (!isCoverExist) {
             Box(
                 modifier = Modifier
                     .weight(0.25f)
-                    .fillMaxSize(0.9f)
-                    .padding(8.dp, 16.dp, 8.dp, 16.dp),
-                contentAlignment = Alignment.Center
+                    .padding(16.dp, 16.dp, 16.dp, 16.dp),
             ) {
+                /* TODO : createPage 완료 -> save 완료 */
                 IgPlusPageButton(
-                    onClick = { /* TODO */ },
+                    onClick = {
+                        createPage(true)
+                        saveBook()
+                    },
                     text = "표지 만들기",
-                    modifier = modifier,
+                    modifier = Modifier
+                        .fillMaxHeight(0.9f),
                 )
             }
         }
@@ -334,10 +382,19 @@ private fun VerticalModeSideSection(
                                 text = "${item.pageInfo.order}",
                                 modifier = Modifier
                                     .wrapContentSize(Alignment.BottomCenter),
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }
+                }
+                /* TODO : CHECK plz : createPage 완료 */
+                item {
+                    IgPlusPageButton(
+                        onClick = { createPage(false) },
+                        text = "새 페이지",
+                        modifier = Modifier
+                            .fillMaxSize(0.9f)
+                    )
                 }
             }
         }
@@ -354,6 +411,9 @@ private fun HorizontalModeSideSection(
     updatePageOrder: (from: Int, to: Int) -> Unit,
     isPageDragEnabled: (ItemPosition, ItemPosition) -> Boolean,
     onNewPageClick: () -> Unit,
+    createPage: (Boolean) -> Unit,
+    saveBook: () -> Unit,
+    getBook: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lazyGridState = rememberReorderableLazyGridState(
@@ -362,11 +422,6 @@ private fun HorizontalModeSideSection(
         onDragEnd = { from, to -> updatePageOrder(from, to)
         })
     val recColor = MaterialTheme.colorScheme.tertiary
-
-    LaunchedEffect(lazyGridState) {
-
-    }
-
     Column {
         if (!isCoverExist) {
             Box(
@@ -376,8 +431,12 @@ private fun HorizontalModeSideSection(
                     .padding(8.dp, 16.dp),
                 contentAlignment = Alignment.Center
             ) {
+                /* TODO : createPage 완료 -> save 완료 */
                 IgPlusPageButton(
-                    onClick = { /* TODO */ },
+                    onClick = {
+                        createPage(true)
+                        saveBook()
+                      },
                     text = "표지 만들기",
                     modifier = modifier
                 )
@@ -438,10 +497,20 @@ private fun HorizontalModeSideSection(
                                 text = "${item.pageInfo.order}",
                                 modifier = Modifier
                                     .padding(top = 8.dp),
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }
+                }
+                item {
+                    /* TODO : CHECK plz : createPage 완료 */
+                    IgPlusPageButton(
+                        onClick = { createPage(false) },
+                        text = "New Page",
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .fillMaxSize(0.9f)
+                    )
                 }
             }
         }
@@ -457,10 +526,15 @@ private fun MainSection(
     updateSelectedPage: (index: Int) -> Unit,
     updatePageOrder: (from: Int, to: Int) -> Unit,
     onNewPageClick: () -> Unit,
+    createPage: (Boolean) -> Unit,
+    deletePage: (String) -> Unit,
+    saveBook: () -> Unit,
+    getBook: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val configuration = LocalConfiguration.current
     val pagerState = rememberPagerState(initialPage = selectedPage)
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(pagerState.currentPage) {
         if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -482,9 +556,9 @@ private fun MainSection(
     HorizontalPager(
         state = pagerState,
         count = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            thumbnailOfPageDataList.size
+            thumbnailOfPageDataList.size + 1
         } else {
-            ceil(thumbnailOfPageDataList.size.toFloat() / 2.0).toInt()
+            thumbnailOfPageDataList.size / 2 + 1
         },
         modifier = Modifier
             .fillMaxSize()
@@ -497,46 +571,21 @@ private fun MainSection(
             },
     ) { page ->
         if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Box (modifier = Modifier
-                .padding(0.dp, 36.dp)
-                .shadow(1.dp)
-            ) {
-                PageForView(
-                    thumbnail = thumbnailOfPageDataList[page].thumbnail,
-                    modifier = modifier
-                )
-                IconButton(
-                    onClick = { /* TODO : deleteDialog 열기 */ },
+            if (page + 1 <= thumbnailOfPageDataList.size) {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                ) {
-                    Icon(
-                        IgIcons.Close,
-                        contentDescription = "Delete",
-                        modifier = Modifier
-                            .size(40.dp),
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-        } else {
-            Row(
-                Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
-            ) {
-                Box(modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .fillMaxHeight(1f)
+                        .padding(0.dp, 36.dp)
+                        .shadow(1.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
                     PageForView(
-                        thumbnail = thumbnailOfPageDataList[page * 2].thumbnail,
+                        thumbnail = thumbnailOfPageDataList[page].thumbnail,
                         modifier = Modifier
-                            .padding(9.dp)
-                            .shadow(1.dp)
+                            .clickable { /* TODO : NAV : page로 이동 */ }
                     )
+                    /* TODO : CHECK plz : deletePage 완료 */
                     IconButton(
-                        onClick = { /* TODO : deleteDialog 열기 */ },
+                        onClick = { showDeleteDialog = true },
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                     ) {
@@ -548,20 +597,50 @@ private fun MainSection(
                             tint = MaterialTheme.colorScheme.error
                         )
                     }
+                    if (showDeleteDialog) {
+                        IgDeleteDialog(
+                            onDismiss = { showDeleteDialog = false },
+                            onDelete = { deletePage(thumbnailOfPageDataList[page].pageInfo.id) }
+                        )
+                    }
                 }
-                if ((page * 2) + 1 <= thumbnailOfPageDataList.size - 1) {
-                    Box(modifier = Modifier
-                        .fillMaxWidth(1f)
-                        .fillMaxHeight(1f)
-                    ) {
+            } else {
+                Box(
+                    modifier = Modifier
+                        .padding(0.dp, 36.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    /* TODO : CHECK plz : createPage 완료 */
+                    IgPlusPageButton(
+                        onClick = { createPage(false) },
+                        text = "",
+                        modifier = Modifier
+                            .padding(9.dp)
+                    )
+                }
+            }
+        } else {
+            Row(
+                Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(),
+            ) {
+                Box(modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .fillMaxHeight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if ((page * 2) <= thumbnailOfPageDataList.size - 1) {
                         PageForView(
-                            thumbnail = thumbnailOfPageDataList[(page * 2) + 1].thumbnail,
+                            thumbnail = thumbnailOfPageDataList[page * 2].thumbnail,
                             modifier = Modifier
                                 .padding(9.dp)
                                 .shadow(1.dp)
+                                .clickable { /* TODO : NAV : page로 이동 */ }
                         )
+                        /* TODO : CHECK plz : deletePage 완료 */
                         IconButton(
-                            onClick = { /* TODO : deleteDialog 열기 */ },
+                            onClick = { showDeleteDialog = true },
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
                         ) {
@@ -573,6 +652,70 @@ private fun MainSection(
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
+                        if (showDeleteDialog) {
+                            IgDeleteDialog(
+                                onDismiss = { showDeleteDialog = false },
+                                onDelete = { deletePage(thumbnailOfPageDataList[page * 2].pageInfo.id) }
+                            )
+                        }
+                    } else {
+                        /* TODO : CHECK plz : createPage 완료 */
+                        IgPlusPageButton(
+                            onClick = { createPage(false) },
+                            text = "",
+                            modifier = Modifier
+                                .padding(9.dp)
+                        )
+                    }
+                }
+                if ((page * 2) + 1 <= thumbnailOfPageDataList.size - 1) {
+                    Box(modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .fillMaxHeight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        PageForView(
+                            thumbnail = thumbnailOfPageDataList[(page * 2) + 1].thumbnail,
+                            modifier = Modifier
+                                .padding(9.dp)
+                                .shadow(1.dp)
+                                .clickable { /* TODO : NAV : page로 이동 */ }
+                        )
+                        /* TODO : CHECK plz : deletePage 완료 */
+                        IconButton(
+                            onClick = { showDeleteDialog = true },
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                        ) {
+                            Icon(
+                                IgIcons.Close,
+                                contentDescription = "Delete",
+                                modifier = Modifier
+                                    .size(30.dp),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        if (showDeleteDialog) {
+                            IgDeleteDialog(
+                                onDismiss = { showDeleteDialog = false },
+                                onDelete = { deletePage(thumbnailOfPageDataList[(page * 2) + 1].pageInfo.id) }
+                            )
+                        }
+                    }
+                }
+                else if (page * 2 != thumbnailOfPageDataList.size) {
+                    Box(modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .fillMaxHeight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        /* TODO : CHECK plz : createPage 완료 */
+                        IgPlusPageButton(
+                            onClick = { createPage(false) },
+                            text = "",
+                            modifier = Modifier
+                                .padding(9.dp)
+                        )
                     }
                 }
             }

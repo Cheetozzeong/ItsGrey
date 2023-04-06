@@ -51,13 +51,13 @@ android {
 
 dependencies {
 
-    implementation(project(":feature:editBook"))
     implementation(project(":feature:editPage"))
     implementation(project(":feature:home"))
     implementation(project(":feature:drawing"))
+    implementation(project(":feature:editBook"))
+    implementation(project(":core:designsystem"))
     implementation(project(":feature:viewer"))
     implementation(project(":domain:home"))
-    implementation(project(":core:designsystem"))
 
     implementation(Libraries.KTX.CORE)
     implementation(Libraries.AndroidX.APP_COMPAT)
