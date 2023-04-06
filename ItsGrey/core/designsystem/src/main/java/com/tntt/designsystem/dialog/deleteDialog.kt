@@ -14,25 +14,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.tntt.designsystem.theme.IgTheme
 
-//@Preview
-//@Composable
-//private fun PreviewDeleteDialog() {
-//    DeleteDialog() {}
-//}
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun DeleteDialog(
+fun IgDeleteDialog(
     onDismiss: () -> Unit,
+    onDelete: () -> Unit
 ) {
-    val configuration = LocalConfiguration.current
     IgTheme() {
         AlertDialog(
             properties = DialogProperties(usePlatformDefaultWidth = false),
             modifier = Modifier
                 .widthIn(max = 300.dp)
                 .wrapContentWidth(Alignment.CenterHorizontally),
-            onDismissRequest = { onDismiss() },
+            onDismissRequest = onDismiss,
             title = {
                 Text(
                     text = "페이지를 삭제할 건가요?",
@@ -41,7 +35,7 @@ fun DeleteDialog(
             },
             confirmButton = {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = onDelete,
                 ) {
                     Text(
                         text = "네",
@@ -52,7 +46,7 @@ fun DeleteDialog(
             },
             dismissButton = {
                 Button(
-                    onClick = { onDismiss() },
+                    onClick = onDismiss,
                 ) {
                     Text(
                         text = "아니요",

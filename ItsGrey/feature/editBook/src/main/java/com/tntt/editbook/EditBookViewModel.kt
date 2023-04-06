@@ -1,12 +1,12 @@
 package com.tntt.editbook
 
-import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tntt.core.common.decoder.StringDecoder
 import com.tntt.editbook.model.Book
 import com.tntt.editbook.model.Page
+import com.tntt.editbook.Navigation.bookIdArg
+import com.tntt.editbook.Navigation.userIdArg
 import com.tntt.editbook.usecase.EditBookUseCase
 import com.tntt.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,12 +21,9 @@ import javax.inject.Inject
 class EditBookViewModel @Inject constructor(
     private val editBookUseCase: EditBookUseCase,
     savedStateHandle: SavedStateHandle,
-    stringDecoder: StringDecoder,
 ) : ViewModel() {
 
-//    private val pageArgs: EditBookPageArgs = EditBookPageArgs(savedStateHandle, stringDecoder)
-//
-//    val pageId = pageArgs.pageId
+    val userId: String = checkNotNull(savedStateHandle[userIdArg])
 
     private val _bookTitle = MutableStateFlow("")
     val bookTitle: StateFlow<String> = _bookTitle
@@ -41,38 +38,88 @@ class EditBookViewModel @Inject constructor(
     val selectedPage: StateFlow<Int> = _selectedPage
 
     init {
-        getBook(bookId = "0e39df61-40f1-42d0-8edc-0a7e63334f2f")
+        getBook()
     }
 
-    private fun getBook(bookId: String) {
+    fun getBook() {
         viewModelScope.launch(Dispatchers.IO) {
             editBookUseCase.getBook(
-                bookId,
+                bookId = "ff18f9d3-4353-4fa5-9d48-66d45003913d",
             ).collect() {
                 _bookTitle.value = it.bookInfo.title
                 _thumbnailOfPageData.value = it.pages
-                _isCoverExist.value = _thumbnailOfPageData.value[0].pageInfo.order == 0
+                _isCoverExist.value =
+                    if (_thumbnailOfPageData.value.isEmpty()) {
+                        false
+                    } else {
+                        _thumbnailOfPageData.value[0].pageInfo.order == 0 }
+                    }
+        }
+    }
+
+    fun createPage(isCover: Boolean) { 
+        viewModelScope.launch(Dispatchers.IO) {
+            editBookUseCase.createPage(
+                bookIdArg,
+                pageInfo = PageInfo(
+                    id = UUID.randomUUID().toString(),
+                    order = if (isCover) {
+                        0
+                    } else {
+                        _thumbnailOfPageData.value[_thumbnailOfPageData.value.size - 1].pageInfo.order + 1
+                    }
+                )
+            ).collect() {
+                _thumbnailOfPageData.value.toMutableList().add(it)
             }
         }
     }
 
-    private fun createPage(bookId: String, pageInfo: PageInfo) {
-
+    fun saveBook() {
+        viewModelScope.launch(Dispatchers.IO) {
+            editBookUseCase.saveBook(
+                book = Book(
+                    bookInfo = BookInfo(
+                        id = bookIdArg,
+                        title = bookTitle.value,
+                        saveDate = Date(),
+                    ),
+                    pages = thumbnailOfPageData.value
+                ),
+                userId = userIdArg,
+                bookType = BookType.WORKING
+            ).collect()
+        }
     }
 
-    private fun savePages(bookId: String, pages: List<Page>) {
-
-    }
-
-    private fun publishBook(book: Book, userId: String) {
-
-    }
-    fun saveBook(book: Book, userId: String, bookType: BookType = BookType.WORKING) {
-
+    fun publishBook() {
+        viewModelScope.launch(Dispatchers.IO) {
+            editBookUseCase.publishBook(
+                book = Book(
+                    bookInfo = BookInfo(
+                        id = bookIdArg,
+                        title = bookTitle.value,
+                        saveDate = Date(),
+                    ),
+                    pages = thumbnailOfPageData.value
+                ),
+                userId = userIdArg
+            ).collect()
+        }
     }
 
     fun deletePage(pageId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            editBookUseCase.deletePage(
+                pageId = pageId
+            ).collect() {
+                if (it) {
+                    getBook()
+                }
+            }
+        }
     }
+
     fun movePage(from: Int, to: Int) {
         _thumbnailOfPageData.value = _thumbnailOfPageData.value.toMutableList().apply {
             add(to, removeAt(from))
@@ -82,13 +129,19 @@ class EditBookViewModel @Inject constructor(
     }
 
     fun isPageDragEnabled(draggedOver: ItemPosition, dragging: ItemPosition): Boolean {
-        val draggedOrder = thumbnailOfPageData.value[draggedOver.index].pageInfo.order
+        val draggedOrder =
+            if (draggedOver.index >= _thumbnailOfPageData.value.size - 1) {
+                null
+            } else {
+                thumbnailOfPageData.value[draggedOver.index].pageInfo.order
+            }
         val draggingOrder = thumbnailOfPageData.value[dragging.index].pageInfo.order
         val isDraggingFirst = draggedOrder == 0
         val isDraggedFirst = draggingOrder == 0
 
         return !(isDraggingFirst || isDraggedFirst)
     }
+
     fun updatePageOrder(from: Int, to: Int) {
         val newList = _thumbnailOfPageData.value
         if (from < to) {
@@ -107,7 +160,12 @@ class EditBookViewModel @Inject constructor(
         }
         _thumbnailOfPageData.value = newList
     }
+
     fun updateSelectedPage(index: Int) {
         _selectedPage.value = index
+    }
+
+    fun titleChange(title: String) {
+        _bookTitle.value = title
     }
 }

@@ -4,10 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.tntt.editbook.Navigation.editBookPageRoute
 import com.tntt.editbook.Navigation.editBookPageScreen
-import com.tntt.feature.editpage.navigation.editPageGraphRoutePattern
 import com.tntt.feature.editpage.navigation.editPageScreen
-import com.tntt.home.navigation.homePageRoute
 import com.tntt.home.navigation.homePageScreen
 import itsgrey.feature.drawing.navigation.*
 
@@ -17,8 +16,8 @@ fun IgNavHost(
     modifier: Modifier = Modifier,
     currentUserEmail: String,
     currentUserName:String,
-    startDestination: String = "$homePageRoute/{userId}/{userName}"
-//     startDestination: String = editPageGraphRoutePattern
+    startDestination: String = editBookPageRoute
+//    startDestination: String = "$homePageRoute/{userId}/{userName}"
 ) {
     NavHost(
         navController = navController,
@@ -47,6 +46,7 @@ fun IgNavHost(
             onViewerClick = {},
             onNewPageClick = {},
 //            onViewerClick = { id -> navController.toViewer(id) }
+            currentUserEmail = currentUserEmail,
         )
     }
 }
