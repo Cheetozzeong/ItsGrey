@@ -22,29 +22,29 @@ data class TextBoxData(
 
 @Composable
 fun TextBox(
-    parent: Rect,
+    parentSize: Size,
     textBoxInfo: TextBoxInfo,
 ) {
 
-    val position = remember(parent) {
+    val position = remember(parentSize) {
         mutableStateOf(
             Offset(
-                textBoxInfo.boxData.offsetRatioX * parent.width,
-                textBoxInfo.boxData.offsetRatioY * parent.height
+                textBoxInfo.boxData.offsetRatioX * parentSize.width,
+                textBoxInfo.boxData.offsetRatioY * parentSize.height
             )
         )
     }
-    val size = remember(parent) {
+    val size = remember(parentSize) {
         mutableStateOf(
             Size(
-                textBoxInfo.boxData.widthRatio * parent.width,
-                textBoxInfo.boxData.heightRatio * parent.height
+                textBoxInfo.boxData.widthRatio * parentSize.width,
+                textBoxInfo.boxData.heightRatio * parentSize.height
             )
         )
     }
-    val fontSize = remember(parent, textBoxInfo) {
+    val fontSize = remember(parentSize, textBoxInfo) {
         mutableStateOf(
-            textBoxInfo.fontSizeRatio * textBoxInfo.boxData.widthRatio * parent.width
+            textBoxInfo.fontSizeRatio * textBoxInfo.boxData.widthRatio * parentSize.width
         )
     }
 
@@ -65,7 +65,7 @@ fun TextBox(
 @Composable
 fun TextBoxForEdit(
     isSelected: Boolean,
-    parent: Rect,
+    parentSize: Size,
     textBoxInfo: TextBoxInfo,
     updateTextBoxInfo: (TextBoxInfo) -> Unit,
     onClick: (id: String) -> Unit,
@@ -73,25 +73,25 @@ fun TextBoxForEdit(
 ) {
     val state = remember { mutableStateOf(isSelected) }
 
-    val position = remember(parent, textBoxInfo) {
+    val position = remember(parentSize, textBoxInfo) {
         mutableStateOf(
             Offset(
-                textBoxInfo.boxData.offsetRatioX * parent.width,
-                textBoxInfo.boxData.offsetRatioY * parent.height
+                textBoxInfo.boxData.offsetRatioX * parentSize.width,
+                textBoxInfo.boxData.offsetRatioY * parentSize.height
             )
         )
     }
-    val size = remember(parent, textBoxInfo) {
+    val size = remember(parentSize, textBoxInfo) {
         mutableStateOf(
             Size(
-                textBoxInfo.boxData.widthRatio * parent.width,
-                textBoxInfo.boxData.heightRatio * parent.height
+                textBoxInfo.boxData.widthRatio * parentSize.width,
+                textBoxInfo.boxData.heightRatio * parentSize.height
             )
         )
     }
-    val fontSize = remember(parent, textBoxInfo) {
+    val fontSize = remember(parentSize, textBoxInfo) {
         mutableStateOf(
-            textBoxInfo.fontSizeRatio * textBoxInfo.boxData.widthRatio * parent.width
+            textBoxInfo.fontSizeRatio * textBoxInfo.boxData.widthRatio * parentSize.width
         )
     }
     val text = remember(textBoxInfo) {
@@ -108,10 +108,10 @@ fun TextBoxForEdit(
                 text = text.value,
                 fontSizeRatio = fontSize.value / size.value.width,
                 boxData = BoxData(
-                    offsetRatioX = position.value.x / parent.width,
-                    offsetRatioY = position.value.y / parent.height,
-                    widthRatio = size.value.width / parent.width,
-                    heightRatio = size.value.height / parent.height,
+                    offsetRatioX = position.value.x / parentSize.width,
+                    offsetRatioY = position.value.y / parentSize.height,
+                    widthRatio = size.value.width / parentSize.width,
+                    heightRatio = size.value.height / parentSize.height,
                 )
             )
         )

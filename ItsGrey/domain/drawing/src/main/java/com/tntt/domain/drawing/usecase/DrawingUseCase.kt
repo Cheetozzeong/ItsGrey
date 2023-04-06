@@ -67,6 +67,7 @@ class DrawingUseCase @Inject constructor(
         drawingRepository.updateDrawingInfo(imageBox.id, imageBox.drawing).collect() { updateDrawingResult ->
             layerRepository.updateLayerInfoList(imageBox.id, imageBox.layerList).collect() { updateLayerResult ->
                 layerRepository.getSumLayerBitmap(imageBox.layerList).collect() { sumLayer ->
+                    Log.d("function test", "sumLayer = ${sumLayer}")
                     imageBoxRepository.setImage(imageBox.id, sumLayer).collect() { result ->
                         emit(result)
                     }

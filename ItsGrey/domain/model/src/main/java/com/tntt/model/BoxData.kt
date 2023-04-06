@@ -1,10 +1,10 @@
 package com.tntt.model
 
 data class BoxData(
-    val offsetRatioX: Float,
-    val offsetRatioY: Float,
-    val widthRatio: Float,
-    val heightRatio: Float,
+    var offsetRatioX: Float,
+    var offsetRatioY: Float,
+    var widthRatio: Float,
+    var heightRatio: Float,
 )
 
 enum class BoxState {
