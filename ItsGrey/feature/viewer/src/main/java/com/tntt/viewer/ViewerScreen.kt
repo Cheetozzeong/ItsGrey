@@ -5,10 +5,12 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,6 +23,7 @@ import com.tntt.designsystem.icon.IgIcons
 import com.tntt.editbook.model.Page
 import com.tntt.model.*
 import com.tntt.ui.PageForView
+import itsgrey.feature.viewer.R
 import org.burnoutcrew.reorderable.*
 import kotlin.math.ceil
 
@@ -166,48 +169,70 @@ private fun MainSection(
         }
     }
 
-    HorizontalPager(
-        state = pagerState,
-        count = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            thumbnailOfPageDataList.size
-        } else {
-            ceil(thumbnailOfPageDataList.size.toFloat() / 2.0).toInt()
-        },
-        modifier = Modifier
-            .fillMaxSize()
-            .let {
-                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    it.padding(horizontal = 10.dp)
-                } else {
-                    it.padding(vertical = 10.dp)
-                }
+    if (thumbnailOfPageDataList.size == 0) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        )
+        {
+            Text(
+                text = stringResource(R.string.waitMessage),
+                style = MaterialTheme.typography.displayMedium)
+        }
+    }
+    else {
+        HorizontalPager(
+            state = pagerState,
+            count = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                thumbnailOfPageDataList.size
+            } else {
+                ceil(thumbnailOfPageDataList.size.toFloat() / 2.0).toInt()
             },
-    ) { page ->
-        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Box (modifier = Modifier) {
-                PageForView(
-                    thumbnail = thumbnailOfPageDataList[page].thumbnail,
-                    modifier = modifier
-                )
-            }
-        } else {
-            Row(
-                Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                PageForView(
-                    thumbnail = thumbnailOfPageDataList[page * 2].thumbnail,
-                    modifier = Modifier
-                )
-                if ((page * 2) + 1 <= thumbnailOfPageDataList.size - 1) {
+            modifier = Modifier
+                .fillMaxSize()
+                .let {
+                    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        it.padding(horizontal = 10.dp)
+                    } else {
+                        it.padding(vertical = 10.dp)
+                    }
+                },
+        ) { page ->
+
+            if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                Box(modifier = Modifier) {
                     PageForView(
-                        thumbnail = thumbnailOfPageDataList[(page * 2) + 1].thumbnail,
+                        thumbnail = thumbnailOfPageDataList[page].thumbnail,
+                        modifier = modifier
+                    )
+                }
+            } else {
+                Row(
+                    Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    PageForView(
+                        thumbnail = thumbnailOfPageDataList[page * 2].thumbnail,
                         modifier = Modifier
                     )
-                } else {
-                    Box(Modifier.aspectRatio(2f / 3f).background(MaterialTheme.colorScheme.secondary))
+                    if ((page * 2) + 1 <= thumbnailOfPageDataList.size - 1) {
+                        PageForView(
+                            thumbnail = thumbnailOfPageDataList[(page * 2) + 1].thumbnail,
+                            modifier = Modifier
+                        )
+                    } else {
+                        Box(
+                            Modifier.aspectRatio(2f / 3f)
+                                .background(MaterialTheme.colorScheme.secondary)
+                        ) {
+                            Text(
+                                text = "마지막 페이지 입니다!",
+                                style = MaterialTheme.typography.displaySmall)
+                        }
+                    }
                 }
             }
         }

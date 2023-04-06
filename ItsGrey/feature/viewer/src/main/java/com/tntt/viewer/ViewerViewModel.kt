@@ -49,7 +49,6 @@ class ViewerViewModel @Inject constructor(
             ).collect() {
                 _bookTitle.value = it.bookInfo.title
                 _thumbnailOfPageData.value = it.pages
-                _isCoverExist.value = _thumbnailOfPageData.value[0].pageInfo.order == 0
             }
         }
     }
