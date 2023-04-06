@@ -22,7 +22,7 @@
 		</a>
     </h3>
 </div>
-
+<br />
 
 ## :boom: 프로젝트 소개
 
@@ -34,9 +34,13 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 
 
 
+
+
 ## :calendar: 진행 기간
 
 2023년 2월 20일 (월) ~ 2023년 4월 7일 (금) **[총 7주 진행]**
+
+
 
 
 
@@ -47,6 +51,9 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 | <img width="160px" src="https://avatars.githubusercontent.com/u/84635035?v=4" /> | <img width="160px" src="https://avatars.githubusercontent.com/u/98262849?v=4" />    | <img width="160px" src="https://avatars.githubusercontent.com/u/82949079?v=4"/>   | <img width="160px" src="https://avatars.githubusercontent.com/u/76838107?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/109324421?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/81691407?v=4"/> |
 |   [@Kongbee](https://github.com/kongbee)   |  [@TraceofLight](https://github.com/ChaeyeonSeo)  | [@fjdks](https://github.com/fjdks) | [@dudnbubn](https://github.com/dudnbubn) | [@Phangg](https://github.com/phangg) | [@Cheetozzeong](https://avatars.githubusercontent.com/u/81691407?v=4) |
 | App (EditPage, Drawing) | CI / CD, Backend | ML Logic, Backend | App (DB, Connection) | App (EditBook, Viewer) | App (Login, Main) |
+
+
+
 
 
 ## :books: 사용 기술 스택
@@ -87,9 +94,13 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 </div>
 
 
+
+
 ## :blue_book: 프로젝트 구조도
 
 ![project_structure_diagram](./docs/project_structure_diagram.png)
+
+
 
 
 
@@ -104,12 +115,16 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 
 
 
+
+
 ## :heavy_check_mark: 주요 기능
 
 - ### 모바일, 타블렛 모드
 
   - 어떤 모바일 환경에서도 사용할 수 있도록 모바일 및 타블렛 환경을 동시에 지원합니다.
   - 각 환경에 맞는 UI 배치를 통해 사용자 편의성을 극대화했습니다.
+
+
 
 
 
@@ -121,6 +136,8 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 
 
 
+
+
 - ### 기록을 담는 페이지
 
   - 이미지 외에도 같은 페이지에 텍스트를 남길 수 있습니다.
@@ -128,10 +145,14 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 
 
 
+
+
 - ### 유저가 완성하는 책
 
   - 같은 주제나 스토리 라인을 가진 페이지 여러 장을 엮어 하나의 책으로 만들 수 있습니다.
   - 뷰어를 통해 완성된 책을 감상할 수 있습니다.
+
+
 
 
 
