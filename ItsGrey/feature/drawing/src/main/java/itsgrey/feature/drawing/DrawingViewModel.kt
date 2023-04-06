@@ -75,7 +75,7 @@ class DrawingViewModel @Inject constructor(
                 }
             }
             else -> {   // 새로운 이미지를 변환해서 불러오기
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     drawingUseCase.createLayerList(
                         imageBoxId,
                         MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(imageUri))

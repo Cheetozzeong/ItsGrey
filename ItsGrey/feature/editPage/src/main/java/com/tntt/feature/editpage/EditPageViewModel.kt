@@ -125,7 +125,6 @@ class EditPageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             editPageUseCase.updateImageBox(pageId, imageBox.value).collect()
         }
-
     }
 
     fun updateImageBox(imageBoxId: String, uri: Uri) {

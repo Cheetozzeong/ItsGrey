@@ -95,7 +95,9 @@ internal fun EditPageScreen(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                CreateImageBoxButton(onCreateImageBox = onCreateImageBox)
+                if(imageBox.isEmpty()) {
+                    CreateImageBoxButton(onCreateImageBox = onCreateImageBox)
+                }
                 CreateTextBoxButton(onCreateTextBox = onCreateTextBox)
             }
             EditPageBox(
@@ -172,6 +174,7 @@ private fun EditImageDrawingButton(navToDrawing: () -> Unit) {
     )
 }
 
+
 @Composable
 private fun ChangeImageButton(imageUri: (Uri?) -> Unit) {
 
@@ -200,7 +203,9 @@ private fun CreateImageBoxButton(
     onCreateImageBox: () -> Unit
 ) {
     IgIconButton(
-        onClick = { onCreateImageBox() },
+        onClick = {
+            onCreateImageBox()
+        },
         icon = {
             Icon(
                 imageVector = IgIcons.AddImageBox,
