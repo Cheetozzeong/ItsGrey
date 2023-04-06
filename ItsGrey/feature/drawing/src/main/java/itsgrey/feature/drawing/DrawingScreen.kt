@@ -66,8 +66,6 @@ fun DrawingRoute(
                 DrawingTopAppBar(
                     sketchController = colorPaintController,
                     onClickBackNav = {
-                        viewModel.updateDrawingInfo(colorPaintController)
-                        viewModel.save()
                         onClickBackNav()
                     },
                     onClickSaveButton = {

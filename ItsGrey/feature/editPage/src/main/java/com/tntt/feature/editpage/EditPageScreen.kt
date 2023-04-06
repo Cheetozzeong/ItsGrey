@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -36,6 +37,10 @@ internal fun EditPageRoute(
     viewModel: EditPageViewModel = hiltViewModel(),
     onImageToDrawClick: (imageBoxId: String, imageUri: Uri?) -> Unit
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.getImageBoxList()
+    }
 
     val textBoxList by viewModel.textBoxList.collectAsStateWithLifecycle()
     val imageBoxList by viewModel.imageBox.collectAsStateWithLifecycle()

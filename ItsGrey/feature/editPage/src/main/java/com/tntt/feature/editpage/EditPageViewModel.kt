@@ -47,8 +47,14 @@ class EditPageViewModel @Inject constructor(
     val selectedBoxId: StateFlow<String> = _selectedBoxId
 
     init{
+        Log.d("viewModel", "init")
         getTextBoxList()
         getImageBoxList()
+    }
+
+    override fun onCleared() {
+        Log.d("viewModel", "onCleared")
+        super.onCleared()
     }
 
     private fun getTextBoxList(){
@@ -59,7 +65,7 @@ class EditPageViewModel @Inject constructor(
         }
     }
 
-    private fun getImageBoxList(){
+    fun getImageBoxList(){
         CoroutineScope(Dispatchers.IO).launch {
             editPageUseCase.getImageBoxList(pageId).collect() {
                 this.launch(Dispatchers.Main) {
