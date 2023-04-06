@@ -35,6 +35,7 @@ import com.tntt.ui.PageForEdit
 @Composable
 internal fun EditPageRoute(
     viewModel: EditPageViewModel = hiltViewModel(),
+    onBackClick: () -> Unit,
     onImageToDrawClick: (imageBoxId: String, imageUri: Uri?) -> Unit
 ) {
 
@@ -50,7 +51,10 @@ internal fun EditPageRoute(
         textBoxList = textBoxList,
         imageBox = imageBoxList,
         selectedBoxId = selectedBoxId,
-        onBackClick = viewModel::savePage,
+        onBackClick = {
+            viewModel.savePage()
+            onBackClick()
+        },
         onImageToDrawClick = { id, uri ->
             if(uri != null) {
                 viewModel.updateImageBox(id, uri)

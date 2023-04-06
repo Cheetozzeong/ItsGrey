@@ -204,7 +204,7 @@ private fun MainSection(
                 Box(modifier = Modifier) {
                     PageForView(
                         thumbnail = thumbnailOfPageDataList[page].thumbnail,
-                        modifier = modifier
+                        modifier = modifier.background(MaterialTheme.colorScheme.surface)
                     )
                 }
             } else {
@@ -216,12 +216,12 @@ private fun MainSection(
                 ) {
                     PageForView(
                         thumbnail = thumbnailOfPageDataList[page * 2].thumbnail,
-                        modifier = Modifier
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                     )
                     if ((page * 2) + 1 <= thumbnailOfPageDataList.size - 1) {
                         PageForView(
                             thumbnail = thumbnailOfPageDataList[(page * 2) + 1].thumbnail,
-                            modifier = Modifier
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                         )
                     } else {
                         Box(

@@ -35,53 +35,48 @@ class HomePageViewModel @Inject constructor(
     val publishedBookList: StateFlow<List<Book>> = _publishedBookList
 
     init {
-        getPublishedBookList(
-            userId = userId,
-            sortType = SortType.SAVE_DATE,
-            startIndex = 0
-        )
-        getWorkingBookList(
-            userId = userId,
-            sortType = SortType.SAVE_DATE,
-            startIndex = 0
-        )
+        getPublishedBookList()
+        getWorkingBookList()
     }
 
 //    savedStateHandle: SavedStateHandle,
 //    stringDecoder: StringDecoder,
 
     fun createBook() {
-        viewModelScope.launch {
-            CoroutineScope(Dispatchers.Main).launch {
-                homeUseCase.createBook(
-                    userId,
-                    bookInfo = BookInfo(
-                        id = UUID.randomUUID().toString(),
-                        title = "새로운 책",
-                        saveDate = Date()
-                    )
-                ).collect()
+        CoroutineScope(Dispatchers.IO).launch {
+            homeUseCase.createBook(
+                userId,
+                bookInfo = BookInfo(
+                    id = UUID.randomUUID().toString(),
+                    title = "새로운 책",
+                    saveDate = Date()
+                )
+            ).collect()
+            homeUseCase.getBooks(userId, SortType.SAVE_DATE, 0, BookType.WORKING).collect() { workingBookList ->
+                this.launch(Dispatchers.Main) {
+                    _workingBookList.value = workingBookList
+                }
             }
         }
     }
 
-    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Int) {
-        CoroutineScope(Dispatchers.Main).launch {
+    fun getWorkingBookList() {
+        CoroutineScope(Dispatchers.IO).launch {
             homeUseCase.getBooks(
                 userId,
-                sortType,
-                startIndex,
+                SortType.SAVE_DATE,
+                0,
                 BookType.WORKING
             ).collect() { workingBookList -> _workingBookList.value = workingBookList }
         }
     }
 
-    private fun getPublishedBookList(userId: String, sortType: SortType, startIndex: Int) {
-        CoroutineScope(Dispatchers.Main).launch {
+    fun getPublishedBookList() {
+        CoroutineScope(Dispatchers.IO).launch {
             homeUseCase.getBooks(
                 userId,
-                sortType,
-                startIndex,
+                SortType.SAVE_DATE,
+                0,
                 BookType.PUBLISHED
             ).collect() { publishedBookList -> _publishedBookList.value = publishedBookList }
         }

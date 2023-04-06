@@ -4,11 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.tntt.editbook.Navigation.editBookPageRoute
 import com.tntt.editbook.Navigation.editBookPageScreen
+import com.tntt.editbook.Navigation.navigateToEditBookPage
+import com.tntt.feature.editpage.navigation.editPageGraphRoutePattern
 import com.tntt.feature.editpage.navigation.editPageScreen
+import com.tntt.feature.editpage.navigation.navigateToEditPage
+import com.tntt.home.navigation.homePageRoute
 import com.tntt.home.navigation.homePageScreen
-import com.tntt.viewer.Navigation.viewerPageRoute
+import com.tntt.viewer.Navigation.navigateToViewerPage
 import com.tntt.viewer.Navigation.viewerPageScreen
 import itsgrey.feature.drawing.navigation.*
 
@@ -18,7 +21,6 @@ fun IgNavHost(
     modifier: Modifier = Modifier,
     currentUserEmail: String,
     currentUserName:String,
-//    startDestination: String = editBookPageRoute
     startDestination: String = "$homePageRoute/{userId}/{userName}"
 ) {
     NavHost(
@@ -28,7 +30,9 @@ fun IgNavHost(
 
     ) {
         editPageScreen(
-            onBackClick = {},
+            onBackClick = {
+                navController.popBackStack()
+            },
             onImageClick = { id, uri ->
                 navController.toDrawing(id, uri)
             },
@@ -36,29 +40,30 @@ fun IgNavHost(
         )
         drawingScreen(
             onBackClick = {
-                navController.navigate(editPageGraphRoutePattern) {
-                    popUpTo(editPageGraphRoutePattern) {
-                        inclusive = true
-                    }
-                }
+                navController.popBackStack()
             }
         )
         homePageScreen(
-            onThumbnailClick = {
-//                navController.navigateToBook(stirng)
-                               },
+            onThumbnailClick = { bookId -> navController.navigateToEditBookPage(bookId, currentUserEmail) },
             currentUserEmail = currentUserEmail,
             currentUserName = currentUserName
         )
         editBookPageScreen(
-            onBackClick = {},
-            onViewerClick = {},
-            onNewPageClick = {},
-//            onViewerClick = { id -> navController.toViewer(id) }
+            onBackClick = {
+                navController.popBackStack()
+            },
+            onViewerClick = { bookId ->
+                navController.navigateToViewerPage(bookId)
+            },
+            onPageClick = { pageId ->
+                navController.navigateToEditPage(pageId)
+            },
             currentUserEmail = currentUserEmail,
         )
         viewerPageScreen(
-            onBackClick = {},
+            onBackClick = {
+                navController.popBackStack()
+            },
         )
     }
 }

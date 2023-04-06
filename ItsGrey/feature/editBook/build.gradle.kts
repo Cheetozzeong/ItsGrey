@@ -89,6 +89,7 @@ dependencies {
     // 드래그 앤 드롭 외부 라이브러리
     implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
 
+
     implementation(project(":core:designsystem"))
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

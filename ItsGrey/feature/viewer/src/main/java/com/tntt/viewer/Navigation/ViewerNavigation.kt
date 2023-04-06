@@ -1,8 +1,7 @@
 package com.tntt.viewer.Navigation
 
 import android.net.Uri
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
+import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.tntt.viewer.ViewerPageRoute
 
@@ -19,15 +18,19 @@ fun NavController.navigateToViewerPage(bookId: String) {
 fun NavGraphBuilder.viewerPageScreen(
     onBackClick: () -> Unit,
 ) {
-    composable(
-        route = viewerPageRoute,
-//        arguments = listOf(
-//            navArgument(userIdArg) {type = NavType.StringType},
-//            navArgument(userNameArg) {type = NavType.StringType}
-//        )
+    navigation(
+        route = "$viewerPageGraphRoutePattern/{$bookIdArg}",
+        startDestination = viewerPageRoute,
     ) {
-        ViewerPageRoute(
-            onBackClick = onBackClick,
-        )
+        composable(
+            route = viewerPageRoute,
+            arguments = listOf(
+                navArgument(bookIdArg) {type = NavType.StringType},
+            )
+        ) {
+            ViewerPageRoute(
+                onBackClick = onBackClick,
+            )
+        }
     }
 }
