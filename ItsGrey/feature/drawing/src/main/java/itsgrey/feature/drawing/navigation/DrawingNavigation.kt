@@ -1,17 +1,10 @@
 package itsgrey.feature.drawing.navigation
 
 import android.net.Uri
-import android.util.Log
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import itsgrey.feature.drawing.Sample
+import itsgrey.feature.drawing.DrawingRoute
 
 private const val drawingGraphRoutePattern = "drawingGraphRoutePattern"
 const val drawingRoute = "drawing_route"
@@ -45,7 +38,9 @@ fun NavGraphBuilder.drawingScreen(
         composable(
             route = drawingRoute,
         ) {
-            Sample()
+            DrawingRoute(
+                onClickBackNav = onBackClick
+            )
         }
     }
 

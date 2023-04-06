@@ -9,7 +9,6 @@ import com.tntt.model.BookType
 import com.tntt.model.SortType
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.util.*
@@ -69,16 +68,18 @@ class RemoteBookDataSourceImpl @Inject constructor(
             query.startAfter(startAfterDocument.documents?.last())
         }
 
-        query.get().addOnSuccessListener {documents ->
-            for(document in documents){
-                val id = document.get("id") as String
-                val userId = document.get("userId") as String
-                val title = document.get("title") as String
-                val bookType = BookType.valueOf(document.get("bookType") as String)
-                val saveDate = (document.get("saveDate") as Timestamp).toDate()
-                bookDtoList.add(BookDto(id, userId, title, bookType, saveDate))
-            }
-        }.await()
+
+        val querySnapshot = query.get().await()
+        val documents = querySnapshot.documents
+        for(document in documents) {
+            val id = document.get("id") as String
+            val userId = document.get("userId") as String
+            val title = document.get("title") as String
+            val bookType = BookType.valueOf(document.get("bookType") as String)
+            val saveDate = (document.get("saveDate") as Timestamp).toDate()
+            bookDtoList.add(BookDto(id, userId, title, bookType, saveDate))
+        }
+
         emit(bookDtoList)
     }
 

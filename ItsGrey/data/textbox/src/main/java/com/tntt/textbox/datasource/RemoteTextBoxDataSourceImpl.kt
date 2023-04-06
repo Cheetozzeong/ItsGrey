@@ -7,7 +7,6 @@ import com.tntt.model.BoxData
 import com.tntt.textbox.model.TextBoxDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -18,39 +17,35 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
 
     val textBoxCollection by lazy { firestore.collection("textBox") }
 
-    override suspend fun createTextBoxDto(textBoxDto: TextBoxDto) = callbackFlow<String> {
+    override suspend fun createTextBoxDto(textBoxDto: TextBoxDto): Flow<String> = flow {
         textBoxCollection
             .document(textBoxDto.id)
             .set(textBoxDto)
-            .addOnSuccessListener {
-                trySend(textBoxDto.id)
-            }
-        awaitClose()
+            .await()
+        emit(textBoxDto.id)
     }
 
     override suspend fun getTextBoxDtoList(pageId: String): Flow<List<TextBoxDto>> = flow {
         Log.d("function test", "getTextBoxDtoList(${pageId})")
         val textBoxDtoList = mutableListOf<TextBoxDto>()
 
-        textBoxCollection
+        val querySnapshot = textBoxCollection
             .whereEqualTo("pageId", pageId)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents
-                for (document in documentSnapshot) {
-                    val data = document.data
+            .await()
 
-                    val id = data?.get("id") as String
-                    val text = data?.get("text") as String
-                    val fontSizeRatio = (data?.get("fontSizeRatio") as Double).toFloat()
-                    val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
-                    val gson = Gson()
-                    val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
-                    synchronized(textBoxDtoList){
-                        textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxData))
-                    }
-                }
-            }.await()
+        val documentSnapshot = querySnapshot.documents
+        for (document in documentSnapshot) {
+            val data = document.data
+
+            val id = data?.get("id") as String
+            val text = data?.get("text") as String
+            val fontSizeRatio = (data?.get("fontSizeRatio") as Double).toFloat()
+            val boxDataHashMap = data?.get("boxData") as HashMap<String, Float>
+            val gson = Gson()
+            val boxData = gson.fromJson(gson.toJson(boxDataHashMap), BoxData::class.java)
+            textBoxDtoList.add(TextBoxDto(id, pageId, text, fontSizeRatio, boxData))
+        }
         emit(textBoxDtoList)
     }
 
@@ -65,11 +60,12 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
                 .addOnFailureListener {
                     result = false
                 }
+                .await()
         }
         emit(result)
     }
 
-    override suspend fun deleteTextBoxDto(id: String) = callbackFlow<Boolean> {
+    override suspend fun deleteTextBoxDto(id: String): Flow<Boolean> = flow {
         var result: Boolean = true
 
         textBoxCollection
@@ -78,7 +74,7 @@ class RemoteTextBoxDataSourceImpl @Inject constructor(
             .addOnFailureListener {
                 result = false
             }
-        trySend(result)
-        awaitClose()
+            .await()
+        emit(result)
     }
 }

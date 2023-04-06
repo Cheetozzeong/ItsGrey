@@ -5,7 +5,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.page.model.PageDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -35,7 +34,7 @@ class RemotePageDataSourceImpl @Inject constructor(
 
         val id = documentSnapshot.id
         val data = documentSnapshot.data
-        val order = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+        val order = (data?.get("order") as Long).toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
 
         val pageDto = PageDto(id, bookId, order)
         emit(pageDto)
@@ -54,7 +53,7 @@ class RemotePageDataSourceImpl @Inject constructor(
             val documentSnapshot = querySnapshot.documents.first()
             val id = documentSnapshot.id as String
             val data = documentSnapshot.data
-            val order = (data?.get("order") as Long).toInt()
+            val order = (data?.get("order") as Long).toString().toInt()
 
             pageDto = PageDto(id, bookId, order)
         }
@@ -73,7 +72,7 @@ class RemotePageDataSourceImpl @Inject constructor(
         for (document in documentSnapshot) {
             val id = document.id
             val data = document.data
-            val order: Int = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+            val order = (data?.get("order") as Long).toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
             pageDtoList.add(PageDto(id, bookId, order))
         }
 
@@ -102,17 +101,17 @@ class RemotePageDataSourceImpl @Inject constructor(
             .get()
             .await()
 
-            if (!querySnapshot.isEmpty) result = true
+        if (!querySnapshot.isEmpty) result = true
         emit(result)
     }
 
     override suspend fun deletePageDto(pageId: String): Flow<Boolean> = flow {
-        var result = false
+        var result = true
         pageCollection
             .document(pageId)
             .delete()
-            .addOnSuccessListener {
-                result = true
+            .addOnFailureListener {
+                result = false
             }.await()
         emit(result)
     }

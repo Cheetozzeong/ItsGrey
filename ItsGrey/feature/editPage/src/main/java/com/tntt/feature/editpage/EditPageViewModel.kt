@@ -65,7 +65,7 @@ class EditPageViewModel @Inject constructor(
             id = UUID.randomUUID().toString(),
             text = "새로운 텍스트 박스",
             fontSizeRatio = 0.05f,
-            boxData = BoxData(0.2f, 0.6f , 0.5f, 0.3f)
+            boxData = BoxData(0.2f, 0.6f , 0.5f, 0.2f)
         )
         viewModelScope.launch {
             editPageUseCase.createTextBox(

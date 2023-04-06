@@ -3,31 +3,30 @@ package com.tntt.imagebox.datasource
 import android.graphics.Bitmap
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 
 import com.tntt.imagebox.model.ImageBoxDto
 import com.tntt.model.BoxData
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class RemoteImageBoxDataSourceImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage,
 ) : RemoteImageBoxDataSource {
 
     val imageBoxCollection by lazy { firestore.collection("imageBox") }
 
-    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto) = callbackFlow<String> {
+    override suspend fun createImageBoxDto(imageBoxDto: ImageBoxDto): Flow<String> = flow {
         imageBoxCollection
             .document(imageBoxDto.id)
             .set(imageBoxDto)
-            .addOnSuccessListener {
-                trySend(imageBoxDto.id)
-            }
-        awaitClose()
+            .await()
+        emit(imageBoxDto.id)
     }
 
     override suspend fun getImageBoxDtoList(pageId: String): Flow<List<ImageBoxDto>> = flow {
@@ -56,14 +55,14 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
         emit(imageBoxDtoList)
     }
 
-    override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto) = callbackFlow<Boolean> {
+    override suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean> = flow {
+        var result = true
         imageBoxCollection
             .document(imageBoxDto.id)
             .set(imageBoxDto)
-            .addOnSuccessListener {
-                trySend(true)
-            }
-        awaitClose()
+            .addOnFailureListener { result = false }
+            .await()
+        emit(result)
     }
 
     override suspend fun updateImageBoxDtoList(imageBoxDtoList: List<ImageBoxDto>): Flow<Boolean> = flow {
@@ -81,25 +80,28 @@ class RemoteImageBoxDataSourceImpl @Inject constructor(
         emit(result)
     }
 
-    override suspend fun deleteImageBoxDto(id: String) = callbackFlow<Boolean> {
+    override suspend fun deleteImageBoxDto(imageBoxId: String): Flow<Boolean> = flow {
+        val storageRef = storage.reference
+        val imageRef = storageRef.child("/images/${imageBoxId}")
+        imageRef.delete()
+
         var result: Boolean = true
         imageBoxCollection
-            .document(id)
+            .document(imageBoxId)
             .delete()
             .addOnFailureListener {
                 result = false
             }
             .await()
-        trySend(result)
-        awaitClose()
+        emit(result)
     }
 
     override suspend fun setImageUrl(imageBoxId: String, url: String): Flow<Boolean> = flow {
-        var result = false
+        var result = true
         imageBoxCollection
             .document(imageBoxId)
             .update("url", url)
-            .addOnSuccessListener { result = true }
+            .addOnFailureListener { result = false }
             .await()
         emit(result)
     }
