@@ -5,7 +5,7 @@ import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.tntt.editbook.EditBookPageRoute
 
-internal const val bookIdArg = "bookId"
+internal const val bookIdArg = "ff18f9d3-4353-4fa5-9d48-66d45003913d"
 internal const val userIdArg = "userId"
 
 const val editBookPageRoute = "editBookPage_route"

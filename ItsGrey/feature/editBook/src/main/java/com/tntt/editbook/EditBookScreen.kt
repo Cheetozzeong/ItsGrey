@@ -147,9 +147,12 @@ private fun EditBookTopAppBar(
                     }
                 )
             }
-            /*TODO : NAV : save 완료 -> onBackClick */
+            /*TODO : NAV : save 완료 -> onViewerClick */
             IconButton(
-                onClick = { saveBook() },
+                onClick = {
+                    saveBook()
+                    onViewerClick()
+                },
                 modifier = Modifier
                     .padding(8.dp, 0.dp)
             ) {
@@ -164,7 +167,8 @@ private fun EditBookTopAppBar(
                 onClick = {
                     publishBook()
                     saveBook()
-                  },
+                    onBackClick()
+                },
                 modifier = Modifier
                     .padding(8.dp, 0.dp)
             ) {
@@ -436,7 +440,7 @@ private fun HorizontalModeSideSection(
                     onClick = {
                         createPage(true)
                         saveBook()
-                      },
+                    },
                     text = "표지 만들기",
                     modifier = modifier
                 )
@@ -578,10 +582,11 @@ private fun MainSection(
                         .shadow(1.dp),
                     contentAlignment = Alignment.Center,
                 ) {
+                    /* TODO : NAV : onNewPageClick 이동 */
                     PageForView(
                         thumbnail = thumbnailOfPageDataList[page].thumbnail,
                         modifier = Modifier
-                            .clickable { /* TODO : NAV : page로 이동 */ }
+                            .clickable { onNewPageClick() }
                     )
                     /* TODO : CHECK plz : deletePage 완료 */
                     IconButton(
@@ -599,8 +604,8 @@ private fun MainSection(
                     }
                     if (showDeleteDialog) {
                         IgDeleteDialog(
-                            onDismiss = { showDeleteDialog = false },
-                            onDelete = { deletePage(thumbnailOfPageDataList[page].pageInfo.id) }
+                            onDelete = { deletePage(thumbnailOfPageDataList[page].pageInfo.id) },
+                            onDismiss = { showDeleteDialog = false }
                         )
                     }
                 }
@@ -631,12 +636,13 @@ private fun MainSection(
                     contentAlignment = Alignment.Center
                 ) {
                     if ((page * 2) <= thumbnailOfPageDataList.size - 1) {
+                        /* TODO : NAV : onNewPageClick 이동 */
                         PageForView(
                             thumbnail = thumbnailOfPageDataList[page * 2].thumbnail,
                             modifier = Modifier
                                 .padding(9.dp)
                                 .shadow(1.dp)
-                                .clickable { /* TODO : NAV : page로 이동 */ }
+                                .clickable { onNewPageClick() }
                         )
                         /* TODO : CHECK plz : deletePage 완료 */
                         IconButton(
@@ -654,8 +660,8 @@ private fun MainSection(
                         }
                         if (showDeleteDialog) {
                             IgDeleteDialog(
-                                onDismiss = { showDeleteDialog = false },
-                                onDelete = { deletePage(thumbnailOfPageDataList[page * 2].pageInfo.id) }
+                                onDelete = { deletePage(thumbnailOfPageDataList[page * 2].pageInfo.id) },
+                                onDismiss = { showDeleteDialog = false }
                             )
                         }
                     } else {
@@ -674,12 +680,13 @@ private fun MainSection(
                         .fillMaxHeight(1f),
                         contentAlignment = Alignment.Center
                     ) {
+                        /* TODO : NAV : onNewPageClick 이동 */
                         PageForView(
                             thumbnail = thumbnailOfPageDataList[(page * 2) + 1].thumbnail,
                             modifier = Modifier
                                 .padding(9.dp)
                                 .shadow(1.dp)
-                                .clickable { /* TODO : NAV : page로 이동 */ }
+                                .clickable { onNewPageClick() }
                         )
                         /* TODO : CHECK plz : deletePage 완료 */
                         IconButton(
@@ -697,8 +704,8 @@ private fun MainSection(
                         }
                         if (showDeleteDialog) {
                             IgDeleteDialog(
-                                onDismiss = { showDeleteDialog = false },
-                                onDelete = { deletePage(thumbnailOfPageDataList[(page * 2) + 1].pageInfo.id) }
+                                onDelete = { deletePage(thumbnailOfPageDataList[(page * 2) + 1].pageInfo.id) },
+                                onDismiss = { showDeleteDialog = false }
                             )
                         }
                     }
