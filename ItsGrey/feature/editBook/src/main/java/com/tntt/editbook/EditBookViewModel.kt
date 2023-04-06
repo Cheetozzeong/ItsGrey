@@ -44,7 +44,7 @@ class EditBookViewModel @Inject constructor(
     fun getBook() {
         viewModelScope.launch(Dispatchers.IO) {
             editBookUseCase.getBook(
-                bookId = "ff18f9d3-4353-4fa5-9d48-66d45003913d",
+                bookId = bookIdArg,
             ).collect() {
                 _bookTitle.value = it.bookInfo.title
                 _thumbnailOfPageData.value = it.pages
@@ -53,11 +53,11 @@ class EditBookViewModel @Inject constructor(
                         false
                     } else {
                         _thumbnailOfPageData.value[0].pageInfo.order == 0 }
-                    }
+            }
         }
     }
 
-    fun createPage(isCover: Boolean) { 
+    fun createPage(isCover: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             editBookUseCase.createPage(
                 bookIdArg,
