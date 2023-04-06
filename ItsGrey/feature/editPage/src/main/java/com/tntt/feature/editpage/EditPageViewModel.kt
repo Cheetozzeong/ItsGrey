@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.tntt.core.common.decoder.StringDecoder
 import com.tntt.editpage.model.Page
 import com.tntt.editpage.usecase.EditPageUseCase
+import com.tntt.feature.editpage.navigation.pageIdArg
 import com.tntt.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -32,10 +33,9 @@ class EditPageViewModel @Inject constructor(
 
     private val context = getApplication<Application>().applicationContext
 
-//    private val pageArgs: EditPageArgs = EditPageArgs(savedStateHandle, stringDecoder)
-//    val pageId = pageIdArg
+    private val pageId: String = checkNotNull(savedStateHandle[pageIdArg])
 
-    val pageId = "testForEunbin"
+    private val isSuccessToSave = MutableStateFlow(false)
 
     private val _textBoxList = MutableStateFlow(listOf<TextBoxInfo>())
     val textBoxList: StateFlow<List<TextBoxInfo>> = _textBoxList

@@ -8,11 +8,11 @@ import com.tntt.editbook.model.Book
 import com.tntt.editbook.model.Page
 import com.tntt.editbook.usecase.EditBookUseCase
 import com.tntt.model.*
+import com.tntt.viewer.Navigation.bookIdArg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.burnoutcrew.reorderable.ItemPosition
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,9 +22,7 @@ class ViewerViewModel @Inject constructor(
     stringDecoder: StringDecoder,
 ) : ViewModel() {
 
-//    private val pageArgs: EditBookPageArgs = EditBookPageArgs(savedStateHandle, stringDecoder)
-//
-//    val pageId = pageArgs.pageId
+    val bookId: String = checkNotNull(savedStateHandle[bookIdArg])
 
     private val _bookTitle = MutableStateFlow("")
     val bookTitle: StateFlow<String> = _bookTitle
@@ -39,7 +37,7 @@ class ViewerViewModel @Inject constructor(
     val selectedPage: StateFlow<Int> = _selectedPage
 
     init {
-        getBook(bookId = "ff18f9d3-4353-4fa5-9d48-66d45003913d")
+        getBook(bookId = bookId)
     }
 
     private fun getBook(bookId: String) {

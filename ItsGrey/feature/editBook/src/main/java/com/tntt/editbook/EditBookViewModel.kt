@@ -11,6 +11,7 @@ import com.tntt.editbook.usecase.EditBookUseCase
 import com.tntt.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import java.util.*
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class EditBookViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val bookId: String = checkNotNull(savedStateHandle[bookIdArg])
+    val bookId: String = checkNotNull(savedStateHandle[bookIdArg])
     private val userId: String = checkNotNull(savedStateHandle[userIdArg])
 
     private val _bookTitle = MutableStateFlow("")
@@ -35,7 +36,7 @@ class EditBookViewModel @Inject constructor(
     private val _isCoverExist = MutableStateFlow(false)
     val isCoverExist: StateFlow<Boolean> = _isCoverExist
 
-    private val _selectedPage = MutableStateFlow<Int>(0)
+    private val _selectedPage = MutableStateFlow(1)
     val selectedPage: StateFlow<Int> = _selectedPage
 
     init {
@@ -47,31 +48,42 @@ class EditBookViewModel @Inject constructor(
             editBookUseCase.getBook(
                 bookId = bookId,
             ).collect() {
-                _bookTitle.value = it.bookInfo.title
-                _thumbnailOfPageData.value = it.pages
-                _isCoverExist.value =
-                    if (_thumbnailOfPageData.value.isEmpty()) {
-                        false
-                    } else {
-                        _thumbnailOfPageData.value[0].pageInfo.order == 0 }
+                this.launch(Dispatchers.Main) {
+                    _bookTitle.value = it.bookInfo.title
+                    _thumbnailOfPageData.value = it.pages
+                    _isCoverExist.value =
+                        if (_thumbnailOfPageData.value.isEmpty()) {
+                            false
+                        } else {
+                            _thumbnailOfPageData.value[0].pageInfo.order == 0
+                        }
+                    updatePageOrder()
+                }
             }
         }
     }
 
-    fun createPage(isCover: Boolean) {
+    fun createPage(isCover: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             editBookUseCase.createPage(
-                bookIdArg,
+                bookId,
                 pageInfo = PageInfo(
                     id = UUID.randomUUID().toString(),
-                    order = if (isCover) {
-                        0
-                    } else {
-                        _thumbnailOfPageData.value[_thumbnailOfPageData.value.size - 1].pageInfo.order + 1
-                    }
+                    order = if(isCover)  0
+                            else if(isCoverExist.value) thumbnailOfPageData.value.size
+                            else thumbnailOfPageData.value.size + 1
                 )
             ).collect() {
-                _thumbnailOfPageData.value.toMutableList().add(it)
+                val newList = _thumbnailOfPageData.value.toMutableList()
+                if(isCover) {
+                    newList.add(0, it)
+                    _isCoverExist.value = true
+                }else {
+                    newList.add(it)
+                }
+                this.launch(Dispatchers.Main) {
+                    _thumbnailOfPageData.value = newList
+                }
             }
         }
     }
@@ -81,7 +93,7 @@ class EditBookViewModel @Inject constructor(
             editBookUseCase.saveBook(
                 book = Book(
                     bookInfo = BookInfo(
-                        id = bookIdArg,
+                        id = bookId,
                         title = bookTitle.value,
                         saveDate = Date(),
                     ),
@@ -110,12 +122,15 @@ class EditBookViewModel @Inject constructor(
     }
 
     fun deletePage(pageId: String) {
+
         viewModelScope.launch(Dispatchers.IO) {
             editBookUseCase.deletePage(
                 pageId = pageId
             ).collect() {
                 if (it) {
-                    getBook()
+                    this.launch(Dispatchers.Main) {
+                        getBook()
+                    }
                 }
             }
         }
@@ -126,7 +141,9 @@ class EditBookViewModel @Inject constructor(
             add(to, removeAt(from))
         }.toList()
 
-        updateSelectedPage(to)
+        updatePageOrder()
+        updateSelectedPage(thumbnailOfPageData.value[to].pageInfo.order)
+        saveBook()
     }
 
     fun isPageDragEnabled(draggedOver: ItemPosition, dragging: ItemPosition): Boolean {
@@ -143,23 +160,14 @@ class EditBookViewModel @Inject constructor(
         return !(isDraggingFirst || isDraggedFirst)
     }
 
-    fun updatePageOrder(from: Int, to: Int) {
-        val newList = _thumbnailOfPageData.value
-        if (from < to) {
-            for (i in from until to) {
-                newList[i].pageInfo.order -= 1
-            }
-        } else if (from > to) {
-            for (i in to + 1..from) {
-                newList[i].pageInfo.order += 1
+    fun updatePageOrder() {
+        thumbnailOfPageData.value.forEachIndexed { index, page ->
+            if(isCoverExist.value) {
+                page.pageInfo.order = index
+            }else {
+                page.pageInfo.order = index + 1
             }
         }
-        if (isCoverExist.value) {
-            newList[to].pageInfo.order = to
-        } else {
-            newList[to].pageInfo.order = to + 1
-        }
-        _thumbnailOfPageData.value = newList
     }
 
     fun updateSelectedPage(index: Int) {

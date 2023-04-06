@@ -8,8 +8,10 @@ import com.tntt.editbook.Navigation.editBookPageScreen
 import com.tntt.editbook.Navigation.navigateToEditBookPage
 import com.tntt.feature.editpage.navigation.editPageGraphRoutePattern
 import com.tntt.feature.editpage.navigation.editPageScreen
+import com.tntt.feature.editpage.navigation.navigateToEditPage
 import com.tntt.home.navigation.homePageRoute
 import com.tntt.home.navigation.homePageScreen
+import com.tntt.viewer.Navigation.navigateToViewerPage
 import com.tntt.viewer.Navigation.viewerPageScreen
 import itsgrey.feature.drawing.navigation.*
 
@@ -28,7 +30,9 @@ fun IgNavHost(
 
     ) {
         editPageScreen(
-            onBackClick = {},
+            onBackClick = {
+                navController.popBackStack()
+            },
             onImageClick = { id, uri ->
                 navController.toDrawing(id, uri)
             },
@@ -36,11 +40,7 @@ fun IgNavHost(
         )
         drawingScreen(
             onBackClick = {
-                navController.navigate(editPageGraphRoutePattern) {
-                    popUpTo(editPageGraphRoutePattern) {
-                        inclusive = true
-                    }
-                }
+                navController.popBackStack()
             }
         )
         homePageScreen(
@@ -49,14 +49,21 @@ fun IgNavHost(
             currentUserName = currentUserName
         )
         editBookPageScreen(
-            onBackClick = {},
-            onViewerClick = {},
-            onNewPageClick = {},
-//            onViewerClick = { id -> navController.toViewer(id) }
+            onBackClick = {
+                navController.popBackStack()
+            },
+            onViewerClick = { bookId ->
+                navController.navigateToViewerPage(bookId)
+            },
+            onPageClick = { pageId ->
+                navController.navigateToEditPage(pageId)
+            },
             currentUserEmail = currentUserEmail,
         )
         viewerPageScreen(
-            onBackClick = {},
+            onBackClick = {
+                navController.popBackStack()
+            },
         )
     }
 }

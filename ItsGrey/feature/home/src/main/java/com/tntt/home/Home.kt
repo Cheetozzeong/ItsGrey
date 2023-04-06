@@ -50,6 +50,11 @@ internal fun HomePageRoute(
     onThumbnailClick: (String) -> Unit,
     viewModel: HomePageViewModel = hiltViewModel(),
 ){
+    LaunchedEffect(Unit) {
+        viewModel.getWorkingBookList()
+        viewModel.getPublishedBookList()
+    }
+
     HomePageScreen(
         onNewButtonClick = viewModel::createBook,
         onThumbnailClick = { onThumbnailClick(it) },

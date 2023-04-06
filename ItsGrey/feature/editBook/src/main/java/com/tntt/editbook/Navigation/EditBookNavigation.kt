@@ -5,8 +5,8 @@ import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.tntt.editbook.EditBookPageRoute
 
-internal const val bookIdArg = "ff18f9d3-4353-4fa5-9d48-66d45003913d"
-internal const val userIdArg = "userId"
+internal const val bookIdArg = "bookIdArg"
+internal const val userIdArg = "userIdArg"
 
 const val editBookPageRoute = "editBookPage_route"
 private const val editBookPageGraphRoutePattern = "editBookPage_route"
@@ -19,9 +19,9 @@ fun NavController.navigateToEditBookPage(bookId: String, userId: String) {
 
 fun NavGraphBuilder.editBookPageScreen(
     onBackClick: () -> Unit,
-    onViewerClick: () -> Unit,
+    onViewerClick: (String) -> Unit,
 //    onViewerClick: (String) -> Unit,
-    onNewPageClick: () -> Unit,
+    onPageClick: (String) -> Unit,
     currentUserEmail: String,
 //    currentBookId: String,
 ) {
@@ -35,7 +35,7 @@ fun NavGraphBuilder.editBookPageScreen(
         EditBookPageRoute(
             onBackClick = onBackClick,
             onViewerClick = onViewerClick,
-            onNewPageClick = onNewPageClick,
+            onPageClick = { pageId -> onPageClick(pageId)},
         )
     }
 }
