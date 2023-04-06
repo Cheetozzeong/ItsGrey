@@ -84,9 +84,12 @@ class LayerRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSumLayerBitmap(layerInfoList: List<LayerInfo>): Flow<Bitmap> = flow {
+        Log.d("function test", "0 : ${layerInfoList[0].bitmap.width}, ${layerInfoList[0].bitmap.height}")
+        Log.d("function test", "1 : ${layerInfoList[1].bitmap.width}, ${layerInfoList[1].bitmap.height}")
         val sumLayer = Bitmap.createBitmap(layerInfoList[0].bitmap.width, layerInfoList[0].bitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(sumLayer)
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        layerInfoList[1].bitmap = Bitmap.createScaledBitmap(layerInfoList[1].bitmap, layerInfoList[0].bitmap.width, layerInfoList[0].bitmap.height, true)
         for (layerInfo in layerInfoList) {
             canvas.drawBitmap(layerInfo.bitmap, 0f, 0f, null)
         }

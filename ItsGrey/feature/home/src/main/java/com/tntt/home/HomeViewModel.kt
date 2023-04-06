@@ -67,7 +67,7 @@ class HomePageViewModel @Inject constructor(
         }
     }
 
-    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Long) {
+    private fun getWorkingBookList(userId: String, sortType: SortType, startIndex: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             homeUseCase.getBooks(
                 userId,

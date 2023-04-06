@@ -1,8 +1,12 @@
 package com.tntt.feature.editpage
 
+import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,12 +27,15 @@ class EditPageViewModel @Inject constructor(
     private val editPageUseCase: EditPageUseCase,
     savedStateHandle: SavedStateHandle,
     stringDecoder: StringDecoder,
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
+
+    private val context = getApplication<Application>().applicationContext
 
 //    private val pageArgs: EditPageArgs = EditPageArgs(savedStateHandle, stringDecoder)
 //    val pageId = pageIdArg
 
-    val pageId = "testChiheon"
+    val pageId = "testForEunbin"
 
     private val _textBoxList = MutableStateFlow(listOf<TextBoxInfo>())
     val textBoxList: StateFlow<List<TextBoxInfo>> = _textBoxList
@@ -55,7 +62,9 @@ class EditPageViewModel @Inject constructor(
     private fun getImageBoxList(){
         CoroutineScope(Dispatchers.IO).launch {
             editPageUseCase.getImageBoxList(pageId).collect() {
-                _imageBox.value = it
+                this.launch(Dispatchers.Main) {
+                    _imageBox.value = it
+                }
             }
         }
     }
@@ -106,6 +115,19 @@ class EditPageViewModel @Inject constructor(
 
     fun updateImageBox(imageBoxInfo: ImageBoxInfo) {
         _imageBox.value = listOf(imageBoxInfo)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            editPageUseCase.updateImageBox(pageId, imageBox.value).collect()
+        }
+
+    }
+
+    fun updateImageBox(imageBoxId: String, uri: Uri) {
+
+        val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+        _imageBox.value[0].boxData.heightRatio *= (bitmap.height.toFloat() / bitmap.width.toFloat())
+
+        savePage()
     }
 
     fun deleteBox(boxId: String) {
@@ -137,7 +159,7 @@ class EditPageViewModel @Inject constructor(
                 textBoxList.value
             )
         )
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             editPageUseCase.savePage(page).collect()
         }
     }

@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -34,6 +36,7 @@ internal fun EditPageRoute(
     viewModel: EditPageViewModel = hiltViewModel(),
     onImageToDrawClick: (imageBoxId: String, imageUri: Uri?) -> Unit
 ) {
+
     val textBoxList by viewModel.textBoxList.collectAsStateWithLifecycle()
     val imageBoxList by viewModel.imageBox.collectAsStateWithLifecycle()
     val selectedBoxId by viewModel.selectedBoxId.collectAsStateWithLifecycle()
@@ -43,7 +46,12 @@ internal fun EditPageRoute(
         imageBox = imageBoxList,
         selectedBoxId = selectedBoxId,
         onBackClick = viewModel::savePage,
-        onImageToDrawClick = onImageToDrawClick,
+        onImageToDrawClick = { id, uri ->
+            if(uri != null) {
+                viewModel.updateImageBox(id, uri)
+            }
+            onImageToDrawClick(id, uri)
+        },
         onCreateTextBox = viewModel::createTextBox,
         onCreateImageBox = viewModel::createImageBox,
         updateTextBox = viewModel::updateTextBox,
@@ -53,7 +61,7 @@ internal fun EditPageRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditPageScreen(
     textBoxList: List<TextBoxInfo>,
@@ -141,7 +149,9 @@ fun EditPageBox(
                 },
                 {
                     EditImageDrawingButton(
-                        navToDrawing = {onImageToDrawClick(selectedBoxId, null)}
+                        navToDrawing = {
+                            onImageToDrawClick(selectedBoxId, null)
+                        }
                     )
                 }
             )

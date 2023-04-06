@@ -33,8 +33,8 @@ class MainActivity : AppCompatActivity() {
             IgTheme {
                 IgNavHost(
                     navController = navController,
-                    currentUserEmail = currentUserEmail!!,
-                    currentUserName = currentUserName!!
+                    currentUserEmail = currentUserEmail ?: "email",
+                    currentUserName = currentUserName ?: "name"
                 )
             }
         }

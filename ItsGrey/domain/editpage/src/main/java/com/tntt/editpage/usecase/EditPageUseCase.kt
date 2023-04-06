@@ -53,6 +53,12 @@ class EditPageUseCase @Inject constructor(
         }
     }
 
+    fun updateImageBox(pageId: String, imageBoxList: List<ImageBoxInfo>) = flow {
+        imageBoxRepository.updateImageBoxInfoList(pageId, imageBoxList).collect() { updateImageBoxResult ->
+            emit(updateImageBoxResult)
+        }
+    }
+
     fun deleteImageBox(imageBoxId: String): Flow<Boolean> = flow {
         Log.d("function test","deleteImageBox")
         layerRepository.deleteLayerInfoList(imageBoxId).collect() { deleteLayerResult ->

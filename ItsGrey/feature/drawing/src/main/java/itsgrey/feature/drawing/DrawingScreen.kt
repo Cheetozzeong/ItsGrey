@@ -26,6 +26,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.tntt.designsystem.component.IgIconButton
 import com.tntt.designsystem.component.IgTextButton
 import com.tntt.designsystem.component.IgTopAppBar
@@ -248,11 +249,10 @@ private fun SketchScreen(
         ) {
             Image(
                 modifier = modifier
-                    .fillMaxSize()
-                    .zIndex(2f),
+                    .zIndex(2f)
+                    .align(Alignment.Center),
                 bitmap = layerList[1].bitmap.asImageBitmap(),
                 contentDescription = "",
-                contentScale = ContentScale.Fit
             )
             Sketchbook(
                 modifier = modifier
