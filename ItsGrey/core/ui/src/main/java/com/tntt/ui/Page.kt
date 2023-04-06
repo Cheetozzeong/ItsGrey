@@ -68,14 +68,12 @@ fun PageForEdit(
     deleteBox: (String) -> Unit,
     imageBoxDialogComponent: List<@Composable () -> Unit>
 ) {
-    var parentOffset by remember { mutableStateOf(Offset.Zero) }
     var parentSize by remember { mutableStateOf(Size.Zero) }
 
     Box(
         modifier
             .aspectRatio(2f / 3f)
             .onGloballyPositioned { layoutCoordinates ->
-                parentOffset = layoutCoordinates.boundsInRoot().topLeft
                 parentSize = layoutCoordinates.boundsInRoot().size
             }
     ){

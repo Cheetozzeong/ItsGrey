@@ -71,7 +71,7 @@ class DrawingViewModel @Inject constructor(
                                 _drawingInfo.value = it
                             }
                         }
-                    aspectRatio.value = (_layerList.value[0].bitmap.width / _layerList.value[0].bitmap.height).toFloat()
+                    aspectRatio.value = (_layerList.value[1].bitmap.width.toFloat() / _layerList.value[1].bitmap.height.toFloat())
                 }
             }
             else -> {   // 새로운 이미지를 변환해서 불러오기
@@ -82,7 +82,7 @@ class DrawingViewModel @Inject constructor(
                     ).collect() {
                         _layerList.value = it
                     }
-                    aspectRatio.value = _layerList.value[0].bitmap.width.toFloat() / _layerList.value[0].bitmap.height.toFloat()
+                    aspectRatio.value = _layerList.value[1].bitmap.width.toFloat() / _layerList.value[1].bitmap.height.toFloat()
                 }
             }
         }

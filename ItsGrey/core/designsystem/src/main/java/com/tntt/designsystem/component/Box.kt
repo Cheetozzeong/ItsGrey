@@ -77,7 +77,7 @@ fun BoxForEdit(
     val density = rememberSaveable { mutableStateOf(1f) }
     val position = remember(inputPosition) { mutableStateOf(inputPosition) }
     val size = remember(inputSize) { mutableStateOf(inputSize) }
-    val ratio by lazy { inputSize.width / inputSize.height }
+    val ratio = remember(inputSize) { inputSize.height / inputSize.width }
 
     val borderStyle = if (isSelected) Stroke(width = 4f) else Stroke(width = 3f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 10f))
     val borderColor = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary

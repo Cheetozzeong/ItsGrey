@@ -130,9 +130,15 @@ class EditPageViewModel @Inject constructor(
     fun updateImageBox(imageBoxId: String, uri: Uri) {
 
         val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-        _imageBox.value[0].boxData.heightRatio *= (bitmap.height.toFloat() / bitmap.width.toFloat())
 
-        savePage()
+        Log.d("check - curHeightRatio", "${_imageBox.value[0].boxData.heightRatio}")
+        Log.d("check - ratio", "${(bitmap.height.toFloat() / bitmap.width.toFloat())}")
+        _imageBox.value[0].boxData.heightRatio = _imageBox.value[0].boxData.heightRatio * (bitmap.height.toFloat() / bitmap.width.toFloat())
+        Log.d("check - nextHeightRatio", "${_imageBox.value[0].boxData.heightRatio}")
+
+        viewModelScope.launch(Dispatchers.Main) {
+            editPageUseCase.updateImageBox(pageId, imageBox.value).collect()
+        }
     }
 
     fun deleteBox(boxId: String) {
