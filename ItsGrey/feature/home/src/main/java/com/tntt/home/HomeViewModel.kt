@@ -51,16 +51,19 @@ class HomePageViewModel @Inject constructor(
 //    stringDecoder: StringDecoder,
 
     fun createBook() {
-        viewModelScope.launch {
-            CoroutineScope(Dispatchers.Main).launch {
-                homeUseCase.createBook(
-                    userId,
-                    bookInfo = BookInfo(
-                        id = UUID.randomUUID().toString(),
-                        title = "새로운 책",
-                        saveDate = Date()
-                    )
-                ).collect()
+        CoroutineScope(Dispatchers.IO).launch {
+            homeUseCase.createBook(
+                userId,
+                bookInfo = BookInfo(
+                    id = UUID.randomUUID().toString(),
+                    title = "새로운 책",
+                    saveDate = Date()
+                )
+            ).collect()
+            homeUseCase.getBooks(userId, SortType.SAVE_DATE, 0, BookType.WORKING).collect() { workingBookList ->
+                this.launch(Dispatchers.Main) {
+                    _workingBookList.value = workingBookList
+                }
             }
         }
     }

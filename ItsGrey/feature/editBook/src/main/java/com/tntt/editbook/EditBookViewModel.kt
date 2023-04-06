@@ -23,6 +23,7 @@ class EditBookViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    val bookId: String = checkNotNull(savedStateHandle[bookIdArg])
     val userId: String = checkNotNull(savedStateHandle[userIdArg])
 
     private val _bookTitle = MutableStateFlow("")
@@ -44,7 +45,7 @@ class EditBookViewModel @Inject constructor(
     fun getBook() {
         viewModelScope.launch(Dispatchers.IO) {
             editBookUseCase.getBook(
-                bookId = "ff18f9d3-4353-4fa5-9d48-66d45003913d",
+                bookId = bookId,
             ).collect() {
                 _bookTitle.value = it.bookInfo.title
                 _thumbnailOfPageData.value = it.pages
@@ -86,7 +87,7 @@ class EditBookViewModel @Inject constructor(
                     ),
                     pages = thumbnailOfPageData.value
                 ),
-                userId = userIdArg,
+                userId = userId,
                 bookType = BookType.WORKING
             ).collect()
         }
@@ -103,7 +104,7 @@ class EditBookViewModel @Inject constructor(
                     ),
                     pages = thumbnailOfPageData.value
                 ),
-                userId = userIdArg
+                userId = userId
             ).collect()
         }
     }

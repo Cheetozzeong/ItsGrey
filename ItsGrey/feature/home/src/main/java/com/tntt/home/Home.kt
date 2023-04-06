@@ -52,7 +52,7 @@ internal fun HomePageRoute(
 ){
     HomePageScreen(
         onNewButtonClick = viewModel::createBook,
-        onThumbnailClick = {onThumbnailClick},
+        onThumbnailClick = { onThumbnailClick(it) },
         viewModel = viewModel,
     )
 }
@@ -184,7 +184,7 @@ private fun BookList(
                         book = book,
                         tabPage = tabPage,
                         onThumbnailClick = {
-                            onThumbnailClick
+                            onThumbnailClick(it)
                         }
                     )
                 }

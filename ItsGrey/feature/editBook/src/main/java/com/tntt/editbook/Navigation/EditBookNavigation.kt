@@ -11,9 +11,10 @@ internal const val userIdArg = "userId"
 const val editBookPageRoute = "editBookPage_route"
 private const val editBookPageGraphRoutePattern = "editBookPage_route"
 
-fun NavController.navigateToEditBookPage(bookId: String) {
-    val encodedId = Uri.encode(bookId)
-    this.navigate("$editBookPageGraphRoutePattern/$encodedId")
+fun NavController.navigateToEditBookPage(bookId: String, userId: String) {
+    val encodedBookId = Uri.encode(bookId)
+    val encodedUserId = Uri.encode(userId)
+    this.navigate("$editBookPageGraphRoutePattern/$encodedUserId/$encodedBookId")
 }
 
 fun NavGraphBuilder.editBookPageScreen(
@@ -25,17 +26,12 @@ fun NavGraphBuilder.editBookPageScreen(
 //    currentBookId: String,
 ) {
     composable(
-        route = editBookPageRoute,
-//        route = "$editBookPageRoute/{$userIdArg}/{$bookIdArg}",
+        route = "$editBookPageRoute/{$userIdArg}/{$bookIdArg}",
         arguments = listOf(
             navArgument(userIdArg) {type = NavType.StringType},
-//            navArgument(bookIdArg) {type = NavType.StringType},
+            navArgument(bookIdArg) {type = NavType.StringType},
         )
     ) {
-        it.arguments?.apply {
-            putString(userIdArg, currentUserEmail)
-//            putString(bookIdArg, currentBookId)
-        }
         EditBookPageRoute(
             onBackClick = onBackClick,
             onViewerClick = onViewerClick,
