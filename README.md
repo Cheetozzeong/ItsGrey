@@ -11,7 +11,7 @@
     <br />
 	<sub>"원하는 사진으로 나만의 책을 엮어보세요"</sub>
 </div>
-
+<br />
 
 
 <div align="center">
@@ -32,17 +32,13 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 
 그림 그리는 것에 막연한 두려움을 가지고 있던 사람, 조금 특별한 방식으로 추억을 보관하고자 하는 사람, 선 따기를 빨리 & 가볍게 진행하고자 하는 디자이너들까지 It's Grey를 통해 손쉽게 그림을 그릴 수 있습니다!
 
-
-
-
+<br />
 
 ## :calendar: 진행 기간
 
 2023년 2월 20일 (월) ~ 2023년 4월 7일 (금) **[총 7주 진행]**
 
-
-
-
+<br />
 
 ## :runner: 개발자 소개
 
@@ -52,9 +48,7 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 |   [@Kongbee](https://github.com/kongbee)   |  [@TraceofLight](https://github.com/ChaeyeonSeo)  | [@fjdks](https://github.com/fjdks) | [@dudnbubn](https://github.com/dudnbubn) | [@Phangg](https://github.com/phangg) | [@Cheetozzeong](https://avatars.githubusercontent.com/u/81691407?v=4) |
 | App (EditPage, Drawing) | CI / CD, Backend | ML Logic, Backend | App (DB, Connection) | App (EditBook, Viewer) | App (Login, Main) |
 
-
-
-
+<br />
 
 ## :books: 사용 기술 스택
 
@@ -68,7 +62,7 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
     <img src="https://img.shields.io/badge/Git-FFFFFF?style=flat&logo=Git&logoColor=F05032">
     <img src="https://img.shields.io/badge/GitLab-FFFFFF?style=flat&logo=GitLab&logoColor=FC6D26">
 </div>
-
+<br />
 
 ### :pick: Development
 
@@ -82,7 +76,7 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
     <img src="https://img.shields.io/badge/Jenkins-FFFFFF?style=flat&logo=Jenkins&logoColor=D24939">
     <img src="https://img.shields.io/badge/NGINX-FFFFFF?style=flat&logo=NGINX&logoColor=009639">
 </div>
-
+<br />
 
 ### :mega: Communication
 
@@ -92,17 +86,13 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
     <img src="https://img.shields.io/badge/Notion-FFFFFF?style=flat&logo=Notion&logoColor=000000">
 	<img src="https://img.shields.io/badge/Jira-FFFFFF?style=flat&logo=Jira&logoColor=0052CC">
 </div>
-
-
-
+<br />
 
 ## :blue_book: 프로젝트 구조도
 
 ![project_structure_diagram](./docs/project_structure_diagram.png)
 
-
-
-
+<br />
 
 ## :card_file_box: 프로젝트 산출물
 
@@ -113,9 +103,7 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 - [최종 발표 자료](./docs/final_presentation.pdf)
 - [Porting Guide](./exec/Porting_Guide.md)
 
-
-
-
+<br />
 
 ## :heavy_check_mark: 주요 기능
 
@@ -124,9 +112,7 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
   - 어떤 모바일 환경에서도 사용할 수 있도록 모바일 및 타블렛 환경을 동시에 지원합니다.
   - 각 환경에 맞는 UI 배치를 통해 사용자 편의성을 극대화했습니다.
 
-
-
-
+<br />
 
 - ### 스케치 이미지 및 편집
 
@@ -134,27 +120,21 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
   - 유저가 찍은 사진을 업로드만 한다면 바로 스케치처럼 바꿔줍니다.
   - 유저가 찍은 사진을 기반으로 한 스케치에 선을 넣거나 채색할 수 있습니다.
 
-
-
-
+<br />
 
 - ### 기록을 담는 페이지
 
   - 이미지 외에도 같은 페이지에 텍스트를 남길 수 있습니다.
   - 자유로운 배치를 통해 나만의 페이지를 구성해보세요.
 
-
-
-
+<br />
 
 - ### 유저가 완성하는 책
 
   - 같은 주제나 스토리 라인을 가진 페이지 여러 장을 엮어 하나의 책으로 만들 수 있습니다.
   - 뷰어를 통해 완성된 책을 감상할 수 있습니다.
 
-
-
-
+<br />
 
 ## :file_folder: 프로젝트 파일 구조
 
@@ -220,7 +200,7 @@ Root
     └─images
 ```
 
-
+<br />
 
 ## :desktop_computer: 화면 구성
 
