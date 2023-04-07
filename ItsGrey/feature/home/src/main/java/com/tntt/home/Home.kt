@@ -250,7 +250,8 @@ private fun BookItem(
                                 onClick = { onThumbnailClick(bookId) } /*TODO 네비 연*/
                             )
                     ) {
-                        PageForView(modifier = Modifier, thumbnail = book.thumbnail!!)
+                        PageForView(modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                            , thumbnail = book.thumbnail!!)
                     }
                     Box {
                         Column {
