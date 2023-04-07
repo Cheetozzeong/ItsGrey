@@ -16,8 +16,8 @@ android {
         applicationId = "com.tntt.itsgrey"
         minSdk = AppConfig.minSdk
         targetSdk = AppConfig.targetSdk
-        versionName = "2.0.1"
-        versionCode = 3
+        versionName = "3.0.1"
+        versionCode = 4
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
