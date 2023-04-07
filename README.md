@@ -99,7 +99,7 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 
 - [기능 명세서](./docs/functional_specification_v0.1.pdf)
 - [디자인](./docs/WireFrame_v0.1.png)
-- [ERD](./docs/ERD_v0.1.png)
+- [ERD Prototype](./docs/ERD_v0.1.png)
 - [중간 발표 자료](./docs/interim_presentation.pdf)
 - [최종 발표 자료](./docs/final_presentation.pdf)
 - [Porting Guide](./exec/Porting_Guide.md)
@@ -209,5 +209,5 @@ Root
 | :-------------------------------------------: | :------------: | :-------------------------------------------: |
 | 로그인 페이지 | <img width="300" src="./docs/display_image/mobile_login.gif"/> | <img width="900" src="./docs/display_image/tablet_login.gif"/> |
 | 메인 페이지 | <img width="300" src="./docs/display_image/mobile_main.gif"/> | <img width="900" src="./docs/display_image/tablet_main.gif"/> |
-| 책 편집 페이지 | <img width="300" src="./docs/display_image/mobile_editbook.gif"/> | <img width="900" src="./docs/display_image/tablet_editbook.gif"/> |
+| 뷰어 페이지 | <img width="300" src="./docs/display_image/mobile_editbook.gif"/> | <img width="900" src="./docs/display_image/tablet_viewer.gif"/> |
 | 페이지 편집 페이지 | <img width="300" src="./docs/display_image/mobile_editpage.gif"/> | <img width="900" src="./docs/display_image/tablet_editpage.gif"/> |
