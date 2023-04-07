@@ -1,5 +1,5 @@
 <div align="center">
-	<img src="./static/logo.png" alt="It's Grey" width="400" height="400">
+	<img src="./docs/logo.png" alt="It's Grey" width="400" height="400">
 	<h1 align="center">
 		It's Grey
 	</h1>
@@ -11,48 +11,48 @@
     <br />
 	<sub>"원하는 사진으로 나만의 책을 엮어보세요"</sub>
 </div>
-
+<br />
 
 <div align="center">
 	<h3 align="center">
 		<a href="https://play.google.com/store/apps/details?id=com.tntt.itsgrey">
-			<img src="./static/google_play_logo.png" alt="It's Grey" width="120" height="23">
+			<img src="./docs/google_play_logo.png" alt="It's Grey" width="120" height="23">
 	에서 다운로드
 		</a>
     </h3>
 </div>
+<br />
 
+## :boom: 프로젝트 소개
 
-## 프로젝트 소개
+그림을 그려보고 싶었는데 배우는 것이 어려워 포기한 적이 있으신가요? 혹은 추억으로 간직하고 싶은 사진을 특별한 방법으로 꾸며보고 싶었던 적이 있으신가요?
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper accumsan. Fusce vestibulum laoreet ultrices. Nullam vel auctor lacus. Nullam rhoncus, nulla quis dictum tempor, lorem nisi commodo magna, eget condimentum sapien sapien eget sapien. Phasellus eu bibendum nunc. Proin non tincidunt neque. Donec ex orci, ornare consequat lectus vel, accumsan vulputate sapien. Sed quis leo erat. Etiam id scelerisque odio. Ut a imperdiet odio. Nam sit amet risus in dui tempus tincidunt. Ut ac ligula sit amet ante hendrerit mattis in non diam. Vivamus risus elit, rutrum eget volutpat id, tempor ut nisl. Cras pharetra massa eu sapien imperdiet tincidunt eget sit amet velit.
+It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어려워하는 사람들을 위해 만들어진 드로잉 애플리케이션입니다.
 
+그림 그리는 것에 막연한 두려움을 가지고 있던 사람, 조금 특별한 방식으로 추억을 보관하고자 하는 사람, 선 따기를 빨리 & 가볍게 진행하고자 하는 디자이너들까지 It's Grey를 통해 손쉽게 그림을 그릴 수 있습니다!
 
+<br />
 
-## 진행 기간
+## :calendar: 진행 기간
 
 2023년 2월 20일 (월) ~ 2023년 4월 7일 (금) **[총 7주 진행]**
 
+<br />
 
+## :runner: 개발자 소개
 
-## 개발자 소개
+|                                      고은빈                                      |                                      김희준                                      |                                     안송빈                                      |                                     이윤석                                      |                                      이창준                                      |                                     이치헌                                      |
+| :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: |
+| <img width="160px" src="https://avatars.githubusercontent.com/u/84635035?v=4" /> | <img width="160px" src="https://avatars.githubusercontent.com/u/98262849?v=4" /> | <img width="160px" src="https://avatars.githubusercontent.com/u/82949079?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/76838107?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/109324421?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/81691407?v=4"/> |
+|                      [@Kongbee](https://github.com/kongbee)                      |                 [@TraceofLight](https://github.com/ChaeyeonSeo)                  |                       [@fjdks](https://github.com/fjdks)                        |                    [@dudnbubn](https://github.com/dudnbubn)                     |                       [@Phangg](https://github.com/phangg)                       |      [@Cheetozzeong](https://avatars.githubusercontent.com/u/81691407?v=4)      |
+|                                   Application                                    |                                CI/CD, ML Backend                                 |                                   ML Backend                                    |                               Application Backend                               |                                   Application                                    |                                   Application                                   |
+|                                EditPage, Drawing                                 |                                FastAPI Structure                                 |                                  FastAPI Logic                                  |                                API, Firestore DB                                |                                 EditBook, Viewer                                 |                              Main, Firebase Login                               |
 
-|      고은빈      |         김희준         |       안송빈       |       이윤석       |       이창준       |       이치헌       |
-| :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img width="160px" src="https://avatars.githubusercontent.com/u/84635035?v=4" /> | <img width="160px" src="https://avatars.githubusercontent.com/u/98262849?v=4" />    | <img width="160px" src="https://avatars.githubusercontent.com/u/82949079?v=4"/>   | <img width="160px" src="https://avatars.githubusercontent.com/u/76838107?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/109324421?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/81691407?v=4"/> |
-|   [@Kongbee](https://github.com/kongbee)   |  [@TraceofLight](https://github.com/ChaeyeonSeo)  | [@fjdks](https://github.com/fjdks) | [@dudnbubn](https://github.com/dudnbubn) | [@Phangg](https://github.com/phangg) | [@Cheetozzeong](https://avatars.githubusercontent.com/u/81691407?v=4) |
+<br />
 
+## :books: 사용 기술 스택
 
-
-## 프로젝트 구조도
-
-![project_structure_diagram](./static/project_structure_diagram.png)
-
-
-
-## 사용 기술 스택
-
-### Environment
+### :earth_africa: Environment
 
 <div>
 	<img src="https://img.shields.io/badge/Android Studio-FFFFFF?style=flat&logo=Android Studio&logoColor=3DDC84">
@@ -62,9 +62,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper a
     <img src="https://img.shields.io/badge/Git-FFFFFF?style=flat&logo=Git&logoColor=F05032">
     <img src="https://img.shields.io/badge/GitLab-FFFFFF?style=flat&logo=GitLab&logoColor=FC6D26">
 </div>
+<br />
 
-
-### Development
+### :pick: Development
 
 <div>
 	<img src="https://img.shields.io/badge/Kotlin-FFFFFF?style=flat&logo=Kotlin&logoColor=7F52FF">
@@ -76,9 +76,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper a
     <img src="https://img.shields.io/badge/Jenkins-FFFFFF?style=flat&logo=Jenkins&logoColor=D24939">
     <img src="https://img.shields.io/badge/NGINX-FFFFFF?style=flat&logo=NGINX&logoColor=009639">
 </div>
+<br />
 
-
-### Communication
+### :mega: Communication
 
 <div>
     <img src="https://img.shields.io/badge/Mattermost-FFFFFF?style=flat&logo=Mattermost&logoColor=0058CC">
@@ -86,33 +86,59 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean maximus semper a
     <img src="https://img.shields.io/badge/Notion-FFFFFF?style=flat&logo=Notion&logoColor=000000">
 	<img src="https://img.shields.io/badge/Jira-FFFFFF?style=flat&logo=Jira&logoColor=0052CC">
 </div>
+<br />
 
+## :blue_book: 프로젝트 구조도
 
-## 주요 기능
+![project_structure_diagram](./docs/project_structure_diagram.png)
 
-### :round_pushpin: 모바일, 타블렛 환경 동시 지원
+<br />
 
-### :round_pushpin: 사용자의 사진을 기반으로 스케치 파일을 제공
+## :card_file_box: 프로젝트 산출물
 
-### :round_pushpin: 사용자가 기록을 담을 수 있는 페이지를 제작
+- [기능 명세서](./docs/functional_specification_v0.1.pdf)
+- [디자인](./docs/WireFrame_v0.1.png)
+- [ERD Prototype](./docs/ERD_v0.1.png)
+- [중간 발표 자료](./docs/interim_presentation.pdf)
+- [최종 발표 자료](./docs/final_presentation.pdf)
+- [Porting Guide](./exec/Porting_Guide.md)
 
-### :round_pushpin: 페이지를 엮어 하나의 책으로 만들 수 있으며 뷰어 기능을 제공
+<br />
 
+## :heavy_check_mark: 주요 기능
 
+- ### 모바일, 타블렛 모드
 
-## 화면 구성
+  - 어떤 모바일 환경에서도 사용할 수 있도록 모바일 및 타블렛 환경을 동시에 지원합니다.
+  - 각 환경에 맞는 UI 배치를 통해 사용자 편의성을 극대화했습니다.
 
-| 메인 페이지  |  소개 페이지   |
-| :-------------------------------------------: | :------------: |
-| <img width="329" src="https://picsum.photos/200/300"/> | <img width="329" src="https://picsum.photos/200/300"/> |
-| 강좌 소개 페이지   |  강의 영상 페이지   |
-| <img width="329" src="https://picsum.photos/200/300"/> | <img width="329" src="https://picsum.photos/200/300"/> |
+<br />
 
+- ### 스케치 이미지 및 편집
 
+  - 어떤 그림을 그릴지 고민할 필요가 없습니다.
+  - 유저가 찍은 사진을 업로드만 한다면 바로 스케치처럼 바꿔줍니다.
+  - 유저가 찍은 사진을 기반으로 한 스케치에 선을 넣거나 채색할 수 있습니다.
 
-## 프로젝트 파일 구조
+<br />
 
-### Application
+- ### 기록을 담는 페이지
+
+  - 이미지 외에도 같은 페이지에 텍스트를 남길 수 있습니다.
+  - 자유로운 배치를 통해 나만의 페이지를 구성해보세요.
+
+<br />
+
+- ### 유저가 완성하는 책
+
+  - 같은 주제나 스토리 라인을 가진 페이지 여러 장을 엮어 하나의 책으로 만들 수 있습니다.
+  - 뷰어를 통해 완성된 책을 감상할 수 있습니다.
+
+<br />
+
+## :file_folder: 프로젝트 파일 구조
+
+### :iphone: Application
 
 ```text
 Root
@@ -129,7 +155,7 @@ Root
 │   │   ├─retrofit
 │   │   └─Firestore
 │   ├─ui
-│   └─Page 
+│   └─Page
 ├─data
 │   ├─book
 │   ├─drawing
@@ -155,7 +181,7 @@ Root
     └─viewer
 ```
 
-### Backend
+### :door: Backend
 
 ```text
 Root
@@ -173,3 +199,14 @@ Root
 └─static
     └─images
 ```
+
+<br />
+
+## :desktop_computer: 화면 구성
+
+|     화면 목록      |                            Mobile Mode                            |                            Tablet Mode                            |
+| :----------------: | :---------------------------------------------------------------: | :---------------------------------------------------------------: |
+|   로그인 페이지    |  <img width="300" src="./docs/display_image/mobile_login.gif"/>   |  <img width="900" src="./docs/display_image/tablet_login.gif"/>   |
+|    메인 페이지     |   <img width="300" src="./docs/display_image/mobile_main.gif"/>   |   <img width="900" src="./docs/display_image/tablet_main.gif"/>   |
+|    뷰어 페이지     | <img width="300" src="./docs/display_image/mobile_editbook.gif"/> |  <img width="900" src="./docs/display_image/tablet_viewer.gif"/>  |
+| 페이지 편집 페이지 | <img width="300" src="./docs/display_image/mobile_editpage.gif"/> | <img width="900" src="./docs/display_image/tablet_editpage.gif"/> |
