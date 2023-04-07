@@ -55,13 +55,17 @@ internal fun EditBookPageRoute(
         viewModel.getBook()
     }
 
-
     val bookTitle by viewModel.bookTitle.collectAsStateWithLifecycle()
     val thumbnailOfPageDataList by viewModel.thumbnailOfPageData.collectAsStateWithLifecycle()
     val selectedPage by viewModel.selectedPage.collectAsStateWithLifecycle()
     val isCoverExist by viewModel.isCoverExist.collectAsStateWithLifecycle()
+    val isPublished by viewModel.isPublished.collectAsStateWithLifecycle()
 
     val configuration = LocalConfiguration.current
+
+    LaunchedEffect(isPublished) {
+        if(isPublished) { onBackClick() }
+    }
 
     Scaffold(
         topBar = {
@@ -72,8 +76,6 @@ internal fun EditBookPageRoute(
                 onBookTitleChange = viewModel::titleChange,
                 onPublishBookClick = {
                     viewModel.publishBook()
-                    onBackClick()
-                    // TODO: publish 후 navigate to viewer? or home?
                 }
             )
         }
@@ -169,10 +171,7 @@ private fun EditBookTopAppBar(
         actions = {
             EditBookTitleButton { showEditTitleDialog = true }
             OpenViewerButton { onViewerClick() }
-            PublishButton {
-                onPublishBookClick()
-                onBackClick()
-            }
+            PublishButton { onPublishBookClick() }
         }
     )
 }
@@ -261,39 +260,31 @@ private fun SideSectionLandScape(
                     thumbnailOfPageDataList[0].pageInfo.id,
                     span = { GridItemSpan(2) },
                 ) {
-                    ReorderableItem(
-                        lazyGridState,
-                        thumbnailOfPageDataList[0].pageInfo.id
-                    ) { isDragging ->
-                        val scale = animateFloatAsState(if (isDragging) 1.1f else 1.0f)
-                        val elevation = animateDpAsState(if (isDragging) 4.dp else 0.dp)
+                    val cover = thumbnailOfPageDataList[0]
 
-                        val cover = thumbnailOfPageDataList[0]
-
-                        Column(
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        PageForView(
+                            thumbnail = cover.thumbnail,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            PageForView(
-                                thumbnail = cover.thumbnail,
-                                modifier = Modifier
-                                    .fillMaxWidth(0.5f)
-                                    .clickable { updateSelectedPage(cover.pageInfo.order) }
-                                    .border(
-                                        width = 4.dp,
-                                        color = if (selectedPage == cover.pageInfo.order) MaterialTheme.colorScheme.outline else Color.Transparent
-                                    )
-                                    .shadow(0.5.dp)
-                            )
-                            Text(
-                                text = "표지",
-                                modifier = Modifier
-                                    .padding(top = 8.dp),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        }
+                                .fillMaxWidth(0.5f)
+                                .clickable { updateSelectedPage(cover.pageInfo.order) }
+                                .border(
+                                    width = 4.dp,
+                                    color = if (selectedPage == cover.pageInfo.order) MaterialTheme.colorScheme.outline else Color.Transparent
+                                )
+                                .shadow(0.5.dp)
+                        )
+                        Text(
+                            text = "표지",
+                            modifier = Modifier
+                                .padding(top = 8.dp),
+                            style = MaterialTheme.typography.titleMedium
+                        )
                     }
                 }
             }else {
@@ -556,8 +547,7 @@ private fun MainSectionLandScape(
 
                             Box(
                                 Modifier
-                                    .aspectRatio(2f / 3f)
-                                    .weight(1f)
+                                    .fillMaxHeight()
                             ) {
                                 PageForView(
                                     thumbnail = curPage.thumbnail,
@@ -567,7 +557,8 @@ private fun MainSectionLandScape(
                                         .clickable { onPageClick(curPage.pageInfo.id) }
                                 )
                                 DeletePageButton(
-                                    modifier = Modifier.align(TopEnd),
+                                    modifier = Modifier
+                                        .align(TopEnd),
                                     onClick = {
                                         deletePageId = curPage.pageInfo.id
                                         showDeleteDialog = true

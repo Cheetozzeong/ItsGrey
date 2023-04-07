@@ -39,6 +39,8 @@ class EditBookViewModel @Inject constructor(
     private val _selectedPage = MutableStateFlow(1)
     val selectedPage: StateFlow<Int> = _selectedPage
 
+    val isPublished = MutableStateFlow(false)
+
     init {
         getBook()
     }
@@ -110,14 +112,16 @@ class EditBookViewModel @Inject constructor(
             editBookUseCase.publishBook(
                 book = Book(
                     bookInfo = BookInfo(
-                        id = bookIdArg,
+                        id = bookId,
                         title = bookTitle.value,
                         saveDate = Date(),
                     ),
                     pages = thumbnailOfPageData.value
                 ),
                 userId = userId
-            ).collect()
+            ).collect() { it
+                isPublished.value = it
+            }
         }
     }
 

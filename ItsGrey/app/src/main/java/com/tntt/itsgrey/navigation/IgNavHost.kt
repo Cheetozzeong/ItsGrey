@@ -44,7 +44,8 @@ fun IgNavHost(
             }
         )
         homePageScreen(
-            onThumbnailClick = { bookId -> navController.navigateToEditBookPage(bookId, currentUserEmail) },
+            onThumbnailClickForEdit = { bookId -> navController.navigateToEditBookPage(bookId, currentUserEmail) },
+            onThumbnailClickForView = { bookId -> navController.navigateToViewerPage(bookId) },
             currentUserEmail = currentUserEmail,
             currentUserName = currentUserName
         )

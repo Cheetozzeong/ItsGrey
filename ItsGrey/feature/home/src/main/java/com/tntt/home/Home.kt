@@ -3,6 +3,7 @@ package com.tntt.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,6 +26,7 @@ import com.tntt.model.*
 import itsgrey.feature.home.R
 import java.util.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -47,7 +49,8 @@ private enum class WindowSize(val item: Int) {
 
 @Composable
 internal fun HomePageRoute(
-    onThumbnailClick: (String) -> Unit,
+    onThumbnailClickForEdit: (String) -> Unit,
+    onThumbnailClickForView: (String) -> Unit,
     viewModel: HomePageViewModel = hiltViewModel(),
 ){
     LaunchedEffect(Unit) {
@@ -57,7 +60,12 @@ internal fun HomePageRoute(
 
     HomePageScreen(
         onNewButtonClick = viewModel::createBook,
-        onThumbnailClick = { onThumbnailClick(it) },
+        onThumbnailClick = { id, type ->
+            when(type) {
+                TabPage.Published.name -> { onThumbnailClickForView(id) }
+                TabPage.Working.name -> { onThumbnailClickForEdit(id) }
+            }
+        },
         viewModel = viewModel,
     )
 }
@@ -66,7 +74,7 @@ internal fun HomePageRoute(
 internal fun HomePageScreen(
     modifier: Modifier = Modifier,
     onNewButtonClick: () -> Unit,
-    onThumbnailClick: (String) -> Unit,
+    onThumbnailClick: (String, String) -> Unit,
     viewModel: HomePageViewModel,
 ) {
 
@@ -93,7 +101,15 @@ internal fun HomePageScreen(
                     .padding(horizontal = 25.dp),
                 title = stringResource(R.string.home_toolbar_name),
                 actions = {
-                    Text(text = "${user.name}님의 서재")
+                    Text(
+                        modifier = Modifier.pointerInput(Unit) {
+                           detectTapGestures {
+                                viewModel.getPublishedBookList()
+                                viewModel.getWorkingBookList()
+                           }
+                        },
+                        text = "${user.name}님의 서재"
+                    )
                 }
             ) }
         ) { padding ->
@@ -144,7 +160,9 @@ internal fun HomePageScreen(
                         books = list,
                         tabPage = tabPage,
                         screenWidth = screenWidth,
-                        onThumbnailClick = onThumbnailClick,
+                        onThumbnailClick = { id ->
+                            onThumbnailClick(id, tabPage.name)
+                        },
                         onNewButtonClick = onNewButtonClick
                     )
                 }

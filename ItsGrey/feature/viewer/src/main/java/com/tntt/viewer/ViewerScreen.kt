@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -216,22 +215,22 @@ private fun MainSection(
                 ) {
                     PageForView(
                         thumbnail = thumbnailOfPageDataList[page * 2].thumbnail,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surface)
+                            .border(1.dp, MaterialTheme.colorScheme.primary)
                     )
                     if ((page * 2) + 1 <= thumbnailOfPageDataList.size - 1) {
                         PageForView(
                             thumbnail = thumbnailOfPageDataList[(page * 2) + 1].thumbnail,
-                            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.surface)
+                                .border(1.dp, MaterialTheme.colorScheme.primary)
                         )
                     } else {
                         Box(
                             Modifier.aspectRatio(2f / 3f)
                                 .background(MaterialTheme.colorScheme.secondary)
-                        ) {
-                            Text(
-                                text = "마지막 페이지 입니다!",
-                                style = MaterialTheme.typography.displaySmall)
-                        }
+                        )
                     }
                 }
             }
