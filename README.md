@@ -204,9 +204,11 @@ Root
 
 ## :desktop_computer: 화면 구성
 
-|     화면 목록      |                            Mobile Mode                            |                            Tablet Mode                            |
-| :----------------: | :---------------------------------------------------------------: | :---------------------------------------------------------------: |
-|   로그인 페이지    |  <img width="300" src="./docs/display_image/mobile_login.gif"/>   |  <img width="900" src="./docs/display_image/tablet_login.gif"/>   |
-|    메인 페이지     |   <img width="300" src="./docs/display_image/mobile_main.gif"/>   |   <img width="900" src="./docs/display_image/tablet_main.gif"/>   |
-|    뷰어 페이지     | <img width="300" src="./docs/display_image/mobile_editbook.gif"/> |  <img width="900" src="./docs/display_image/tablet_viewer.gif"/>  |
-| 페이지 편집 페이지 | <img width="300" src="./docs/display_image/mobile_editpage.gif"/> | <img width="900" src="./docs/display_image/tablet_editpage.gif"/> |
+|   화면 목록    |                         Mobile Mode                          |                         Tablet Mode                          |
+| :------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+|  로그인 화면   | <img width="300" src="./docs/display_image/mobile_login.gif"/> | <img height="300" src="./docs/display_image/tablet_login.gif"/> |
+|   메인 서재    | <img width="300" src="./docs/display_image/mobile_main.gif"/> | <img height="300" src="./docs/display_image/tablet_main.gif"/> |
+|   뷰어 기능    | <img width="300" src="./docs/display_image/mobile_viewer.gif"/> | <img height="300" src="./docs/display_image/tablet_viewer.gif"/> |
+|    책 추가     | <img height="300" src="./docs/display_image/mobile_add_book.gif"/> | <img height="300" src="./docs/display_image/tablet_add_book.gif"/> |
+|  이미지 편집   | <img width="300" src="./docs/display_image/mobile_edit_image.gif"/> | <img height="300" src="./docs/display_image/tablet_edit_image.gif"/> |
+| 채색 및 드로잉 | <img width="300" src="./docs/display_image/mobile_drawing.gif"/> | <img height="300" src="./docs/display_image/tablet_drawing.gif"/> |
