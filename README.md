@@ -13,7 +13,6 @@
 </div>
 <br />
 
-
 <div align="center">
 	<h3 align="center">
 		<a href="https://play.google.com/store/apps/details?id=com.tntt.itsgrey">
@@ -26,9 +25,9 @@
 
 ## :boom: 프로젝트 소개
 
-그림을 그려보고 싶었는데 배우는 것이 어려워 포기한 적이 있으신가요? 혹은 추억으로 간직하고 싶은 사진을 특별한 방법으로 꾸며보고 싶었던 적이 있으신가요? 
+그림을 그려보고 싶었는데 배우는 것이 어려워 포기한 적이 있으신가요? 혹은 추억으로 간직하고 싶은 사진을 특별한 방법으로 꾸며보고 싶었던 적이 있으신가요?
 
-It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어려워하는 사람들을 위해 만들어진 드로잉 애플리케이션입니다. 
+It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어려워하는 사람들을 위해 만들어진 드로잉 애플리케이션입니다.
 
 그림 그리는 것에 막연한 두려움을 가지고 있던 사람, 조금 특별한 방식으로 추억을 보관하고자 하는 사람, 선 따기를 빨리 & 가볍게 진행하고자 하는 디자이너들까지 It's Grey를 통해 손쉽게 그림을 그릴 수 있습니다!
 
@@ -42,12 +41,12 @@ It's Grey는 그림 그리기, 특히 스케칭의 높은 진입 장벽에 어�
 
 ## :runner: 개발자 소개
 
-|      고은빈      |         김희준         |       안송빈       |       이윤석       |       이창준       |       이치헌       |
-| :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img width="160px" src="https://avatars.githubusercontent.com/u/84635035?v=4" /> | <img width="160px" src="https://avatars.githubusercontent.com/u/98262849?v=4" />    | <img width="160px" src="https://avatars.githubusercontent.com/u/82949079?v=4"/>   | <img width="160px" src="https://avatars.githubusercontent.com/u/76838107?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/109324421?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/81691407?v=4"/> |
-|   [@Kongbee](https://github.com/kongbee)   |  [@TraceofLight](https://github.com/ChaeyeonSeo)  | [@fjdks](https://github.com/fjdks) | [@dudnbubn](https://github.com/dudnbubn) | [@Phangg](https://github.com/phangg) | [@Cheetozzeong](https://avatars.githubusercontent.com/u/81691407?v=4) |
-| Application |                      CI/CD, ML Backend                       | ML Backend | Application Backend | Application | Application |
-| EditPage, Drawing | FastAPI Structure | FastAPI Logic | API, Firestore DB | EditBook, Viewer | Main, Firebase Login |
+|                                      고은빈                                      |                                      김희준                                      |                                     안송빈                                      |                                     이윤석                                      |                                      이창준                                      |                                     이치헌                                      |
+| :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: |
+| <img width="160px" src="https://avatars.githubusercontent.com/u/84635035?v=4" /> | <img width="160px" src="https://avatars.githubusercontent.com/u/98262849?v=4" /> | <img width="160px" src="https://avatars.githubusercontent.com/u/82949079?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/76838107?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/109324421?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/81691407?v=4"/> |
+|                      [@Kongbee](https://github.com/kongbee)                      |                 [@TraceofLight](https://github.com/ChaeyeonSeo)                  |                       [@fjdks](https://github.com/fjdks)                        |                    [@dudnbubn](https://github.com/dudnbubn)                     |                       [@Phangg](https://github.com/phangg)                       |      [@Cheetozzeong](https://avatars.githubusercontent.com/u/81691407?v=4)      |
+|                                   Application                                    |                                CI/CD, ML Backend                                 |                                   ML Backend                                    |                               Application Backend                               |                                   Application                                    |                                   Application                                   |
+|                                EditPage, Drawing                                 |                                FastAPI Structure                                 |                                  FastAPI Logic                                  |                                API, Firestore DB                                |                                 EditBook, Viewer                                 |                              Main, Firebase Login                               |
 
 <br />
 
@@ -156,7 +155,7 @@ Root
 │   │   ├─retrofit
 │   │   └─Firestore
 │   ├─ui
-│   └─Page 
+│   └─Page
 ├─data
 │   ├─book
 │   ├─drawing
@@ -205,9 +204,9 @@ Root
 
 ## :desktop_computer: 화면 구성
 
-| 화면 목록 | Mobile Mode |  Tablet Mode  |
-| :-------------------------------------------: | :------------: | :-------------------------------------------: |
-| 로그인 페이지 | <img width="300" src="./docs/display_image/mobile_login.gif"/> | <img width="900" src="./docs/display_image/tablet_login.gif"/> |
-| 메인 페이지 | <img width="300" src="./docs/display_image/mobile_main.gif"/> | <img width="900" src="./docs/display_image/tablet_main.gif"/> |
-| 뷰어 페이지 | <img width="300" src="./docs/display_image/mobile_editbook.gif"/> | <img width="900" src="./docs/display_image/tablet_viewer.gif"/> |
+|     화면 목록      |                            Mobile Mode                            |                            Tablet Mode                            |
+| :----------------: | :---------------------------------------------------------------: | :---------------------------------------------------------------: |
+|   로그인 페이지    |  <img width="300" src="./docs/display_image/mobile_login.gif"/>   |  <img width="900" src="./docs/display_image/tablet_login.gif"/>   |
+|    메인 페이지     |   <img width="300" src="./docs/display_image/mobile_main.gif"/>   |   <img width="900" src="./docs/display_image/tablet_main.gif"/>   |
+|    뷰어 페이지     | <img width="300" src="./docs/display_image/mobile_editbook.gif"/> |  <img width="900" src="./docs/display_image/tablet_viewer.gif"/>  |
 | 페이지 편집 페이지 | <img width="300" src="./docs/display_image/mobile_editpage.gif"/> | <img width="900" src="./docs/display_image/tablet_editpage.gif"/> |

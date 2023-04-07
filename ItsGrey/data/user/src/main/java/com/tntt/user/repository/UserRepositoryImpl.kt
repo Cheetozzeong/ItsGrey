@@ -14,12 +14,6 @@ class UserRepositoryImpl @Inject constructor(
     private val remoteUserDataSource: RemoteUserDataSource
 ): UserRepository {
 
-    override suspend fun getUser(id: String): Flow<UserInfo> = flow {
-        remoteUserDataSource.getUser(id).collect() { userDto ->
-            emit(UserInfo(userDto.id, userDto.name))
-        }
-    }
-
     override suspend fun createUser(userInfo: UserInfo): Flow<String> = flow {
         val userDto = UserDto(userInfo.id, userInfo.name)
         remoteUserDataSource.createUser(userDto).collect() { userId ->
@@ -27,10 +21,16 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateUser(userInfo: UserInfo): Flow<UserInfo> = flow {
+    override suspend fun getUser(userId: String): Flow<UserInfo> = flow {
+        remoteUserDataSource.getUser(userId).collect() { userDto ->
+            emit(UserInfo(userDto.id, userDto.name))
+        }
+    }
+
+    override suspend fun updateUser(userInfo: UserInfo): Flow<Boolean> = flow {
         val userDto = UserDto(userInfo.id, userInfo.name)
-        remoteUserDataSource.updateUser(userDto).collect() { updatedUserDto ->
-            emit(UserInfo(updatedUserDto.id, updatedUserDto.name))
+        remoteUserDataSource.updateUser(userDto).collect() { result ->
+            emit(result)
         }
     }
 

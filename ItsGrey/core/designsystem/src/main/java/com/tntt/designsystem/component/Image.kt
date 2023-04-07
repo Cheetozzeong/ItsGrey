@@ -17,17 +17,18 @@ import com.tntt.model.ImageBoxInfo
 
 @Composable
 fun ImageBox(
-    parent: Rect,
+    parentOffset: Offset,
+    parentSize: Size,
     imageBoxInfo: ImageBoxInfo,
 ) {
     Box(
         position = Offset(
-            imageBoxInfo.boxData.offsetRatioX * parent.width,
-            imageBoxInfo.boxData.offsetRatioY * parent.height
+            imageBoxInfo.boxData.offsetRatioX * parentSize.width,
+            imageBoxInfo.boxData.offsetRatioY * parentSize.height
         ),
         size = Size(
-            imageBoxInfo.boxData.widthRatio * parent.width,
-            imageBoxInfo.boxData.heightRatio * parent.height
+            imageBoxInfo.boxData.widthRatio * parentSize.width,
+            imageBoxInfo.boxData.heightRatio * parentSize.height
         )
     ) {
         Image(
@@ -43,7 +44,7 @@ fun ImageBox(
 @Composable
 fun ImageBoxForEdit(
     isSelected: Boolean,
-    parent: Rect,
+    parentSize: Size,
     imageBoxInfo: ImageBoxInfo,
     updateImageBoxInfo: (ImageBoxInfo) -> Unit,
     onClick: (id: String) -> Unit,
@@ -53,19 +54,19 @@ fun ImageBoxForEdit(
 
     val state = remember { mutableStateOf(isSelected) }
 
-    val position = remember(parent, imageBoxInfo) {
+    val position = remember(parentSize, imageBoxInfo) {
         mutableStateOf(
             Offset(
-                imageBoxInfo.boxData.offsetRatioX * parent.width,
-                imageBoxInfo.boxData.offsetRatioY * parent.height
+                imageBoxInfo.boxData.offsetRatioX * parentSize.width,
+                imageBoxInfo.boxData.offsetRatioY * parentSize.height
             )
         )
     }
-    val size = remember(parent, imageBoxInfo) {
+    var size by remember(parentSize, imageBoxInfo) {
         mutableStateOf(
             Size(
-                imageBoxInfo.boxData.widthRatio * parent.width,
-                imageBoxInfo.boxData.heightRatio * parent.height
+                imageBoxInfo.boxData.widthRatio * parentSize.width,
+                imageBoxInfo.boxData.heightRatio * parentSize.height
             )
         )
     }
@@ -76,48 +77,46 @@ fun ImageBoxForEdit(
             ImageBoxInfo(
                 id = imageBoxInfo.id,
                 boxData = BoxData(
-                    offsetRatioX = position.value.x / parent.width,
-                    offsetRatioY = position.value.y / parent.height,
-                    widthRatio = size.value.width / parent.width,
-                    heightRatio = size.value.height / parent.height,
+                    offsetRatioX = position.value.x / parentSize.width,
+                    offsetRatioY = position.value.y / parentSize.height,
+                    widthRatio = size.width / parentSize.width,
+                    heightRatio = size.height / parentSize.height,
                 ),
                 image = imageBoxInfo.image
             )
         )
     }
 
-
-    Box() {
-        if(isSelected) {
-            BoxDialog(
-                dialogComponent = dialogComponent,
-                position = position.value
-            )
-        }
-
-        BoxForEdit(
-            isSelected = isSelected,
-            inputPosition = position.value,
-            inputSize = size.value,
-            resizeType = ResizeType.Ratio,
-            updatePosition = { newPosition -> position.value = newPosition },
-            updateSize = { newSize -> size.value = newSize },
-            onClickDelete = { onClickDelete() },
-            innerContent = {
-                Image(
-                    bitmap = imageBoxInfo.image.asImageBitmap(),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .pointerInput(state.value, imageBoxInfo) {
-                            if (!isSelected) {
-                                detectTapGestures {
-                                    onClick(imageBoxInfo.id)
-                                }
-                            }
-                        },
-                )
-            }
+    if(isSelected) {
+        BoxDialog(
+            dialogComponent = dialogComponent,
+            position = position.value
         )
     }
+
+    BoxForEdit(
+        isSelected = isSelected,
+        inputPosition = position.value,
+        inputSize = size,
+        resizeType = ResizeType.Ratio,
+        updatePosition = { newPosition -> position.value = newPosition },
+        updateSize = { newSize -> size = newSize },
+        onClickDelete = { onClickDelete() },
+        innerContent = {
+            Image(
+                bitmap = imageBoxInfo.image.asImageBitmap(),
+                contentDescription = "",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(state.value, imageBoxInfo) {
+                        if (!isSelected) {
+                            detectTapGestures {
+                                onClick(imageBoxInfo.id)
+                            }
+                        }
+                    },
+                contentScale = ContentScale.Fit
+            )
+        }
+    )
 }

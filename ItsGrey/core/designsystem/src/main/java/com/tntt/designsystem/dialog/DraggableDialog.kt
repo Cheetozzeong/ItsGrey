@@ -13,7 +13,8 @@ import com.tntt.designsystem.icon.IgIcons
 import com.tntt.designsystem.theme.IgTheme
 
 @Composable
-private fun IgDraggableDialog(
+fun IgDraggableDialog(
+    modifier: Modifier = Modifier,
     minValue: Float,
     maxValue: Float,
     initialFontSize: Float,
@@ -23,7 +24,7 @@ private fun IgDraggableDialog(
 
     IgTheme {
         Card(
-            modifier = Modifier.size(400.dp,100.dp),
+            modifier = modifier.size(400.dp,100.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
             shape = RoundedCornerShape(25.dp),
         ) {

@@ -59,6 +59,8 @@ class LoginActivity : AppCompatActivity() {
                                             if (googleSignInToken != "") {
                                                 Toast.makeText(applicationContext, "로그인 성공!!", Toast.LENGTH_SHORT)
                                                 Intent(this@LoginActivity, MainActivity::class.java)
+                                                    .putExtra("currentUserEmail",firebaseAuth.currentUser!!.email.toString())
+                                                    .putExtra("currentUserName",firebaseAuth.currentUser!!.displayName.toString())
                                             } else {
                                                 Toast.makeText(applicationContext, "로그인 실패!", Toast.LENGTH_SHORT)
                                                 Intent(this@LoginActivity, LoginActivity::class.java)

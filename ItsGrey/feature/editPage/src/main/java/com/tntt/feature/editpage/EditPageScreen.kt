@@ -3,19 +3,23 @@ package com.tntt.feature.editpage
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -34,6 +38,11 @@ internal fun EditPageRoute(
     onBackClick: () -> Unit,
     onImageToDrawClick: (imageBoxId: String, imageUri: Uri?) -> Unit
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.getImageBoxList()
+    }
+
     val textBoxList by viewModel.textBoxList.collectAsStateWithLifecycle()
     val imageBoxList by viewModel.imageBox.collectAsStateWithLifecycle()
     val selectedBoxId by viewModel.selectedBoxId.collectAsStateWithLifecycle()
@@ -42,8 +51,16 @@ internal fun EditPageRoute(
         textBoxList = textBoxList,
         imageBox = imageBoxList,
         selectedBoxId = selectedBoxId,
-        onBackClick = onBackClick,
-        onImageToDrawClick = onImageToDrawClick,
+        onBackClick = {
+            viewModel.savePage()
+            onBackClick()
+        },
+        onImageToDrawClick = { id, uri ->
+            if(uri != null) {
+                viewModel.updateImageBox(id, uri)
+            }
+            onImageToDrawClick(id, uri)
+        },
         onCreateTextBox = viewModel::createTextBox,
         onCreateImageBox = viewModel::createImageBox,
         updateTextBox = viewModel::updateTextBox,
@@ -68,7 +85,6 @@ internal fun EditPageScreen(
     onBoxSelected: (String) -> Unit,
     deleteBox: (String) -> Unit
 ) {
-
     Scaffold(
         topBar = {
             EditBookTopAppBar(
@@ -79,8 +95,13 @@ internal fun EditPageScreen(
         Column(
             Modifier.padding(paddingValues)
         ) {
-            Row {
-                CreateImageBoxButton(onCreateImageBox = onCreateImageBox)
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if(imageBox.isEmpty()) {
+                    CreateImageBoxButton(onCreateImageBox = onCreateImageBox)
+                }
                 CreateTextBoxButton(onCreateTextBox = onCreateTextBox)
             }
             EditPageBox(
@@ -139,7 +160,9 @@ fun EditPageBox(
                 },
                 {
                     EditImageDrawingButton(
-                        navToDrawing = {onImageToDrawClick(selectedBoxId, null)}
+                        navToDrawing = {
+                            onImageToDrawClick(selectedBoxId, null)
+                        }
                     )
                 }
             )
@@ -154,6 +177,7 @@ private fun EditImageDrawingButton(navToDrawing: () -> Unit) {
         text = {Text(text = "수정")}
     )
 }
+
 
 @Composable
 private fun ChangeImageButton(imageUri: (Uri?) -> Unit) {
@@ -183,7 +207,9 @@ private fun CreateImageBoxButton(
     onCreateImageBox: () -> Unit
 ) {
     IgIconButton(
-        onClick = { onCreateImageBox() },
+        onClick = {
+            onCreateImageBox()
+        },
         icon = {
             Icon(
                 imageVector = IgIcons.AddImageBox,
@@ -236,20 +262,6 @@ fun EditBookTopAppBar(
         navigationIcon = IgIcons.NavigateBefore,
         navigationIconContentDescription = "Back",
         onNavigationClick = { onBackClick() },
-        actions = {
-            IgIconButton(
-                onClick = { /*TODO*/ },
-                icon = {
-                    Icon(
-                        imageVector = IgIcons.Template,
-                        contentDescription = "Preview",
-                    )
-                }
-            )
-            IgTextButton(
-                onClick = { /*TODO*/ },
-                text = { Text(text = "저장") }
-            )
-        }
+        actions = {}
     )
 }

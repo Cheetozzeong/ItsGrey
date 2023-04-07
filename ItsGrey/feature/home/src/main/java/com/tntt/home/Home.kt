@@ -3,12 +3,14 @@ package com.tntt.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
@@ -24,6 +26,7 @@ import com.tntt.model.*
 import itsgrey.feature.home.R
 import java.util.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -46,14 +49,24 @@ private enum class WindowSize(val item: Int) {
 
 @Composable
 internal fun HomePageRoute(
-    onNewButtonClick: () -> Unit,
-    onThumbnailClick: (String) -> Unit,
+    onThumbnailClickForEdit: (String) -> Unit,
+    onThumbnailClickForView: (String) -> Unit,
     viewModel: HomePageViewModel = hiltViewModel(),
 ){
+    LaunchedEffect(Unit) {
+        viewModel.getWorkingBookList()
+        viewModel.getPublishedBookList()
+    }
+
     HomePageScreen(
-        onNewButtonClick = {onNewButtonClick},
-        onThumbnailClick = {onThumbnailClick},
-        viewModel = viewModel
+        onNewButtonClick = viewModel::createBook,
+        onThumbnailClick = { id, type ->
+            when(type) {
+                TabPage.Published.name -> { onThumbnailClickForView(id) }
+                TabPage.Working.name -> { onThumbnailClickForEdit(id) }
+            }
+        },
+        viewModel = viewModel,
     )
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,23 +74,17 @@ internal fun HomePageRoute(
 internal fun HomePageScreen(
     modifier: Modifier = Modifier,
     onNewButtonClick: () -> Unit,
-    onThumbnailClick: (String) -> Unit,
-    viewModel: HomePageViewModel
+    onThumbnailClick: (String, String) -> Unit,
+    viewModel: HomePageViewModel,
 ) {
 
     val displayMetrics = LocalContext.current.resources.displayMetrics
     val screenWidth = displayMetrics.widthPixels / displayMetrics.density
 
-    val dateString = "2023-03-26T11:30:00+0900"
-    val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
-    val date = formatter.parse(dateString)
-
-    // dummy data
-    val user = User(name = "fakeUser",id = "1")
+    val user = User(name = viewModel.userName,id = viewModel.userId)
 
     val publishedBookList by viewModel.publishedBookList.collectAsState()
     val workingBookList by viewModel.workingBookList.collectAsState()
-
 
     var tabPage by remember { mutableStateOf(TabPage.Published) }
 
@@ -90,14 +97,21 @@ internal fun HomePageScreen(
         Scaffold(
             modifier = Modifier,
             topBar = { IgTopAppBar (
-                    modifier = Modifier
-                        .padding(horizontal = 25.dp),
-                    title = stringResource(R.string.home_toolbar_name),
-                    actions = {
-                        Text(text = user.name)
-                    }
-                )
-            }
+                modifier = Modifier
+                    .padding(horizontal = 25.dp),
+                title = stringResource(R.string.home_toolbar_name),
+                actions = {
+                    Text(
+                        modifier = Modifier.pointerInput(Unit) {
+                           detectTapGestures {
+                                viewModel.getPublishedBookList()
+                                viewModel.getWorkingBookList()
+                           }
+                        },
+                        text = "${user.name}님의 서재"
+                    )
+                }
+            ) }
         ) { padding ->
             Column(
                 Modifier
@@ -146,7 +160,9 @@ internal fun HomePageScreen(
                         books = list,
                         tabPage = tabPage,
                         screenWidth = screenWidth,
-                        onThumbnailClick = onThumbnailClick,
+                        onThumbnailClick = { id ->
+                            onThumbnailClick(id, tabPage.name)
+                        },
                         onNewButtonClick = onNewButtonClick
                     )
                 }
@@ -165,28 +181,44 @@ private fun BookList(
     onNewButtonClick: () -> Unit
 ) {
     val windowSize = computeWindowSizeClasses(screenWidth)
-
     IgTheme {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(windowSize.item),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 50.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = modifier.fillMaxHeight()
-        ) {
-            items(books) { book ->
-                BookItem(
-                    modifier = Modifier,
-                    book = book,
-                    tabPage = tabPage,
-                    onThumbnailClick = {
-                        onThumbnailClick
-                    }
-                )
+        if (books.isEmpty() && tabPage == TabPage.Published) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                Text(
+                    text = stringResource(R.string.homeNullListMessage),
+                    style = MaterialTheme.typography.displayMedium)
             }
-            if (tabPage == TabPage.Working) {
-                item {
-                    IgPlusPageButton(onClick = {onNewButtonClick})
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(windowSize.item),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 50.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = modifier.fillMaxHeight()
+            ) {
+                items(books) { book ->
+                    BookItem(
+                        modifier = Modifier,
+                        book = book,
+                        tabPage = tabPage,
+                        onThumbnailClick = {
+                            onThumbnailClick(it)
+                        }
+                    )
+                }
+                if (tabPage == TabPage.Working) {
+                    item {
+                        IgPlusPageButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { onNewButtonClick() },
+                            text = "New..."
+                        )
+                    }
                 }
             }
         }
@@ -204,38 +236,39 @@ private fun BookItem(
 ) {
     val bookId = book.bookInfo.id
     Column {
-            Row {
-                Box(
-                    modifier
-                        .fillMaxSize()
-                )
-                {
-                    Column {
-                        Box (
-                            Modifier
-                                .border(width = 5.dp, MaterialTheme.colorScheme.onPrimary)
-                                .clickable(
-                                    onClick = { onThumbnailClick(bookId) } /*TODO 네비 연*/
-                                )
-                        ) {
-                            PageForView(modifier = Modifier, thumbnail = book.thumbnail!!)
-                        }
-                        Box {
-                            Column {
-                                Text(
-                                    text = book.bookInfo.title,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    textAlign = TextAlign.Center
-                                )
-                                if (tabPage == TabPage.Published) PublishedTimeAgoText(book.bookInfo.saveDate)
-                                else if (tabPage == TabPage.Working) WorkingTimeAgoText(book.bookInfo.saveDate)
-                            }
+        Row {
+            Box(
+                modifier
+                    .fillMaxSize()
+            )
+            {
+                Column {
+                    Box (
+                        Modifier
+                            .border(width = 5.dp, MaterialTheme.colorScheme.onPrimary)
+                            .clickable(
+                                onClick = { onThumbnailClick(bookId) } /*TODO 네비 연*/
+                            )
+                    ) {
+                        PageForView(modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                            , thumbnail = book.thumbnail!!)
+                    }
+                    Box {
+                        Column {
+                            Text(
+                                text = book.bookInfo.title,
+                                style = MaterialTheme.typography.titleLarge,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center
+                            )
+                            if (tabPage == TabPage.Published) PublishedTimeAgoText(book.bookInfo.saveDate)
+                            else if (tabPage == TabPage.Working) WorkingTimeAgoText(book.bookInfo.saveDate)
                         }
                     }
                 }
             }
+        }
         Spacer(modifier = Modifier.height(20.dp))
     }
 }

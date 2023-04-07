@@ -19,34 +19,31 @@ fun PageForView(
     modifier: Modifier,
     thumbnail: Thumbnail,
 ) {
-    var parent by rememberSaveable(stateSaver = RectSaver){
-        mutableStateOf(
-            Rect(Offset.Zero, Size.Zero)
-        )
-    }
-    val imageBoxInfo = remember{ mutableStateOf(thumbnail.imageBoxList) }
-    val contentBoxInfoList = remember{
-        thumbnail.textBoxList.toMutableStateList()
-    }
+    var parentOffset by remember { mutableStateOf(Offset.Zero) }
+    var parentSize by remember { mutableStateOf(Size.Zero) }
+    val imageBoxInfo = remember(thumbnail) { thumbnail.imageBoxList }
+    val contentBoxInfoList = remember(thumbnail) { thumbnail.textBoxList }
 
     Box(
         modifier
             .aspectRatio(2f / 3f)
             .onGloballyPositioned { layoutCoordinates ->
-                parent = layoutCoordinates.boundsInRoot()
+                parentOffset = layoutCoordinates.boundsInRoot().topLeft
+                parentSize = layoutCoordinates.boundsInRoot().size
             }
     ){
 
-        imageBoxInfo.value.forEach { imageBox ->
+        imageBoxInfo.forEach { imageBox ->
             ImageBox(
-                parent = parent,
+                parentOffset = parentOffset,
+                parentSize = parentSize,
                 imageBoxInfo = imageBox,
             )
         }
-        contentBoxInfoList.map{textBoxInfo->
+        contentBoxInfoList.forEach { textBoxInfo->
             with(textBoxInfo){
                 TextBox(
-                    parent = parent,
+                    parentSize = parentSize,
                     textBoxInfo = TextBoxInfo(
                         id,
                         text,
@@ -71,21 +68,20 @@ fun PageForEdit(
     deleteBox: (String) -> Unit,
     imageBoxDialogComponent: List<@Composable () -> Unit>
 ) {
-    var parent by rememberSaveable(stateSaver = RectSaver) { mutableStateOf(Rect(Offset.Zero, Size.Zero)) }
+    var parentSize by remember { mutableStateOf(Size.Zero) }
 
     Box(
         modifier
             .aspectRatio(2f / 3f)
-            .fillMaxHeight()
             .onGloballyPositioned { layoutCoordinates ->
-                parent = layoutCoordinates.boundsInRoot()
+                parentSize = layoutCoordinates.boundsInRoot().size
             }
     ){
         imageBoxList.forEach { imageBoxInfo ->
             with(imageBoxInfo) {
                 ImageBoxForEdit(
                     isSelected = id == selectedBoxId,
-                    parent = parent,
+                    parentSize = parentSize,
                     imageBoxInfo = imageBoxInfo,
                     updateImageBoxInfo = { newImageBoxInfo -> updateImageBox(newImageBoxInfo) },
                     onClick = { id -> onBoxSelected(id) },
@@ -99,7 +95,7 @@ fun PageForEdit(
             with(textBoxInfo) {
                 TextBoxForEdit(
                     isSelected = id == selectedBoxId,
-                    parent = parent,
+                    parentSize = parentSize,
                     textBoxInfo = this,
                     updateTextBoxInfo = { new -> updateTextBox(new) },
                     onClick = { id -> onBoxSelected(id) },

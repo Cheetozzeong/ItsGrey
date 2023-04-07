@@ -10,4 +10,5 @@ interface RemoteImageBoxDataSource {
     suspend fun updateImageBoxDto(imageBoxDto: ImageBoxDto): Flow<Boolean>
     suspend fun updateImageBoxDtoList(imageBoxDtoList: List<ImageBoxDto>): Flow<Boolean>
     suspend fun deleteImageBoxDto(id: String):  Flow<Boolean>
+    suspend fun setImageUrl(imageBoxId: String, url: String): Flow<Boolean>
 }

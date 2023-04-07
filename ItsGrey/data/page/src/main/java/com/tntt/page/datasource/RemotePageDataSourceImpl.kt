@@ -3,6 +3,7 @@ package com.tntt.page.datasource
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tntt.page.model.PageDto
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -14,79 +15,71 @@ class RemotePageDataSourceImpl @Inject constructor(
 
     val pageCollection by lazy { firestore.collection("page") }
 
-    override suspend fun createPageDto(pageDto: PageDto): Flow<PageDto> = flow {
-        Log.d("function test", "createPageDto(${pageDto})")
+    override suspend fun createPageDto(pageDto: PageDto): Flow<String> = flow {
         pageCollection
             .document(pageDto.id)
             .set(pageDto)
-            .addOnSuccessListener { Log.d("function test", "success createPageDto(${pageDto})") }
             .await()
-        emit(pageDto)
+        emit(pageDto.id)
     }
 
     override suspend fun getPageDto(bookId: String, pageOrder: Int): Flow<PageDto> = flow {
-        Log.d("function test", "getPageDto(${bookId}, ${pageOrder})")
-        var pageDto: PageDto = PageDto("1", "1", 1)
-        println("getPageDto(${bookId}, ${pageOrder})")
-        pageCollection
+        val querySnapshot = pageCollection
             .whereEqualTo("bookId", bookId)
             .whereEqualTo("order", pageOrder)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents.first() ?: throw  NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().documentSnapshot")
+            .await()
 
-                val id = documentSnapshot.id
-                val data = documentSnapshot.data
-                val order = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+        val documentSnapshot = querySnapshot.documents.first() ?: throw  NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().documentSnapshot")
 
-                pageDto = PageDto(id, bookId, order)
+        val id = documentSnapshot.id
+        val data = documentSnapshot.data
+        val order = (data?.get("order") as Long).toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
 
-            }.await()
+        val pageDto = PageDto(id, bookId, order)
         emit(pageDto)
     }
 
     override suspend fun getFirstPageDto(bookId: String): Flow<PageDto?> = flow {
         var pageDto: PageDto? = null
-        pageCollection
+        val querySnapshot = pageCollection
             .whereEqualTo("bookId", bookId)
             .orderBy("order")
             .limit(1)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                if(!querySnapshot.isEmpty) {
-                    val documentSnapshot = querySnapshot.documents.first()
-                    val id = documentSnapshot.id as String
-                    val data = documentSnapshot.data
-                    val order = (data?.get("order") as Long).toInt()
+            .await()
 
-                    pageDto = PageDto(id, bookId, order)
-                }
-            }.await()
+        if(!querySnapshot.isEmpty) {
+            val documentSnapshot = querySnapshot.documents.first()
+            val id = documentSnapshot.id as String
+            val data = documentSnapshot.data
+            val order = (data?.get("order") as Long).toString().toInt()
+
+            pageDto = PageDto(id, bookId, order)
+        }
         emit(pageDto)
     }
 
     override suspend fun getPageDtoList(bookId: String): Flow<List<PageDto>> = flow {
-        Log.d("function test", "getPageDtoList(${bookId})")
         val pageDtoList = mutableListOf<PageDto>()
-        pageCollection
+        val querySnapshot = pageCollection
             .whereEqualTo("bookId", bookId)
             .orderBy("order")
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                val documentSnapshot = querySnapshot.documents
-                for (document in documentSnapshot) {
-                    val id = document.id
-                    val data = document.data
-                    val order: Int = data?.get("order").toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+            .await()
 
-                    pageDtoList.add(PageDto(id, bookId, order))
-                }
-            }.await()
+        val documentSnapshot = querySnapshot.documents
+        for (document in documentSnapshot) {
+            val id = document.id
+            val data = document.data
+            val order = (data?.get("order") as Long).toString().toInt() ?: throw NullPointerException(":data:page - datasource/RemotePageDatasourceImpl.getPage().order")
+            pageDtoList.add(PageDto(id, bookId, order))
+        }
+
         emit(pageDtoList)
     }
 
     override suspend fun updatePageDto(pageDtoList: List<PageDto>): Flow<Boolean> = flow {
-        Log.d("function test", "updatePageDto(${pageDtoList}")
         var result: Boolean = true
 
         for (pageDto in pageDtoList) {
@@ -100,27 +93,26 @@ class RemotePageDataSourceImpl @Inject constructor(
     }
 
     override suspend fun hasCover(bookId: String): Flow<Boolean> = flow {
-        Log.d("function test", "hasCover(${bookId})")
         var result = false
-        pageCollection
+        val querySnapshot = pageCollection
             .whereEqualTo("bookId", bookId)
             .whereEqualTo("order", 0)
             .limit(1)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) result = true
-            }
             .await()
+
+        if (!querySnapshot.isEmpty) result = true
         emit(result)
     }
 
     override suspend fun deletePageDto(pageId: String): Flow<Boolean> = flow {
-        var result = false
+        var result = true
         pageCollection
             .document(pageId)
             .delete()
-            .addOnSuccessListener { result = true }
-            .await()
+            .addOnFailureListener {
+                result = false
+            }.await()
         emit(result)
     }
 }
